@@ -1,3 +1,4 @@
+docker build -t emacs/build:16.04 -f ./emacs-build.Dockerfile .
 
 docker build -t expt/man.lu:0.1 -f ./experiment.Dockerfile .
 
