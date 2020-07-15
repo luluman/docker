@@ -107,7 +107,6 @@ RUN python3 -m pip --no-cache-dir install \
     enum34
 # ================================================================================
 
-COPY --from=0 .emacs.d /root/.emacs.d
-COPY --from=0 .local /usr/local
+COPY ./local /usr/local
 
 WORKDIR /workspace

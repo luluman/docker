@@ -66,7 +66,6 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 # ================================================================================
 
-COPY --from=0 /root/.emacs.d /root/.emacs.d
-COPY --from=0 /usr/local /usr/local
+COPY ./local /usr/local
 
 WORKDIR /workspace

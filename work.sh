@@ -18,8 +18,7 @@ function test_1()
          --volume="/etc/group:/etc/group:ro" \
          --volume="/etc/passwd:/etc/passwd:ro" \
          --volume="/etc/shadow:/etc/shadow:ro" \
-         --volume="/home/man.lu/docker/.bashrc:/home/${USER}/.bashrc" \
-         --volume="/home/man.lu/docker/16.04/usr/local:/usr/local":cached \
+         --volume="/home/man.lu/docker/16.04/usr/local:/usr/local":delegated \
          --workdir="/home/$USER" \
          emacs/build:16.04 /bin/bash
 }

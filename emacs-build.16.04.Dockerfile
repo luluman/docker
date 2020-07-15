@@ -11,6 +11,7 @@ RUN apt-get update && \
             build-essential \
             curl \
             dpkg-dev \
+            gettext \
             git \
             gnupg \
             imagemagick \
@@ -36,9 +37,11 @@ RUN apt-get update && \
             librsvg2-dev \
             libselinux1-dev \
             libtiff-dev \
+            libtool \
             libxaw7-dev \
             libxml2-dev \
             openssh-client \
+            perl \
             python \
             texinfo \
             wget \
