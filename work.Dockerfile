@@ -60,9 +60,13 @@ RUN apt-get update && \
             python3-pip \
             python3-setuptools \
             python3-scipy \
+            virtualenv \
             && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 # ================================================================================
+
+COPY --from=0 /root/.emacs.d /root/.emacs.d
+COPY --from=0 /usr/local /usr/local
 
 WORKDIR /workspace

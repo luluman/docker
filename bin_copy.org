@@ -1,0 +1,13 @@
+* copy binary
+  - [X] emacs
+  - [X] clangd
+  - [X] cmake
+  - [X] Bear
+  - [X] ninja
+  - [ ] .emacs.d
+    + [ ] ycmd
+  - [ ] node.js
+    + [ ] javascript-typescript-stdio
+    + [ ] bash-language-server
+* man using symbol link
+  ln -s share/man man
