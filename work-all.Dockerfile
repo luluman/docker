@@ -60,7 +60,7 @@ RUN apt-get update && \
 # ============================================================
 # https://github.com/Silex/docker-emacs
 
-RUN git clone --depth 1 --branch emacs-27.0.91 git://git.sv.gnu.org/emacs.git /opt/emacs && \
+RUN git clone --depth 1 --branch emacs-27 git://git.sv.gnu.org/emacs.git /opt/emacs && \
     cd /opt/emacs && \
     ./autogen.sh && \
     ./configure --build="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" --with-modules && \
@@ -241,6 +241,8 @@ RUN apt-get update && \
 # ================================================================================
 
 COPY --from=builder /usr/local /usr/local
+
+ENV SHELL "/bin/bash"
 
 RUN ldconfig
 
