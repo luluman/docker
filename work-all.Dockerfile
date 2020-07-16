@@ -113,6 +113,7 @@ RUN git -c http.sslVerify=false \
 
 # ============================================================
 # Build clangd
+# https://gist.github.com/jakob/929ed728c96741a119798647a32618ca
 
 RUN git -c http.sslVerify=false \
         clone --depth 1 https://github.com/llvm/llvm-project.git && \

@@ -6,6 +6,7 @@
   - [X] ninja
   - [X] aspell
   - [ ] ycmd
+  - [ ] ripgrep
   - [X] node.js
     + [X] javascript-typescript-stdio
     + [X] bash-language-server
