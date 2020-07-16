@@ -1,2 +1,3 @@
-./home/
-! ./home/.bashrc
+!/home
+/home/*
+!/home/.bashrc

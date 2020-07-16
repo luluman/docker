@@ -158,6 +158,17 @@ RUN     curl -SLOk "${ASPELL_SERVER}/aspell-${ASPELL_VERSION}.tar.gz" \
 
      && rm -rf /aspell* /var/lib/apt/lists/*
 
+# ============================================================
+# https://hub.docker.com/r/peccu/rg/dockerfile
+# build ripgrep
+
+ENV RG_VERSION=11.0.2
+RUN     set -x \
+    &&  wget https://github.com/BurntSushi/ripgrep/releases/download/${RG_VERSION}/ripgrep-${RG_VERSION}-x86_64-unknown-linux-musl.tar.gz \
+             --no-check-certificate \
+    &&  tar xzf ripgrep-${RG_VERSION}-x86_64-unknown-linux-musl.tar.gz \
+    &&  mv ripgrep-${RG_VERSION}-x86_64-unknown-linux-musl/rg /usr/local/bin/
+
 # ********************************************************************************
 #
 # satge 1
@@ -231,6 +242,6 @@ RUN apt-get update && \
 
 COPY --from=builder /usr/local /usr/local
 
-# RUN ldconfig
+RUN ldconfig
 
 WORKDIR /workspace
