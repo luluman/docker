@@ -49,6 +49,7 @@ RUN apt-get update && \
             perl \
             python \
             texinfo \
+            unzip \
             wget \
             xaw3dg-dev \
             zlib1g-dev \
@@ -63,7 +64,7 @@ RUN git clone --depth 1 --branch emacs-27.0.91 git://git.sv.gnu.org/emacs.git /o
     cd /opt/emacs && \
     ./autogen.sh && \
     ./configure --build="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" --with-modules && \
-    make -j && \
+    make -j30 && \
     make install
 
 # ============================================================
@@ -71,15 +72,15 @@ RUN git clone --depth 1 --branch emacs-27.0.91 git://git.sv.gnu.org/emacs.git /o
 
 ENV NODE_VERSION 12.18.2
 
-RUN      curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x86.tar.xz" \
-      && tar -xJf "node-v$NODE_VERSION-linux-x86.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
-      && rm "node-v$NODE_VERSION-linux-$ARCH.tar.xz" \
+RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
+      && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
+      && rm "node-v$NODE_VERSION-linux-x64.tar.xz" \
       && ln -s /usr/local/bin/node /usr/local/bin/nodejs \
       # smoke tests
       && node --version \
       && npm --version \
       # install some LSP servers
-      && npm i -g javascript-typescript-stdio \
+      && npm i -g javascript-typescript-langserver \
       && npm i -g bash-language-server
 
 # ============================================================
@@ -103,7 +104,8 @@ RUN wget https://github.com/ninja-build/ninja/releases/download/v1.10.0/ninja-li
 # ============================================================
 # Build EAR (BEAR)
 
-RUN git clone --depth 1 --branch v2.4.3 https://github.com/rizsotto/Bear.git /opt/bear && \
+RUN git -c http.sslVerify=false \
+        clone --depth 1 --branch v2.4.3 https://github.com/rizsotto/Bear.git /opt/bear && \
     cd /opt/bear && \
     cmake . -DCMAKE_INSTALL_PREFIX=/usr/local && \
     make all -j4 && \
@@ -112,7 +114,8 @@ RUN git clone --depth 1 --branch v2.4.3 https://github.com/rizsotto/Bear.git /op
 # ============================================================
 # Build clangd
 
-RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
+RUN git -c http.sslVerify=false \
+        clone --depth 1 https://github.com/llvm/llvm-project.git && \
     mkdir llvm-project/build-clangd && \
     cd llvm-project/build-clangd && \
     cmake -G Ninja \
@@ -133,11 +136,11 @@ RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
 # https://github.com/Starefossen/docker-aspell
 
 ENV ASPELL_SERVER ftp://ftp.gnu.org/gnu/aspell
-ENV ASPELL_VERSION 0.60.6.1
-ENV ASPELL_EN 2015.04.24-0
+ENV ASPELL_VERSION 0.60.8
+ENV ASPELL_EN 2019.10.06-0
 
-RUN     curl -SLO "${ASPELL_SERVER}/aspell-${ASPELL_VERSION}.tar.gz" \
-     && curl -SLO "${ASPELL_SERVER}/dict/en/aspell6-en-${ASPELL_EN}.tar.bz2" \
+RUN     curl -SLOk "${ASPELL_SERVER}/aspell-${ASPELL_VERSION}.tar.gz" \
+     && curl -SLOk "${ASPELL_SERVER}/dict/en/aspell6-en-${ASPELL_EN}.tar.bz2" \
      && tar -xzf "/aspell-${ASPELL_VERSION}.tar.gz" \
      && tar -xjf "/aspell6-en-${ASPELL_EN}.tar.bz2" \
 
