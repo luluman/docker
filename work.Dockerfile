@@ -68,4 +68,6 @@ RUN apt-get update && \
 
 COPY ./local /usr/local
 
+RUN ldconfig
+
 WORKDIR /workspace
