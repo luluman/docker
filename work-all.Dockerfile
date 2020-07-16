@@ -48,6 +48,7 @@ RUN apt-get update && \
             openssh-client \
             perl \
             python \
+            python3-dev \
             texinfo \
             unzip \
             wget \
@@ -56,6 +57,8 @@ RUN apt-get update && \
             && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+RUN git config --global http.sslVerify false
 
 # ============================================================
 # https://github.com/Silex/docker-emacs
@@ -104,8 +107,7 @@ RUN wget https://github.com/ninja-build/ninja/releases/download/v1.10.0/ninja-li
 # ============================================================
 # Build EAR (BEAR)
 
-RUN git -c http.sslVerify=false \
-        clone --depth 1 --branch v2.4.3 https://github.com/rizsotto/Bear.git /opt/bear && \
+RUN git clone --depth 1 --branch v2.4.3 https://github.com/rizsotto/Bear.git /opt/bear && \
     cd /opt/bear && \
     cmake . -DCMAKE_INSTALL_PREFIX=/usr/local && \
     make all -j4 && \
@@ -115,8 +117,7 @@ RUN git -c http.sslVerify=false \
 # Build clangd
 # https://gist.github.com/jakob/929ed728c96741a119798647a32618ca
 
-RUN git -c http.sslVerify=false \
-        clone --depth 1 https://github.com/llvm/llvm-project.git && \
+RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
     mkdir llvm-project/build-clangd && \
     cd llvm-project/build-clangd && \
     cmake -G Ninja \
@@ -134,6 +135,25 @@ RUN git -c http.sslVerify=false \
     cp -r ./* /usr/local
 
 # ============================================================
+# Build YCMD
+# https://github.com/AlexandreCarlton/ycmd-docker
+
+RUN git clone --depth 1 --recursive https://github.com/ycm-core/ycmd && \
+    cd ycmd && \
+    python3 build.py \
+          --clang-completer \
+          --ts-completer \
+          --ninja && \
+    mkdir build && \
+    cp .ycm_extra_conf.py ./build/ && \
+    cp CORE_VERSION ./build/ && \
+    cp -r third_party ./build/ && \
+    cp -r ycmd ./build/ && \
+    cp ycm_core.so ./build/ && \
+    cp -r ./build /usr/local/lib/ycmd
+
+# ============================================================
+# Build Aspell
 # https://github.com/Starefossen/docker-aspell
 
 ENV ASPELL_SERVER ftp://ftp.gnu.org/gnu/aspell

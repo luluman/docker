@@ -5,10 +5,8 @@
   - [X] Bear
   - [X] ninja
   - [X] aspell
-  - [ ] ycmd
+  - [X] ycmd
   - [X] ripgrep
   - [X] node.js
     + [X] javascript-typescript-stdio
     + [X] bash-language-server
-* man using symbol link
-  ln -s share/man man
