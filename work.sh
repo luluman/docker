@@ -14,6 +14,7 @@ function test_1()
   docker run --rm -it \
          --name man.lu \
          --user $UID:$GID \
+         --detach-keys "ctrl-^,ctrl-@" \
          --volume="/home/man.lu/.docker/home:/home/$USER":delegated \
          --volume="/home/man.lu/workspace:/workspace":cached \
          --volume="/etc/group:/etc/group:ro" \
