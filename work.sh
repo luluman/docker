@@ -1,10 +1,14 @@
 function work-macos()
 {
-  docker run --rm --name work-man.lu \
-         -v ~/Documents/workspace:/workspace \
-         -v ~/Documents/install-linux:/local_install \
-         -v ~/Documents/package-linux:/local_package \
-         -ti work/man.lu:0.1
+  local home=~/Documents/docker/home
+  local workspace=~/Documents/workspace
+  docker run --rm -ti \
+         --name ${USER}-work \
+         --detach-keys "ctrl-^,ctrl-@" \
+         --volume="${home}:/home/root":delegated \
+         --volume="${workspace}:/workspace":cached \
+	     --add-host=gerrit.ai.bitmaincorp.vip:10.128.0.97 \
+         work/man.lu:1.0 /bin/bash
 }
 
 function work-linux()
@@ -22,6 +26,6 @@ function work-linux()
          --volume="/etc/group:/etc/group:ro" \
          --volume="/etc/passwd:/etc/passwd:ro" \
          --volume="/etc/shadow:/etc/shadow:ro" \
-	 --add-host=gerrit.ai.bitmaincorp.vip:10.128.0.97 \
+	     --add-host=gerrit.ai.bitmaincorp.vip:10.128.0.97 \
          work/man.lu:1.0 /bin/bash
 }
