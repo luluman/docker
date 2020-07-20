@@ -1,4 +1,4 @@
-function work_1()
+function work-macos()
 {
   docker run --rm --name work-man.lu \
          -v ~/Documents/workspace:/workspace \
@@ -7,18 +7,21 @@ function work_1()
          -ti work/man.lu:0.1
 }
 
-function test_1()
+function work-linux()
 {
   local UID=$(id -u)
   local GID=$(id -g)
+  local home=$(realpath ~/.docker/home)
+  local workspace=$(realpath ~/workspace)
   docker run --rm -it \
-         --name man.lu \
+         --name ${USER}-work \
          --user $UID:$GID \
          --detach-keys "ctrl-^,ctrl-@" \
-         --volume="/home/man.lu/.docker/home:/home/$USER":delegated \
-         --volume="/home/man.lu/workspace:/workspace":cached \
+         --volume="${home}:/home/$USER":delegated \
+         --volume="${workspace}:/workspace":cached \
          --volume="/etc/group:/etc/group:ro" \
          --volume="/etc/passwd:/etc/passwd:ro" \
          --volume="/etc/shadow:/etc/shadow:ro" \
+	 --add-host=gerrit.ai.bitmaincorp.vip:10.128.0.97 \
          work/man.lu:1.0 /bin/bash
 }
