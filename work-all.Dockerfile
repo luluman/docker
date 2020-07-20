@@ -189,6 +189,16 @@ RUN     set -x \
     &&  tar xzf ripgrep-${RG_VERSION}-x86_64-unknown-linux-musl.tar.gz \
     &&  mv ripgrep-${RG_VERSION}-x86_64-unknown-linux-musl/rg /usr/local/bin/
 
+# ============================================================
+# https://github.com/Valian/docker-git-lfs
+# build git-lfs
+
+RUN    curl -sLOk https://github.com/git-lfs/git-lfs/releases/download/v2.11.0/git-lfs-linux-amd64-v2.11.0.tar.gz \
+    && tar -zxf git-lfs-linux-amd64-v2.11.0.tar.gz \
+    && mv git-lfs /usr/local/bin/ \
+    && rm -rf git-lfs-* \
+    && rm -rf install.sh
+
 # ********************************************************************************
 #
 # satge 1
@@ -264,6 +274,7 @@ COPY --from=builder /usr/local /usr/local
 
 ENV SHELL "/bin/bash"
 
-RUN ldconfig
+RUN ldconfig && \
+    git lfs install
 
 WORKDIR /workspace
