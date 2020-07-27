@@ -22,6 +22,7 @@ function work-linux()
          --name ${USER}-work \
          --user $UID:$GID \
          --detach-keys "ctrl-^,ctrl-@" \
+         --network man.lu-net \
          --volume="${home}:/home/$USER":delegated \
          --volume="${workspace}:/workspace":cached \
          --volume="${data}:/data":cached \
@@ -30,4 +31,17 @@ function work-linux()
          --volume="/etc/shadow:/etc/shadow:ro" \
          --add-host=gerrit.ai.bitmaincorp.vip:10.128.0.97 \
          work/man.lu:1.0 /bin/bash
+}
+
+function work-langtool-server()
+{
+  docker run -dit \
+         --name langtool-server \
+         --network man.lu-net \
+         silviof/docker-languagetool
+}
+
+function add-network()
+{
+  docker network create --driver bridge man.lu-net
 }
