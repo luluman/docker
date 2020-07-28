@@ -265,6 +265,7 @@ RUN apt-get update && \
             python3-setuptools \
             python3-scipy \
             virtualenv \
+            parallel \
             && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
