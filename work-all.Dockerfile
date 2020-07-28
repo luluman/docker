@@ -245,7 +245,6 @@ RUN apt-get update && \
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
             build-essential \
-            cmake \
             git \
             wget \
             libatlas-base-dev \
@@ -266,6 +265,7 @@ RUN apt-get update && \
             python3-scipy \
             virtualenv \
             parallel \
+            gdb \
             && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
