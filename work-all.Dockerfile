@@ -164,18 +164,18 @@ RUN     curl -SLOk "${ASPELL_SERVER}/aspell-${ASPELL_VERSION}.tar.gz" \
      && curl -SLOk "${ASPELL_SERVER}/dict/en/aspell6-en-${ASPELL_EN}.tar.bz2" \
      && tar -xzf "/aspell-${ASPELL_VERSION}.tar.gz" \
      && tar -xjf "/aspell6-en-${ASPELL_EN}.tar.bz2" \
-
+     # build
      && cd "/aspell-${ASPELL_VERSION}" \
        && ./configure \
        && make -j4 \
        && make install \
        && ldconfig \
-
+     # copy
      && cd "/aspell6-en-${ASPELL_EN}" \
        && ./configure \
        && make -j4 \
        && make install \
-
+     # cleanup
      && rm -rf /aspell* /var/lib/apt/lists/*
 
 # ============================================================
@@ -263,6 +263,7 @@ RUN apt-get update && \
             python3-pip \
             python3-setuptools \
             python3-scipy \
+            # dev needed
             virtualenv \
             parallel \
             gdb \
