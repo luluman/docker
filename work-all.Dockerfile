@@ -7,6 +7,8 @@ ARG UBUNTU_VERSION=16.04
 
 FROM ubuntu:${UBUNTU_VERSION} AS builder
 
+COPY ./sources.list /etc/apt/sources.list
+
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
             apt-utils \
