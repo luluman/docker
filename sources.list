@@ -1,3 +1,9 @@
+# Does not work with proxy
+# deb mirror://mirrors.ubuntu.com/mirrors.txt xenial main restricted universe multiverse
+# deb mirror://mirrors.ubuntu.com/mirrors.txt xenial-updates main restricted universe multiverse
+# deb mirror://mirrors.ubuntu.com/mirrors.txt xenial-backports main restricted universe multiverse
+# deb mirror://mirrors.ubuntu.com/mirrors.txt xenial-security main restricted universe multiverse
+
 # See http://help.ubuntu.com/community/UpgradeNotes for how to upgrade to
 # newer versions of the distribution.
 # deb http://archive.ubuntu.com/ubuntu/ xenial main restricted

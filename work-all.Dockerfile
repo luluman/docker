@@ -65,7 +65,7 @@ RUN git config --global http.sslVerify false
 # ============================================================
 # https://github.com/Silex/docker-emacs
 
-RUN git clone --depth 1 --branch emacs-27 git://git.sv.gnu.org/emacs.git /opt/emacs && \
+RUN git clone --depth 1 --branch emacs-27 https://github.com/emacs-mirror/emacs /opt/emacs && \
     cd /opt/emacs && \
     ./autogen.sh && \
     ./configure --build="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" --with-modules && \
@@ -85,13 +85,14 @@ RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-
       && node --version \
       && npm --version \
       # install some LSP servers
+      && npm config set registry https://registry.npm.taobao.org \
       && npm i -g javascript-typescript-langserver \
       && npm i -g bash-language-server
 
 # ============================================================
 # https://hub.docker.com/r/rikorose/gcc-cmake/dockerfile
 
-RUN wget https://github.com/Kitware/CMake/releases/download/v3.17.3/cmake-3.17.3-Linux-x86_64.sh \
+RUN wget https://github.com/Kitware/CMake/releases/download/v3.18.0/cmake-3.18.0-Linux-x86_64.sh \
       --no-check-certificate \
       -q -O /tmp/cmake-install.sh \
       && chmod u+x /tmp/cmake-install.sh \
@@ -207,6 +208,8 @@ RUN    curl -sLOk https://github.com/git-lfs/git-lfs/releases/download/v2.11.0/g
 # ********************************************************************************
 
 FROM ubuntu:${UBUNTU_VERSION} AS base
+
+COPY ./sources.list /etc/apt/sources.list
 
 # ================================================================================
 # dependcy package of Emacs
