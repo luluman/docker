@@ -120,7 +120,8 @@ RUN git clone --depth 1 --branch v2.4.3 https://github.com/rizsotto/Bear.git /op
 # Build clangd
 # https://gist.github.com/jakob/929ed728c96741a119798647a32618ca
 
-RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
+# master build failed, fallback to releases/11.x
+RUN git clone --depth 1 --branch release/11.x https://github.com/llvm/llvm-project.git && \
     mkdir llvm-project/build-clangd && \
     cd llvm-project/build-clangd && \
     cmake -G Ninja \
@@ -141,8 +142,11 @@ RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
 # Build YCMD
 # https://github.com/AlexandreCarlton/ycmd-docker
 
-RUN git clone --depth 1 --recursive https://github.com/ycm-core/ycmd && \
+# master drop python3.5 support, fallback to 0abcfafbaf57e4d4d499680c13e1413a34672a58
+RUN git clone --recursive https://github.com/ycm-core/ycmd && \
     cd ycmd && \
+    git checkout  0abcfafbaf57e4d4d499680c13e1413a34672a58 && \
+    git submodule update --recursive && \
     python3 build.py \
           --clang-completer \
           --ts-completer \
@@ -196,7 +200,8 @@ RUN     set -x \
 # https://github.com/Valian/docker-git-lfs
 # build git-lfs
 
-RUN    curl -sLOk https://github.com/git-lfs/git-lfs/releases/download/v2.11.0/git-lfs-linux-amd64-v2.11.0.tar.gz \
+RUN    wget https://github.com/git-lfs/git-lfs/releases/download/v2.11.0/git-lfs-linux-amd64-v2.11.0.tar.gz \
+            -c --retry-connrefused --tries=0 --timeout=180 --no-check-certificate \
     && tar -zxf git-lfs-linux-amd64-v2.11.0.tar.gz \
     && mv git-lfs /usr/local/bin/ \
     && rm -rf git-lfs-* \
