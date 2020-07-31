@@ -286,7 +286,6 @@ COPY --from=builder /usr/local /usr/local
 
 ENV SHELL "/bin/bash"
 
-RUN ldconfig && \
-    git lfs install
+RUN ldconfig
 
 WORKDIR /workspace
