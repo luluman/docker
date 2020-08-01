@@ -7,7 +7,7 @@ ARG UBUNTU_VERSION=16.04
 
 FROM ubuntu:${UBUNTU_VERSION} AS builder
 
-COPY ./sources.list /etc/apt/sources.list
+# COPY ./sources.list /etc/apt/sources.list
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -85,7 +85,7 @@ RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-
       && node --version \
       && npm --version \
       # install some LSP servers
-      && npm config set registry https://registry.npm.taobao.org \
+      # && npm config set registry https://registry.npm.taobao.org \
       && npm i -g javascript-typescript-langserver \
       && npm i -g bash-language-server
 
@@ -127,7 +127,7 @@ RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
           ../llvm -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
           -DCMAKE_BUILD_TYPE=Release \
           -DLLVM_TARGETS_TO_BUILD="X86" && \
-    ninja clangd clang-format clangd-fuzzer clangd-indexer -j 40 && \
+    ninja clangd clang-format clangd-fuzzer clangd-indexer && \
     mkdir clangd-latest && \
     cd clangd-latest && \
     mkdir bin && \
@@ -213,7 +213,7 @@ RUN    wget https://github.com/git-lfs/git-lfs/releases/download/v2.11.0/git-lfs
 
 FROM ubuntu:${UBUNTU_VERSION} AS base
 
-COPY ./sources.list /etc/apt/sources.list
+# COPY ./sources.list /etc/apt/sources.list
 
 # ================================================================================
 # dependcy package of Emacs
