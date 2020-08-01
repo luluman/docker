@@ -30,7 +30,7 @@ function work-linux()
          --volume="/etc/passwd:/etc/passwd:ro" \
          --volume="/etc/shadow:/etc/shadow:ro" \
          --add-host=gerrit.ai.bitmaincorp.vip:10.128.0.97 \
-         work/man.lu:1.0 /bin/bash
+         work/man.lu:1.2 /bin/bash
 }
 
 function work-langtool-server()

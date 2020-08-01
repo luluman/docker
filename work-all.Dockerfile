@@ -75,7 +75,7 @@ RUN git clone --depth 1 --branch emacs-27 https://github.com/emacs-mirror/emacs 
 # ============================================================
 # https://github.com/nodejs/docker-node
 
-ENV NODE_VERSION 12.18.2
+ENV NODE_VERSION 12.18.3
 
 RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
       && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
@@ -120,8 +120,7 @@ RUN git clone --depth 1 --branch v2.4.3 https://github.com/rizsotto/Bear.git /op
 # Build clangd
 # https://gist.github.com/jakob/929ed728c96741a119798647a32618ca
 
-# master build failed, fallback to releases/11.x
-RUN git clone --depth 1 --branch release/11.x https://github.com/llvm/llvm-project.git && \
+RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
     mkdir llvm-project/build-clangd && \
     cd llvm-project/build-clangd && \
     cmake -G Ninja \
@@ -277,6 +276,7 @@ RUN apt-get update && \
             virtualenv \
             parallel \
             gdb \
+            openjdk-8-jdk \
             && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
