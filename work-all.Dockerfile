@@ -2,7 +2,7 @@ ARG UBUNTU_VERSION=16.04
 
 # ********************************************************************************
 #
-# satge 0
+# stage 0
 # ********************************************************************************
 
 FROM ubuntu:${UBUNTU_VERSION} AS builder
@@ -208,7 +208,7 @@ RUN    wget https://github.com/git-lfs/git-lfs/releases/download/v2.11.0/git-lfs
 
 # ********************************************************************************
 #
-# satge 1
+# stage 1
 # ********************************************************************************
 
 FROM ubuntu:${UBUNTU_VERSION} AS base
@@ -276,7 +276,6 @@ RUN apt-get update && \
             virtualenv \
             parallel \
             gdb \
-            openjdk-8-jdk \
             && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*

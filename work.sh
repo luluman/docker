@@ -19,6 +19,7 @@ function work-linux()
   local workspace=$(realpath ~/workspace)
   local data=$(realpath /data)
   docker run -it \
+         --privileged \
          --name ${USER}-work \
          --user $UID:$GID \
          --detach-keys "ctrl-^,ctrl-@" \
