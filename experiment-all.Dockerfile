@@ -1,13 +1,11 @@
-ARG UBUNTU_VERSION=16.04
+ARG UBUNTU_VERSION=18.04
 
 # ********************************************************************************
 #
-# stage 0
+# satge 0
 # ********************************************************************************
 
 FROM ubuntu:${UBUNTU_VERSION} AS builder
-
-# COPY ./sources.list /etc/apt/sources.list
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -85,7 +83,7 @@ RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-
       && node --version \
       && npm --version \
       # install some LSP servers
-      # && npm config set registry https://registry.npm.taobao.org \
+      && npm config set registry https://registry.npm.taobao.org \
       && npm i -g javascript-typescript-langserver \
       && npm i -g bash-language-server
 
@@ -127,7 +125,7 @@ RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
           ../llvm -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
           -DCMAKE_BUILD_TYPE=Release \
           -DLLVM_TARGETS_TO_BUILD="X86" && \
-    ninja clangd clang-format clangd-fuzzer clangd-indexer && \
+    ninja clangd clang-format clangd-fuzzer clangd-indexer -j 40 && \
     mkdir clangd-latest && \
     cd clangd-latest && \
     mkdir bin && \
@@ -141,11 +139,8 @@ RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
 # Build YCMD
 # https://github.com/AlexandreCarlton/ycmd-docker
 
-# master drop python3.5 support, fallback to 0abcfafbaf57e4d4d499680c13e1413a34672a58
-RUN git clone --recursive https://github.com/ycm-core/ycmd && \
+RUN git clone --depth 1 --recursive https://github.com/ycm-core/ycmd && \
     cd ycmd && \
-    git checkout  0abcfafbaf57e4d4d499680c13e1413a34672a58 && \
-    git submodule update --recursive && \
     python3 build.py \
           --clang-completer \
           --ts-completer \
@@ -188,7 +183,7 @@ RUN     curl -SLOk "${ASPELL_SERVER}/aspell-${ASPELL_VERSION}.tar.gz" \
 # https://hub.docker.com/r/peccu/rg/dockerfile
 # build ripgrep
 
-ENV RG_VERSION=11.0.2
+ENV RG_VERSION=12.1.1
 RUN     set -x \
     &&  wget https://github.com/BurntSushi/ripgrep/releases/download/${RG_VERSION}/ripgrep-${RG_VERSION}-x86_64-unknown-linux-musl.tar.gz \
              --no-check-certificate \
@@ -206,14 +201,25 @@ RUN    wget https://github.com/git-lfs/git-lfs/releases/download/v2.11.0/git-lfs
     && rm -rf git-lfs-* \
     && rm -rf install.sh
 
+# ============================================================
+# https://github.com/tensorflow/tensorflow/blob/master/tensorflow/tools/dockerfiles/partials/ubuntu/bazelbuild.partial.Dockerfile
+# Install bazel
+
+ARG BAZEL_VERSION=3.1.0
+RUN mkdir /bazel && \
+    wget -O /bazel/installer.sh "https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel-${BAZEL_VERSION}-installer-linux-x86_64.sh" && \
+    wget -O /bazel/LICENSE.txt "https://raw.githubusercontent.com/bazelbuild/bazel/master/LICENSE" && \
+    chmod +x /bazel/installer.sh && \
+    /bazel/installer.sh && \
+    rm -f /bazel/installer.sh
+
+
 # ********************************************************************************
 #
-# stage 1
+# satge 1
 # ********************************************************************************
 
 FROM ubuntu:${UBUNTU_VERSION} AS base
-
-# COPY ./sources.list /etc/apt/sources.list
 
 # ================================================================================
 # dependcy package of Emacs
@@ -250,35 +256,61 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # ================================================================================
-# dependcy of caffe
+# dependcy of Tensorflow
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
             build-essential \
+            curl \
             git \
-            wget \
-            libatlas-base-dev \
-            libboost-all-dev \
-            libgflags-dev \
-            libgoogle-glog-dev \
+            libcurl3-dev \
+            libfreetype6-dev \
             libhdf5-serial-dev \
-            libleveldb-dev \
-            liblmdb-dev \
-            libopencv-dev \
-            libprotobuf-dev \
-            libsnappy-dev \
-            protobuf-compiler \
-            python3-dev \
-            python3-numpy \
-            python3-pip \
-            python3-setuptools \
-            python3-scipy \
-            # dev needed
-            virtualenv \
-            parallel \
-            gdb \
+            libzmq3-dev \
+            pkg-config \
+            rsync \
+            software-properties-common \
+            sudo \
+            unzip \
+            zip \
+            zlib1g-dev \
+            openjdk-11-jdk \
+            openjdk-11-jre-headless \
             && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+# See http://bugs.python.org/issue19846
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
+
+RUN apt-get update && \
+    apt-get install -y \
+            python3 \
+            python3-pip \
+            && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN python3 -m pip --no-cache-dir install --upgrade \
+    pip \
+    setuptools
+
+# Some TF tools expect a "python" binary
+RUN ln -s $(which python3) /usr/local/bin/python
+
+RUN apt-get update && \
+    apt-get install -y \
+            build-essential \
+            curl \
+            git \
+            wget \
+            python3-dev \
+            virtualenv \
+            swig \
+            && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 # ================================================================================
 
 COPY --from=builder /usr/local /usr/local
