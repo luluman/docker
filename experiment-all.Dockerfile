@@ -83,7 +83,7 @@ RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-
       && node --version \
       && npm --version \
       # install some LSP servers
-      && npm config set registry https://registry.npm.taobao.org \
+      # && npm config set registry https://registry.npm.taobao.org \
       && npm i -g javascript-typescript-langserver \
       && npm i -g bash-language-server
 
@@ -125,7 +125,7 @@ RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
           ../llvm -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
           -DCMAKE_BUILD_TYPE=Release \
           -DLLVM_TARGETS_TO_BUILD="X86" && \
-    ninja clangd clang-format clangd-fuzzer clangd-indexer -j 40 && \
+    ninja clangd clang-format clangd-fuzzer clangd-indexer && \
     mkdir clangd-latest && \
     cd clangd-latest && \
     mkdir bin && \
@@ -207,8 +207,8 @@ RUN    wget https://github.com/git-lfs/git-lfs/releases/download/v2.11.0/git-lfs
 
 ARG BAZEL_VERSION=3.1.0
 RUN mkdir /bazel && \
-    wget -O /bazel/installer.sh "https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel-${BAZEL_VERSION}-installer-linux-x86_64.sh" && \
-    wget -O /bazel/LICENSE.txt "https://raw.githubusercontent.com/bazelbuild/bazel/master/LICENSE" && \
+    wget --no-check-certificate \
+         -O /bazel/installer.sh "https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel-${BAZEL_VERSION}-installer-linux-x86_64.sh" && \
     chmod +x /bazel/installer.sh && \
     /bazel/installer.sh && \
     rm -f /bazel/installer.sh
@@ -314,13 +314,9 @@ RUN apt-get update && \
 # ================================================================================
 
 COPY --from=builder /usr/local /usr/local
-COPY bashrc /etc/bash.bashrc
-RUN chmod a+rwx /etc/bash.bashrc
 
 ENV SHELL "/bin/bash"
 
 RUN ldconfig
 
 WORKDIR /workspace
-
-CMD ["bash", "-c", "source /etc/bash.bashrc"]

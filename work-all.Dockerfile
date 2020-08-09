@@ -282,13 +282,11 @@ RUN apt-get update && \
 # ================================================================================
 
 COPY --from=builder /usr/local /usr/local
-COPY bashrc /etc/bash.bashrc
-RUN chmod a+rwx /etc/bash.bashrc
 
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
 ENV SHELL "/bin/bash"
 
 RUN ldconfig
 
 WORKDIR /workspace
-
-CMD ["bash", "-c", "source /etc/bash.bashrc"]
