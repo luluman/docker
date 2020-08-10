@@ -307,6 +307,8 @@ RUN apt-get update && \
             python3-dev \
             virtualenv \
             swig \
+            # dev need
+            gdb \
             && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
