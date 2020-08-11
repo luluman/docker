@@ -115,27 +115,6 @@ RUN git clone --depth 1 --branch v2.4.3 https://github.com/rizsotto/Bear.git /op
     make install
 
 # ============================================================
-# Build clangd
-# https://gist.github.com/jakob/929ed728c96741a119798647a32618ca
-
-RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
-    mkdir llvm-project/build-clangd && \
-    cd llvm-project/build-clangd && \
-    cmake -G Ninja \
-          ../llvm -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
-          -DCMAKE_BUILD_TYPE=Release \
-          -DLLVM_TARGETS_TO_BUILD="X86" && \
-    ninja clangd clang-format clangd-fuzzer clangd-indexer && \
-    mkdir clangd-latest && \
-    cd clangd-latest && \
-    mkdir bin && \
-    mkdir lib && \
-    cp ../bin/clangd* ./bin/ && \
-    cp ../bin/clang-format ./bin/ && \
-    cp -r ../lib/clang ./lib/ && \
-    cp -r ./* /usr/local
-
-# ============================================================
 # Build YCMD
 # https://github.com/AlexandreCarlton/ycmd-docker
 
@@ -307,9 +286,18 @@ RUN apt-get update && \
             python3-dev \
             virtualenv \
             swig \
-            # dev need
-            gdb \
             && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Tensorflow runtime dependcy
+RUN wget https://apt.llvm.org/llvm.sh && \
+    chmod +x llvm.sh && \
+    ./llvm.sh && \
+    rm llvm.sh && \
+    add-apt-repository -y ppa:ubuntu-toolchain-r/test && \
+    apt-get update && \
+    apt-get install -y gcc-10 g++-10 gdb && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
