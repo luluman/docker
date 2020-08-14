@@ -291,15 +291,22 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Tensorflow runtime dependcy
-RUN wget https://apt.llvm.org/llvm.sh && \
-    chmod +x llvm.sh && \
-    ./llvm.sh && \
-    rm llvm.sh && \
-    add-apt-repository -y ppa:ubuntu-toolchain-r/test && \
-    apt-get update && \
-    apt-get install -y gcc-10 g++-10 gdb && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+       # install llvm
+RUN    wget https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.1/clang+llvm-10.0.1-x86_64-linux-gnu-ubuntu-16.04.tar.xz \
+              --no-check-certificate \
+    && tar -xf clang+llvm-10.0.1-x86_64-linux-gnu-ubuntu-16.04.tar.xz \
+    && cp -rf clang+llvm-10.0.1-x86_64-linux-gnu-ubuntu-16.04/* /usr/local/ \
+    && rm  clang+llvm* -rf \
+       # update gcc
+    && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
+    && apt-get update \
+    && apt-get install -y gcc-10 g++-10 gdb \
+    && update-alternatives \
+              --install /usr/bin/gcc gcc /usr/bin/gcc-10 100 \
+              --slave /usr/bin/g++ g++ /usr/bin/g++-10 \
+              --slave /usr/bin/gcov gcov /usr/bin/gcov-10 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # ================================================================================
 
