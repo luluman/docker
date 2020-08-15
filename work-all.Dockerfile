@@ -151,10 +151,10 @@ RUN git clone --recursive https://github.com/ycm-core/ycmd && \
           --ts-completer \
           --ninja && \
     mkdir build && \
-    cp .ycm_extra_conf.py ./build/ && \
     cp CORE_VERSION ./build/ && \
     cp -r third_party ./build/ && \
     cp -r ycmd ./build/ && \
+    cp -r examples ./build/ && \
     cp ycm_core.so ./build/ && \
     cp -r ./build /usr/local/lib/ycmd
 

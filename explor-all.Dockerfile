@@ -125,10 +125,10 @@ RUN git clone --depth 1 --recursive https://github.com/ycm-core/ycmd && \
           --ts-completer \
           --ninja && \
     mkdir build && \
-    cp .ycm_extra_conf.py ./build/ && \
     cp CORE_VERSION ./build/ && \
     cp -r third_party ./build/ && \
     cp -r ycmd ./build/ && \
+    cp -r examples ./build/ && \
     cp ycm_core.so ./build/ && \
     cp -r ./build /usr/local/lib/ycmd
 
@@ -240,6 +240,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
             build-essential \
             curl \
+            wget \
             git \
             libcurl3-dev \
             libfreetype6-dev \
@@ -277,21 +278,8 @@ RUN python3 -m pip --no-cache-dir install --upgrade \
 # Some TF tools expect a "python" binary
 RUN ln -s $(which python3) /usr/local/bin/python
 
-RUN apt-get update && \
-    apt-get install -y \
-            build-essential \
-            curl \
-            git \
-            wget \
-            python3-dev \
-            python3-venv \
-            virtualenv \
-            swig \
-            && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# Tensorflow runtime dependcy
+# ================================================================================
+# dependcy of Tensorflow-runtime
        # install llvm
 RUN    wget https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.1/clang+llvm-10.0.1-x86_64-linux-gnu-ubuntu-16.04.tar.xz \
               --no-check-certificate \
@@ -308,6 +296,20 @@ RUN    wget https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.
               --slave /usr/bin/gcov gcov /usr/bin/gcov-10 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# ================================================================================
+# some others
+RUN apt-get update && \
+    apt-get install -y \
+            build-essential \
+            git \
+            python3-dev \
+            python3-venv \
+            virtualenv \
+            swig \
+            && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # ================================================================================
 
