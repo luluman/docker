@@ -290,10 +290,6 @@ RUN    wget https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.
     && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
     && apt-get update \
     && apt-get install -y gcc-10 g++-10 gdb \
-    && update-alternatives \
-              --install /usr/bin/gcc gcc /usr/bin/gcc-10 100 \
-              --slave /usr/bin/g++ g++ /usr/bin/g++-10 \
-              --slave /usr/bin/gcov gcov /usr/bin/gcov-10 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
