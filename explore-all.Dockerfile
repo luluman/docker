@@ -77,6 +77,7 @@ ENV NODE_VERSION 12.18.3
 
 RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
       && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
+      && rm /usr/local/*.md  /usr/local/LICENSE \
       && rm "node-v$NODE_VERSION-linux-x64.tar.xz" \
       && ln -s /usr/local/bin/node /usr/local/bin/nodejs \
       # smoke tests
@@ -204,14 +205,15 @@ RUN    cd "${INSTALL_DIR}" \
     && ln -f -s "${INSTALL_DIR}/bazel-compilation-database-${VERSION}/generate.sh" /usr/local/bin/bazel-compdb
 
 # ============================================================
-# https://github.com/kythe/kythe
-# install kythe
+# https://github.com/vincent-picaud/Bazel_and_CompileCommands
+# install Bazel_and_CompileCommands :)
 
-ARG KYTHE_VERSION=0.0.46
-RUN    curl -SLOk "https://github.com/kythe/kythe/releases/download/v0.0.46/kythe-v${KYTHE_VERSION}.tar.gz" \
-    && tar xzf kythe-v*.tar.gz \
-    && rm -rf /opt/kythe \
-    && mv kythe-v*/ /opt/kythe
+RUN    cd "${INSTALL_DIR}" \
+    && curl -SLOk "https://github.com/vincent-picaud/Bazel_and_CompileCommands/archive/master.zip" \
+    && unzip master.zip && rm master.zip \
+    && ln -f -s "${INSTALL_DIR}/Bazel_and_CompileCommands-master/create_compile_commands.sh" /usr/local/bin/bazel-create-cc \
+    && ln -f -s "${INSTALL_DIR}/Bazel_and_CompileCommands-master/setup_compile_commands.sh" /usr/local/bin/bazel-setup-cc
+
 
 # ********************************************************************************
 #
@@ -331,7 +333,6 @@ RUN apt-get update && \
 # ================================================================================
 
 COPY --from=builder /usr/local /usr/local
-COPY --from=builder /opt /opt
 
 ENV SHELL "/bin/bash"
 
