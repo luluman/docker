@@ -15,7 +15,7 @@ function work-linux()
 {
   local UID=$(id -u)
   local GID=$(id -g)
-  local home=$(realpath ~/.docker/home)
+  local home=$(realpath ~/.docker/home-work)
   local workspace=$(realpath ~/workspace)
   local data=$(realpath /data)
   docker run -it \
@@ -33,16 +33,16 @@ function work-linux()
          mattlu/work-dev:latest /bin/bash
 }
 
-function explor-linux()
+function explore-linux()
 {
   local UID=$(id -u)
   local GID=$(id -g)
-  local home=$(realpath ~/.docker/home)
+  local home=$(realpath ~/.docker/home-explore)
   local workspace=$(realpath ~/workspace)
   local data=$(realpath /data)
   docker run -it \
          --privileged \
-         --name ${USER}-explor \
+         --name ${USER}-explore \
          --user $UID:$GID \
          --detach-keys "ctrl-^,ctrl-@" \
          --network man.lu-net \
@@ -52,13 +52,20 @@ function explor-linux()
          --volume="/etc/group:/etc/group:ro" \
          --volume="/etc/passwd:/etc/passwd:ro" \
          --volume="/etc/shadow:/etc/shadow:ro" \
-         mattlu/explor-dev:latest /bin/bash
+         mattlu/explore-dev:latest /bin/bash
 }
 
 function work-linux-attach()
 {
   docker attach \
          ${USER}-work \
+         --detach-keys "ctrl-^,ctrl-@"
+}
+
+function explore-linux-attach()
+{
+  docker attach \
+         ${USER}-explore \
          --detach-keys "ctrl-^,ctrl-@"
 }
 

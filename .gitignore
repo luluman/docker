@@ -1,5 +1,5 @@
 .DS_Store
-!/home
-/home/*
-!/home/.bashrc
+!/home*
+/home*/*
+!/home*/.bashrc
 /ngrams

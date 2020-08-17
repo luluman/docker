@@ -110,7 +110,8 @@ RUN wget https://github.com/ninja-build/ninja/releases/download/v1.10.0/ninja-li
 
 RUN git clone --depth 1 --branch v2.4.3 https://github.com/rizsotto/Bear.git /opt/bear && \
     cd /opt/bear && \
-    cmake . -DCMAKE_INSTALL_PREFIX=/usr/local && \
+    cmake . -DCMAKE_INSTALL_PREFIX=/usr/local \
+            -DPYTHON_EXECUTABLE=/usr/bin/python3 && \
     make all -j4 && \
     make install
 
@@ -192,6 +193,25 @@ RUN mkdir /bazel && \
     /bazel/installer.sh && \
     rm -f /bazel/installer.sh
 
+# ============================================================
+# https://github.com/grailbio/bazel-compilation-database
+# install bazel-compilation-database
+
+ENV INSTALL_DIR /usr/local/lib
+ARG VERSION=0.4.5
+RUN    cd "${INSTALL_DIR}" \
+    && curl -Lk "https://github.com/grailbio/bazel-compilation-database/archive/${VERSION}.tar.gz" | tar -xz \
+    && ln -f -s "${INSTALL_DIR}/bazel-compilation-database-${VERSION}/generate.sh" /usr/local/bin/bazel-compdb
+
+# ============================================================
+# https://github.com/kythe/kythe
+# install kythe
+
+ARG KYTHE_VERSION=0.0.46
+RUN    curl -SLOk "https://github.com/kythe/kythe/releases/download/v0.0.46/kythe-v${KYTHE_VERSION}.tar.gz" \
+    && tar xzf kythe-v*.tar.gz \
+    && rm -rf /opt/kythe \
+    && mv kythe-v*/ /opt/kythe
 
 # ********************************************************************************
 #
@@ -302,6 +322,7 @@ RUN apt-get update && \
             python3-dev \
             python3-venv \
             virtualenv \
+            protobuf-compiler \
             swig \
             && \
     apt-get clean && \
@@ -310,6 +331,7 @@ RUN apt-get update && \
 # ================================================================================
 
 COPY --from=builder /usr/local /usr/local
+COPY --from=builder /opt /opt
 
 ENV SHELL "/bin/bash"
 
