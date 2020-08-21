@@ -206,7 +206,7 @@ RUN    cd "${INSTALL_DIR}" \
 
 # ============================================================
 # https://github.com/vincent-picaud/Bazel_and_CompileCommands
-# install Bazel_and_CompileCommands :)
+# install Bazel_and_CompileCommands :) // really great and helpful
 
 RUN    cd "${INSTALL_DIR}" \
     && curl -SLOk "https://github.com/vincent-picaud/Bazel_and_CompileCommands/archive/master.zip" \
@@ -214,6 +214,8 @@ RUN    cd "${INSTALL_DIR}" \
     && ln -f -s "${INSTALL_DIR}/Bazel_and_CompileCommands-master/create_compile_commands.sh" /usr/local/bin/bazel-create-cc \
     && ln -f -s "${INSTALL_DIR}/Bazel_and_CompileCommands-master/setup_compile_commands.sh" /usr/local/bin/bazel-setup-cc
 
+COPY scripts/legalize_compile_commands.sh /usr/local/lib/Bazel_and_CompileCommands-master/
+RUN  ln -f -s "${INSTALL_DIR}/Bazel_and_CompileCommands-master/legalize_compile_commands.sh" /usr/local/bin/bazel-legalize-cc
 
 # ********************************************************************************
 #
