@@ -30,6 +30,7 @@ function work-linux()
          --volume="/etc/group:/etc/group:ro" \
          --volume="/etc/passwd:/etc/passwd:ro" \
          --volume="/etc/shadow:/etc/shadow:ro" \
+         --add-host=gerrit.ai.bitmaincorp.vip:10.128.0.97 \
          mattlu/work-dev:latest /bin/bash
 }
 
