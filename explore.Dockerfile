@@ -73,7 +73,7 @@ RUN git clone --depth 1 --branch emacs-27 https://github.com/emacs-mirror/emacs 
 # ============================================================
 # https://github.com/nodejs/docker-node
 
-ENV NODE_VERSION 12.18.3
+ENV NODE_VERSION 12.18.4
 
 RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
       && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
@@ -91,7 +91,9 @@ RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-
 # ============================================================
 # https://hub.docker.com/r/rikorose/gcc-cmake/dockerfile
 
-RUN wget https://github.com/Kitware/CMake/releases/download/v3.18.0/cmake-3.18.0-Linux-x86_64.sh \
+ENV CMAKE_VERSION 3.18.2
+
+RUN wget https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmake-$CMAKE_VERSION-Linux-x86_64.sh \
       --no-check-certificate \
       -q -O /tmp/cmake-install.sh \
       && chmod u+x /tmp/cmake-install.sh \
@@ -101,7 +103,9 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v3.18.0/cmake-3.18.0
 # ============================================================
 # ninja
 
-RUN wget https://github.com/ninja-build/ninja/releases/download/v1.10.0/ninja-linux.zip \
+ENV NINJA_VERSION 1.10.1
+
+RUN wget https://github.com/ninja-build/ninja/releases/download/v$NINJA_VERSION/ninja-linux.zip \
       --no-check-certificate \
       && unzip ninja-linux.zip \
       && cp ninja /usr/local/bin
@@ -109,12 +113,36 @@ RUN wget https://github.com/ninja-build/ninja/releases/download/v1.10.0/ninja-li
 # ============================================================
 # Build EAR (BEAR)
 
-RUN git clone --depth 1 --branch v2.4.3 https://github.com/rizsotto/Bear.git /opt/bear && \
+ENV BEAR_VERSION 2.4.4
+
+RUN git clone --depth 1 --branch $BEAR_VERSION https://github.com/rizsotto/Bear.git /opt/bear && \
     cd /opt/bear && \
     cmake . -DCMAKE_INSTALL_PREFIX=/usr/local \
             -DPYTHON_EXECUTABLE=/usr/bin/python3 && \
     make all -j4 && \
     make install
+
+# ============================================================
+# Build clangd
+# https://gist.github.com/jakob/929ed728c96741a119798647a32618ca
+
+RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
+    mkdir llvm-project/build-clangd && \
+    cd llvm-project/build-clangd && \
+    cmake -G Ninja \
+          ../llvm -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DLLVM_TARGETS_TO_BUILD="X86" && \
+    ninja clangd clang-format clang-tidy clangd-fuzzer clangd-indexer && \
+    mkdir clangd-latest && \
+    cd clangd-latest && \
+    mkdir bin && \
+    mkdir lib && \
+    cp ../bin/clangd* ./bin/ && \
+    cp ../bin/clang-format ./bin/ && \
+    cp ../bin/clang-tidy ./bin/ && \
+    cp -r ../lib/clang ./lib/ && \
+    cp -r ./* /usr/local
 
 # ============================================================
 # Build YCMD
@@ -175,9 +203,11 @@ RUN     set -x \
 # https://github.com/Valian/docker-git-lfs
 # build git-lfs
 
-RUN    wget https://github.com/git-lfs/git-lfs/releases/download/v2.11.0/git-lfs-linux-amd64-v2.11.0.tar.gz \
+ENV GITLFS_VERSION=2.12.0
+
+RUN    wget https://github.com/git-lfs/git-lfs/releases/download/v$GITLFS_VERSION/git-lfs-linux-amd64-v$GITLFS_VERSION.tar.gz \
             -c --retry-connrefused --tries=0 --timeout=180 --no-check-certificate \
-    && tar -zxf git-lfs-linux-amd64-v2.11.0.tar.gz \
+    && tar -zxf git-lfs-linux-amd64-v$GITLFS_VERSION.tar.gz \
     && mv git-lfs /usr/local/bin/ \
     && rm -rf git-lfs-* \
     && rm -rf install.sh
