@@ -247,6 +247,12 @@ RUN    cd "${INSTALL_DIR}" \
 COPY scripts/legalize_compile_commands.sh /usr/local/lib/Bazel_and_CompileCommands-master/
 RUN  ln -f -s "${INSTALL_DIR}/Bazel_and_CompileCommands-master/legalize_compile_commands.sh" /usr/local/bin/bazel-legalize-cc
 
+# ============================================================
+# other scripts
+
+RUN mkdir /usr/local/share/bash-color
+COPY scripts/terminfo-24bit.src /usr/local/share/bash-color/
+
 # ********************************************************************************
 #
 # satge 1

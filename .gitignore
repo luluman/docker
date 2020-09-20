@@ -1,4 +1,5 @@
 .DS_Store
+!*~
 !/home*
 /home*/*
 !/home*/.bashrc

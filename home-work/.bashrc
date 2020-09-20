@@ -116,7 +116,18 @@ if ! shopt -oq posix; then
   fi
 fi
 
-export TERM=xterm-256color
+if [ -f /usr/local/share/bash-color/terminfo-24bit.src ]; then
+    if [ -d ~/.terminfo ]; then
+	export TERM=xterm-24bit
+    else
+	tic -x -o ~/.terminfo /usr/local/share/bash-color/terminfo-24bit.src
+	export TERM=xterm-24bit
+    fi
+elif [ -d ~/.terminfo ]; then
+    export TERM=xterm-24bit
+else
+    export TERM=xterm-256color
+fi
 
 alias make="bear make"
 

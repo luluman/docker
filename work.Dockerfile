@@ -215,6 +215,12 @@ RUN    wget https://github.com/git-lfs/git-lfs/releases/download/v$GITLFS_VERSIO
     && rm -rf git-lfs-* \
     && rm -rf install.sh
 
+# ============================================================
+# other scripts
+
+RUN mkdir /usr/local/share/bash-color
+COPY scripts/terminfo-24bit.src /usr/local/share/bash-color/
+
 # ********************************************************************************
 #
 # stage 1
