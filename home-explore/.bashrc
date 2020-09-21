@@ -116,14 +116,10 @@ if ! shopt -oq posix; then
   fi
 fi
 
-if [ -f /usr/local/share/bash-color/terminfo-24bit.src ]; then
-    if [ -d ~/.terminfo ]; then
-	export TERM=xterm-24bit
-    else
-	tic -x -o ~/.terminfo /usr/local/share/bash-color/terminfo-24bit.src
-	export TERM=xterm-24bit
-    fi
-elif [ -d ~/.terminfo ]; then
+if [ -d ~/.terminfo ]; then
+    export TERM=xterm-24bit
+elif [ -f /usr/local/share/bash-color/terminfo-24bit.src ]; then
+    tic -x -o ~/.terminfo /usr/local/share/bash-color/terminfo-24bit.src
     export TERM=xterm-24bit
 else
     export TERM=xterm-256color
