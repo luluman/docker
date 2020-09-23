@@ -218,13 +218,8 @@ RUN    wget https://github.com/git-lfs/git-lfs/releases/download/v$GITLFS_VERSIO
 # ============================================================
 # other scripts
 
-# 24bit-color
 RUN mkdir /usr/local/share/bash-color
 COPY scripts/terminfo-24bit.src /usr/local/share/bash-color/
-
-# realgud dependcy
-COPY scripts/realgud_dep_install.sh /
-RUN  ./realgud_dep_install.sh && rm realgud_dep_install.sh
 
 # ********************************************************************************
 #
