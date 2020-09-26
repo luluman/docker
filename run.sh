@@ -84,7 +84,7 @@ function explore-linux-attach()
 function explore-linux-exec()
 {
   docker exec -ti \
-         --detach-keys "ctrl-^,ctrl-@"
+         --detach-keys "ctrl-^,ctrl-@" \
          ${USER}-explore /bin/bash
 }
 
