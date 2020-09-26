@@ -306,3 +306,4 @@ ENV SHELL "/bin/bash"
 RUN ldconfig
 
 WORKDIR /workspace
+CMD tail -f /dev/null # never stop

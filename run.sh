@@ -8,7 +8,8 @@ function work-macos()
          --volume="${home}:/home/root":delegated \
          --volume="${workspace}:/workspace":cached \
          --add-host=gerrit.ai.bitmaincorp.vip:10.128.0.97 \
-         work/man.lu:1.0 /bin/bash
+         --detach \
+         mattlu/work-dev:latest
 }
 
 function work-linux()
@@ -31,7 +32,8 @@ function work-linux()
          --volume="/etc/passwd:/etc/passwd:ro" \
          --volume="/etc/shadow:/etc/shadow:ro" \
          --add-host=gerrit.ai.bitmaincorp.vip:10.128.0.97 \
-         mattlu/work-dev:latest /bin/bash
+         --detach \
+         mattlu/work-dev:latest
 }
 
 function explore-linux()
@@ -53,7 +55,8 @@ function explore-linux()
          --volume="/etc/group:/etc/group:ro" \
          --volume="/etc/passwd:/etc/passwd:ro" \
          --volume="/etc/shadow:/etc/shadow:ro" \
-         mattlu/explore-dev:latest /bin/bash
+         --detach \
+         mattlu/explore-dev:latest
 }
 
 function work-linux-attach()
@@ -63,11 +66,26 @@ function work-linux-attach()
          --detach-keys "ctrl-^,ctrl-@"
 }
 
+function work-linux-exec()
+{
+  docker exec -ti \
+         --detach-keys "ctrl-^,ctrl-@" \
+         ${USER}-work /bin/bash
+
+}
+
 function explore-linux-attach()
 {
   docker attach \
          ${USER}-explore \
          --detach-keys "ctrl-^,ctrl-@"
+}
+
+function explore-linux-exec()
+{
+  docker exec -ti \
+         --detach-keys "ctrl-^,ctrl-@"
+         ${USER}-explore /bin/bash
 }
 
 function work-langtool-server()
