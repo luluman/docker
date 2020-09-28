@@ -133,7 +133,7 @@ RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
           ../llvm -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
           -DCMAKE_BUILD_TYPE=Release \
           -DLLVM_TARGETS_TO_BUILD="X86" && \
-    ninja clangd clang-format clang-tidy clangd-fuzzer clangd-indexer && \
+    ninja clangd clang-format clang-tidy clangd-indexer && \
     mkdir clangd-latest && \
     cd clangd-latest && \
     mkdir bin && \

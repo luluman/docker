@@ -133,7 +133,7 @@ RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
           ../llvm -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
           -DCMAKE_BUILD_TYPE=Release \
           -DLLVM_TARGETS_TO_BUILD="X86" && \
-    ninja clangd clang-format clang-tidy clangd-fuzzer clangd-indexer && \
+    ninja clangd clang-format clang-tidy clangd-indexer && \
     mkdir clangd-latest && \
     cd clangd-latest && \
     mkdir bin && \
@@ -362,10 +362,21 @@ RUN apt-get update && \
             python3-dev \
             python3-venv \
             virtualenv \
-            libprotobuf-dev \
             libprotoc-dev \
-            protobuf-compiler \
             swig \
+            # onnx-mlir
+            libprotobuf-dev \
+            protobuf-compiler \
+            libssl-dev \
+            zlib1g-dev \
+            libbz2-dev \
+            libreadline-dev \
+            libsqlite3-dev \
+            libncurses5-dev \
+            libncursesw5-dev \
+            xz-utils \
+            libffi-dev \
+            liblzma-dev \
             && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
