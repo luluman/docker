@@ -19,7 +19,7 @@ function work-linux()
   local home=$(realpath ~/.docker/home-work)
   local workspace=$(realpath ~/workspace)
   local data=$(realpath /data)
-  docker run -it \
+  docker run -t \
          --privileged \
          --name ${USER}-work \
          --user $UID:$GID \
@@ -33,7 +33,7 @@ function work-linux()
          --volume="/etc/shadow:/etc/shadow:ro" \
          --add-host=gerrit.ai.bitmaincorp.vip:10.128.0.97 \
          --detach \
-         mattlu/work-dev:latest
+         mattlu/work-dev:latest /bin/bash
 }
 
 function explore-linux()
@@ -43,7 +43,7 @@ function explore-linux()
   local home=$(realpath ~/.docker/home-explore)
   local workspace=$(realpath ~/workspace)
   local data=$(realpath /data)
-  docker run -it \
+  docker run -t \
          --privileged \
          --name ${USER}-explore \
          --user $UID:$GID \
@@ -56,7 +56,7 @@ function explore-linux()
          --volume="/etc/passwd:/etc/passwd:ro" \
          --volume="/etc/shadow:/etc/shadow:ro" \
          --detach \
-         mattlu/explore-dev:latest
+         mattlu/explore-dev:latest /bin/bash
 }
 
 function work-linux-attach()
