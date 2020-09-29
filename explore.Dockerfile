@@ -5,7 +5,7 @@ ARG UBUNTU_VERSION=18.04
 # satge 0
 # ********************************************************************************
 
-FROM ubuntu:${UBUNTU_VERSION} AS builder
+FROM ubuntu:${UBUNTU_VERSION} AS builder0
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -123,28 +123,6 @@ RUN git clone --depth 1 --branch $BEAR_VERSION https://github.com/rizsotto/Bear.
     make install
 
 # ============================================================
-# Build clangd
-# https://gist.github.com/jakob/929ed728c96741a119798647a32618ca
-
-RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
-    mkdir llvm-project/build-clangd && \
-    cd llvm-project/build-clangd && \
-    cmake -G Ninja \
-          ../llvm -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
-          -DCMAKE_BUILD_TYPE=Release \
-          -DLLVM_TARGETS_TO_BUILD="X86" && \
-    ninja clangd clang-format clang-tidy clangd-indexer && \
-    mkdir clangd-latest && \
-    cd clangd-latest && \
-    mkdir bin && \
-    mkdir lib && \
-    cp ../bin/clangd* ./bin/ && \
-    cp ../bin/clang-format ./bin/ && \
-    cp ../bin/clang-tidy ./bin/ && \
-    cp -r ../lib/clang ./lib/ && \
-    cp -r ./* /usr/local
-
-# ============================================================
 # Build YCMD
 # https://github.com/AlexandreCarlton/ycmd-docker
 
@@ -256,6 +234,52 @@ COPY scripts/terminfo-24bit.src /usr/local/share/bash-color/
 # ********************************************************************************
 #
 # satge 1
+# ********************************************************************************
+
+FROM ubuntu:${UBUNTU_VERSION} AS builder1
+
+# ================================================================================
+# dependcy of ???
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+            build-essential \
+            wget \
+            git \
+            libcurl3-dev \
+            python3-dev \
+            pkg-config \
+            && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN git config --global http.sslVerify false
+COPY --from=builder0 /usr/local /usr/local
+
+# ============================================================
+# Build clangd
+# https://gist.github.com/jakob/929ed728c96741a119798647a32618ca
+
+RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
+    mkdir llvm-project/build-clangd && \
+    cd llvm-project/build-clangd && \
+    cmake -G Ninja \
+          ../llvm -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DLLVM_TARGETS_TO_BUILD="X86" && \
+    ninja clangd clang-format clang-tidy clangd-indexer && \
+    mkdir clangd-latest && \
+    cd clangd-latest && \
+    mkdir bin && \
+    mkdir lib && \
+    cp ../bin/clangd* ./bin/ && \
+    cp ../bin/clang-format ./bin/ && \
+    cp ../bin/clang-tidy ./bin/ && \
+    cp -r ../lib/clang ./lib/ && \
+    cp -r ./* /usr/local
+
+# ********************************************************************************
+#
+# satge 2
 # ********************************************************************************
 
 FROM ubuntu:${UBUNTU_VERSION} AS base
@@ -383,7 +407,7 @@ RUN apt-get update && \
 
 # ================================================================================
 
-COPY --from=builder /usr/local /usr/local
+COPY --from=builder1 /usr/local /usr/local
 
 ENV SHELL "/bin/bash"
 
