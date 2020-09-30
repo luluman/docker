@@ -249,14 +249,7 @@ RUN apt-get update && \
             libcurl3-dev \
             python3-dev \
             pkg-config \
-            && \
-    add-apt-repository -y ppa:ubuntu-toolchain-r/test && \
-    apt-get update && \
-    apt-get install -y gcc-10 g++-10 && \
-    update-alternatives \
-            --install /usr/bin/gcc gcc /usr/bin/gcc-10 100 \
-            --slave /usr/bin/g++ g++ /usr/bin/g++-10 \
-            --slave /usr/bin/gcov gcov /usr/bin/gcov-10 \
+            clang \
             && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -274,7 +267,9 @@ RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
     cmake -G Ninja \
           ../llvm -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
           -DCMAKE_BUILD_TYPE=Release \
-          -DLLVM_TARGETS_TO_BUILD="X86" && \
+          -DLLVM_TARGETS_TO_BUILD="X86" \
+          -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ \
+          && \
     ninja clangd clang-format clang-tidy clangd-indexer && \
     mkdir clangd-latest && \
     cd clangd-latest && \
