@@ -239,7 +239,8 @@ COPY scripts/terminfo-24bit.src /usr/local/share/bash-color/
 FROM ubuntu:${UBUNTU_VERSION} AS builder1
 
 # ================================================================================
-# dependcy of ???
+
+# dependcy of llvm
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
             build-essential \
@@ -248,6 +249,14 @@ RUN apt-get update && \
             libcurl3-dev \
             python3-dev \
             pkg-config \
+            && \
+    add-apt-repository -y ppa:ubuntu-toolchain-r/test && \
+    apt-get update && \
+    apt-get install -y gcc-10 g++-10 && \
+    update-alternatives \
+            --install /usr/bin/gcc gcc /usr/bin/gcc-10 100 \
+            --slave /usr/bin/g++ g++ /usr/bin/g++-10 \
+            --slave /usr/bin/gcov gcov /usr/bin/gcov-10 \
             && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
