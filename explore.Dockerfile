@@ -225,6 +225,21 @@ RUN    cd "${INSTALL_DIR}" \
 COPY scripts/legalize_compile_commands.sh /usr/local/lib/Bazel_and_CompileCommands-master/
 RUN  ln -f -s "${INSTALL_DIR}/Bazel_and_CompileCommands-master/legalize_compile_commands.sh" /usr/local/bin/bazel-legalize-cc
 
+
+# ============================================================
+# https://github.com/protocolbuffers/protobuf/blob/master/src/README.md
+# install latest protobuf
+
+ARG PROTOBUF_VERSION=3.13.0
+
+RUN apt-get install -y autoconf automake libtool curl make g++ unzip && \
+    git clone --depth 1 --recursive --branch v${PROTOBUF_VERSION} https://github.com/protocolbuffers/protobuf.git && \
+        cd protobuf && \
+        ./autogen.sh && \
+        ./configure && \
+        make -j10 && \
+        make install
+
 # ============================================================
 # other scripts
 
@@ -390,11 +405,8 @@ RUN apt-get update && \
             python3-dev \
             python3-venv \
             virtualenv \
-            libprotoc-dev \
             swig \
             # onnx-mlir
-            libprotobuf-dev \
-            protobuf-compiler \
             libssl-dev \
             zlib1g-dev \
             libbz2-dev \
