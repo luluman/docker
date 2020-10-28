@@ -126,6 +126,11 @@ RUN git clone --depth 1 --branch $BEAR_VERSION https://github.com/rizsotto/Bear.
 # Build YCMD
 # https://github.com/AlexandreCarlton/ycmd-docker
 
+RUN apt-get update && \
+    apt-get install -y gcc-8 g++-8 && \
+    update-alternatives --install /usr/bin/cc cc /usr/bin/gcc-8 100 && \
+    update-alternatives --install /usr/bin/c++ c++ /usr/bin/g++-8 100
+
 RUN git clone --depth 1 --recursive https://github.com/ycm-core/ycmd && \
     cd ycmd && \
     python3 build.py \
@@ -255,7 +260,7 @@ FROM ubuntu:${UBUNTU_VERSION} AS builder1
 
 # ================================================================================
 
-# dependcy of llvm
+# dependency of llvm
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
             build-essential \
@@ -304,7 +309,7 @@ RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
 FROM ubuntu:${UBUNTU_VERSION} AS base
 
 # ================================================================================
-# dependcy package of Emacs
+# dependency of Emacs
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
             apt-utils \
@@ -338,7 +343,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # ================================================================================
-# dependcy of Tensorflow
+# dependency of Tensorflow
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
             build-essential \
@@ -382,7 +387,7 @@ RUN python3 -m pip --no-cache-dir install --upgrade \
 RUN ln -s $(which python3) /usr/local/bin/python
 
 # ================================================================================
-# dependcy of Tensorflow-runtime
+# dependency of Tensorflow-runtime
        # install llvm
 RUN    wget https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.1/clang+llvm-10.0.1-x86_64-linux-gnu-ubuntu-16.04.tar.xz \
               --no-check-certificate \
