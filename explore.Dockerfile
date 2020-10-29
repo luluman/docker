@@ -1,4 +1,4 @@
-ARG UBUNTU_VERSION=18.04
+ARG UBUNTU_VERSION=20.04
 
 # ********************************************************************************
 #
@@ -73,7 +73,7 @@ RUN git clone --depth 1 --branch emacs-27 https://github.com/emacs-mirror/emacs 
 # ============================================================
 # https://github.com/nodejs/docker-node
 
-ENV NODE_VERSION 12.18.4
+ENV NODE_VERSION 14.15.0
 
 RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
       && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
@@ -91,7 +91,7 @@ RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-
 # ============================================================
 # https://hub.docker.com/r/rikorose/gcc-cmake/dockerfile
 
-ENV CMAKE_VERSION 3.18.2
+ENV CMAKE_VERSION 3.18.4
 
 RUN wget https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmake-$CMAKE_VERSION-Linux-x86_64.sh \
       --no-check-certificate \
@@ -113,7 +113,7 @@ RUN wget https://github.com/ninja-build/ninja/releases/download/v$NINJA_VERSION/
 # ============================================================
 # Build EAR (BEAR)
 
-ENV BEAR_VERSION 2.4.4
+ENV BEAR_VERSION 3.0.0
 
 RUN git clone --depth 1 --branch $BEAR_VERSION https://github.com/rizsotto/Bear.git /opt/bear && \
     cd /opt/bear && \
@@ -125,11 +125,6 @@ RUN git clone --depth 1 --branch $BEAR_VERSION https://github.com/rizsotto/Bear.
 # ============================================================
 # Build YCMD
 # https://github.com/AlexandreCarlton/ycmd-docker
-
-RUN apt-get update && \
-    apt-get install -y gcc-8 g++-8 && \
-    update-alternatives --install /usr/bin/cc cc /usr/bin/gcc-8 100 && \
-    update-alternatives --install /usr/bin/c++ c++ /usr/bin/g++-8 100
 
 RUN git clone --depth 1 --recursive https://github.com/ycm-core/ycmd && \
     cd ycmd && \
@@ -388,16 +383,19 @@ RUN ln -s $(which python3) /usr/local/bin/python
 
 # ================================================================================
 # dependency of Tensorflow-runtime
+
+ARG LLVM_VERSION=11.0.0
+
        # install llvm
-RUN    wget https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.1/clang+llvm-10.0.1-x86_64-linux-gnu-ubuntu-16.04.tar.xz \
+RUN    wget https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/clang+llvm-${LLVM_VERSION}-x86_64-linux-gnu-ubuntu-${UBUNTU_VERSION}.tar.xz \
               --no-check-certificate \
-    && tar -xf clang+llvm-10.0.1-x86_64-linux-gnu-ubuntu-16.04.tar.xz \
-    && cp -rf clang+llvm-10.0.1-x86_64-linux-gnu-ubuntu-16.04/* /usr/local/ \
+    && tar -xf clang+llvm-${LLVM_VERSION}-x86_64-linux-gnu-ubuntu-${UBUNTU_VERSION}.tar.xz \
+    && cp -rf clang+llvm-${LLVM_VERSION}-x86_64-linux-gnu-ubuntu-${UBUNTU_VERSION}/* /usr/local/ \
     && rm  clang+llvm* -rf \
        # update gcc
     && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
     && apt-get update \
-    && apt-get install -y gcc-10 g++-10 gdb \
+    && apt-get install -y gdb \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
