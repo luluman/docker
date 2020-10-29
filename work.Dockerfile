@@ -75,7 +75,7 @@ RUN git clone --depth 1 --branch emacs-27 https://github.com/emacs-mirror/emacs 
 # ============================================================
 # https://github.com/nodejs/docker-node
 
-ENV NODE_VERSION 12.18.4
+ENV NODE_VERSION 14.15.0
 
 RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
       && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
@@ -92,7 +92,7 @@ RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-
 # ============================================================
 # https://hub.docker.com/r/rikorose/gcc-cmake/dockerfile
 
-ENV CMAKE_VERSION 3.18.2
+ENV CMAKE_VERSION 3.18.4
 
 RUN wget https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmake-$CMAKE_VERSION-Linux-x86_64.sh \
       --no-check-certificate \
@@ -152,7 +152,7 @@ RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
 RUN git clone --recursive https://github.com/ycm-core/ycmd && \
     cd ycmd && \
     git checkout  0abcfafbaf57e4d4d499680c13e1413a34672a58 && \
-    git submodule update --recursive && \
+    git submodule update --init --recursive && \
     python3 build.py \
           --clang-completer \
           --ts-completer \

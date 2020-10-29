@@ -1,4 +1,5 @@
 ARG UBUNTU_VERSION=20.04
+ARG DEBIAN_FRONTEND="noninteractive"
 
 # ********************************************************************************
 #
@@ -6,6 +7,7 @@ ARG UBUNTU_VERSION=20.04
 # ********************************************************************************
 
 FROM ubuntu:${UBUNTU_VERSION} AS builder0
+ARG DEBIAN_FRONTEND
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -114,6 +116,16 @@ RUN wget https://github.com/ninja-build/ninja/releases/download/v$NINJA_VERSION/
 # Build EAR (BEAR)
 
 ENV BEAR_VERSION 3.0.0
+
+RUN apt-get update && \
+    apt-get install -y \
+            pkg-config \
+            libfmt-dev \
+            libspdlog-dev \
+            nlohmann-json3-dev \
+            libgrpc++-dev \
+            protobuf-compiler-grpc \
+            libssl-dev
 
 RUN git clone --depth 1 --branch $BEAR_VERSION https://github.com/rizsotto/Bear.git /opt/bear && \
     cd /opt/bear && \
@@ -252,7 +264,7 @@ COPY scripts/terminfo-24bit.src /usr/local/share/bash-color/
 # ********************************************************************************
 
 FROM ubuntu:${UBUNTU_VERSION} AS builder1
-
+ARG DEBIAN_FRONTEND
 # ================================================================================
 
 # dependency of llvm
@@ -302,7 +314,7 @@ RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
 # ********************************************************************************
 
 FROM ubuntu:${UBUNTU_VERSION} AS base
-
+ARG DEBIAN_FRONTEND
 # ================================================================================
 # dependency of Emacs
 RUN apt-get update && \
@@ -385,6 +397,7 @@ RUN ln -s $(which python3) /usr/local/bin/python
 # dependency of Tensorflow-runtime
 
 ARG LLVM_VERSION=11.0.0
+ARG UBUNTU_VERSION
 
        # install llvm
 RUN    wget https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/clang+llvm-${LLVM_VERSION}-x86_64-linux-gnu-ubuntu-${UBUNTU_VERSION}.tar.xz \
