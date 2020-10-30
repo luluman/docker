@@ -113,6 +113,21 @@ RUN wget https://github.com/ninja-build/ninja/releases/download/v$NINJA_VERSION/
       && cp ninja /usr/local/bin
 
 # ============================================================
+# https://github.com/protocolbuffers/protobuf/blob/master/src/README.md
+# install latest protobuf
+
+ARG PROTOBUF_VERSION=3.13.0
+
+RUN apt-get install -y autoconf automake libtool curl make g++ unzip && \
+    git clone --depth 1 --recursive --branch v${PROTOBUF_VERSION} https://github.com/protocolbuffers/protobuf.git && \
+        cd protobuf && \
+        ./autogen.sh && \
+        ./configure && \
+        make -j10 && \
+        make install && \
+        ldconfig
+
+# ============================================================
 # Build EAR (BEAR)
 
 ENV BEAR_VERSION 3.0.0
@@ -124,13 +139,13 @@ RUN apt-get update && \
             libspdlog-dev \
             nlohmann-json3-dev \
             libgrpc++-dev \
-            protobuf-compiler-grpc \
             libssl-dev
 
 RUN git clone --depth 1 --branch $BEAR_VERSION https://github.com/rizsotto/Bear.git /opt/bear && \
     cd /opt/bear && \
     cmake . -DCMAKE_INSTALL_PREFIX=/usr/local \
-            -DPYTHON_EXECUTABLE=/usr/bin/python3 && \
+            -DPYTHON_EXECUTABLE=/usr/bin/python3 \
+            -DENABLE_UNIT_TESTS=OFF -DENABLE_FUNC_TESTS=OFF && \
     make all -j4 && \
     make install
 
@@ -236,21 +251,6 @@ RUN    cd "${INSTALL_DIR}" \
 
 COPY scripts/legalize_compile_commands.sh /usr/local/lib/Bazel_and_CompileCommands-master/
 RUN  ln -f -s "${INSTALL_DIR}/Bazel_and_CompileCommands-master/legalize_compile_commands.sh" /usr/local/bin/bazel-legalize-cc
-
-
-# ============================================================
-# https://github.com/protocolbuffers/protobuf/blob/master/src/README.md
-# install latest protobuf
-
-ARG PROTOBUF_VERSION=3.13.0
-
-RUN apt-get install -y autoconf automake libtool curl make g++ unzip && \
-    git clone --depth 1 --recursive --branch v${PROTOBUF_VERSION} https://github.com/protocolbuffers/protobuf.git && \
-        cd protobuf && \
-        ./autogen.sh && \
-        ./configure && \
-        make -j10 && \
-        make install
 
 # ============================================================
 # other scripts
@@ -433,6 +433,11 @@ RUN apt-get update && \
             xz-utils \
             libffi-dev \
             liblzma-dev \
+            # bear make
+            libfmt-dev \
+            libspdlog-dev \
+            nlohmann-json3-dev \
+            libgrpc++-dev \
             && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
