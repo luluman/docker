@@ -55,6 +55,8 @@ function explore-linux()
          --volume="/etc/group:/etc/group:ro" \
          --volume="/etc/passwd:/etc/passwd:ro" \
          --volume="/etc/shadow:/etc/shadow:ro" \
+         --add-host=gerrit.ai.bitmaincorp.vip:10.128.0.97 \
+         --add-host=gitlab.bitmaincorp.vip:10.128.1.4 \
          --detach \
          mattlu/explore-dev:latest /bin/bash
 }
