@@ -155,6 +155,7 @@ RUN git clone --depth 1 --branch $BEAR_VERSION https://github.com/rizsotto/Bear.
 
 RUN git clone --depth 1 --recursive https://github.com/ycm-core/ycmd && \
     cd ycmd && \
+    git submodule update --init --recursive && \
     python3 build.py \
           --clang-completer \
           --ts-completer \
