@@ -82,8 +82,7 @@ if __name__ == '__main__':
     sys.exit(main(sys.argv))
 //MY_CODE_STREAM
 else
-echo "File $current_file already exists, aborted! (you can use -f to force overwrite)"
-exit 1
+echo "File $current_file already exists. (you can use -f to force overwrite)"
 fi
 
 python3 ./tools/actions/prune_compile_command.py

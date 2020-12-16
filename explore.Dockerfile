@@ -153,9 +153,13 @@ RUN git clone --depth 1 --branch $BEAR_VERSION https://github.com/rizsotto/Bear.
 # Build YCMD
 # https://github.com/AlexandreCarlton/ycmd-docker
 
+RUN apt-get update && \
+    apt-get install -y \
+            python3-pip
+
 RUN git clone --depth 1 --recursive https://github.com/ycm-core/ycmd && \
     cd ycmd && \
-    git submodule update --init --recursive && \
+    pip3 install requests && \
     python3 build.py \
           --clang-completer \
           --ts-completer \
