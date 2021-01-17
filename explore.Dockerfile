@@ -401,8 +401,8 @@ RUN ln -s $(which python3) /usr/local/bin/python
 # ================================================================================
 # dependency of Tensorflow-runtime
 
-ARG LLVM_VERSION=11.0.0
-ARG UBUNTU_VERSION
+ARG LLVM_VERSION=11.0.1
+ARG UBUNTU_VERSION=20.10
 
        # install llvm
 RUN    wget https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/clang+llvm-${LLVM_VERSION}-x86_64-linux-gnu-ubuntu-${UBUNTU_VERSION}.tar.xz \
