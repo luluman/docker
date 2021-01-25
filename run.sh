@@ -101,6 +101,15 @@ function work-langtool-server()
          silviof/docker-languagetool
 }
 
+function plantuml-server()
+{
+  docker run -d \
+         --name plantuml-server \
+         --network man.lu-net \
+         --restart=unless-stopped \
+         plantuml/plantuml-server:jetty
+}
+
 function add-network()
 {
   docker network create --driver bridge man.lu-net
