@@ -75,7 +75,7 @@ RUN git clone --depth 1 --branch emacs-27 https://github.com/emacs-mirror/emacs 
 # ============================================================
 # https://github.com/nodejs/docker-node
 
-ENV NODE_VERSION 14.15.0
+ENV NODE_VERSION 14.16.0
 
 RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
       && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
@@ -92,7 +92,7 @@ RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-
 # ============================================================
 # https://hub.docker.com/r/rikorose/gcc-cmake/dockerfile
 
-ENV CMAKE_VERSION 3.18.4
+ENV CMAKE_VERSION 3.20.0
 
 RUN wget https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmake-$CMAKE_VERSION-Linux-x86_64.sh \
       --no-check-certificate \
@@ -104,7 +104,7 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmak
 # ============================================================
 # ninja
 
-ENV NINJA_VERSION 1.10.1
+ENV NINJA_VERSION 1.10.2
 
 RUN wget https://github.com/ninja-build/ninja/releases/download/v$NINJA_VERSION/ninja-linux.zip \
       --no-check-certificate \
@@ -114,7 +114,7 @@ RUN wget https://github.com/ninja-build/ninja/releases/download/v$NINJA_VERSION/
 # ============================================================
 # Build EAR (BEAR)
 
-ENV BEAR_VERSION 2.4.4
+ENV BEAR_VERSION 3.0.10
 
 RUN git clone --depth 1 --branch $BEAR_VERSION https://github.com/rizsotto/Bear.git /opt/bear && \
     cd /opt/bear && \
@@ -132,6 +132,7 @@ RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
     cmake -G Ninja \
           ../llvm -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
           -DCMAKE_BUILD_TYPE=Release \
+          -DLLVM_INCLUDE_TESTS=NO \
           -DLLVM_TARGETS_TO_BUILD="X86" && \
     ninja clangd clang-format clang-tidy clangd-indexer && \
     mkdir clangd-latest && \
@@ -206,7 +207,7 @@ RUN     set -x \
 # https://github.com/Valian/docker-git-lfs
 # build git-lfs
 
-ENV GITLFS_VERSION=2.12.0
+ENV GITLFS_VERSION=2.13.2
 
 RUN    wget https://github.com/git-lfs/git-lfs/releases/download/v$GITLFS_VERSION/git-lfs-linux-amd64-v$GITLFS_VERSION.tar.gz \
             -c --retry-connrefused --tries=0 --timeout=180 --no-check-certificate \

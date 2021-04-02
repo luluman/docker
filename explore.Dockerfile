@@ -75,7 +75,7 @@ RUN git clone --depth 1 --branch emacs-27 https://github.com/emacs-mirror/emacs 
 # ============================================================
 # https://github.com/nodejs/docker-node
 
-ENV NODE_VERSION 14.15.3
+ENV NODE_VERSION 14.16.0
 
 RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
       && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
@@ -93,7 +93,7 @@ RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-
 # ============================================================
 # https://hub.docker.com/r/rikorose/gcc-cmake/dockerfile
 
-ENV CMAKE_VERSION 3.19.2
+ENV CMAKE_VERSION 3.20.0
 
 RUN wget https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmake-$CMAKE_VERSION-Linux-x86_64.sh \
       --no-check-certificate \
@@ -116,7 +116,7 @@ RUN wget https://github.com/ninja-build/ninja/releases/download/v$NINJA_VERSION/
 # https://github.com/protocolbuffers/protobuf/blob/master/src/README.md
 # install latest protobuf
 
-ARG PROTOBUF_VERSION=3.14.0
+ARG PROTOBUF_VERSION=3.15.6
 
 RUN apt-get install -y autoconf automake libtool curl make g++ unzip && \
     git clone --depth 1 --recursive --branch v${PROTOBUF_VERSION} https://github.com/protocolbuffers/protobuf.git && \
@@ -130,7 +130,7 @@ RUN apt-get install -y autoconf automake libtool curl make g++ unzip && \
 # ============================================================
 # Build EAR (BEAR)
 
-ENV BEAR_VERSION 3.0.6
+ENV BEAR_VERSION 3.0.10
 
 RUN apt-get update && \
     apt-get install -y \
@@ -213,7 +213,7 @@ RUN     set -x \
 # https://github.com/Valian/docker-git-lfs
 # build git-lfs
 
-ENV GITLFS_VERSION=2.13.1
+ENV GITLFS_VERSION=2.13.2
 
 RUN    wget https://github.com/git-lfs/git-lfs/releases/download/v$GITLFS_VERSION/git-lfs-linux-amd64-v$GITLFS_VERSION.tar.gz \
             -c --retry-connrefused --tries=0 --timeout=180 --no-check-certificate \
@@ -226,7 +226,7 @@ RUN    wget https://github.com/git-lfs/git-lfs/releases/download/v$GITLFS_VERSIO
 # https://github.com/tensorflow/tensorflow/blob/master/tensorflow/tools/dockerfiles/partials/ubuntu/bazelbuild.partial.Dockerfile
 # Install bazel
 
-ARG BAZEL_VERSION=3.1.0
+ARG BAZEL_VERSION=4.0.0
 RUN mkdir /bazel && \
     wget --no-check-certificate \
          -O /bazel/installer.sh "https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel-${BAZEL_VERSION}-installer-linux-x86_64.sh" && \
@@ -300,6 +300,7 @@ RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
           ../llvm -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
           -DCMAKE_BUILD_TYPE=Release \
           -DLLVM_TARGETS_TO_BUILD="X86" \
+          -DLLVM_INCLUDE_TESTS=NO \
           -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ \
           && \
     ninja clangd clang-format clang-tidy clangd-indexer && \
