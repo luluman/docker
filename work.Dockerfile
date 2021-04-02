@@ -114,7 +114,7 @@ RUN wget https://github.com/ninja-build/ninja/releases/download/v$NINJA_VERSION/
 # ============================================================
 # Build EAR (BEAR)
 
-ENV BEAR_VERSION 3.0.10
+ENV BEAR_VERSION 2.4.4
 
 RUN git clone --depth 1 --branch $BEAR_VERSION https://github.com/rizsotto/Bear.git /opt/bear && \
     cd /opt/bear && \
