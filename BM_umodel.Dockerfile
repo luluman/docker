@@ -62,7 +62,9 @@ RUN python3 -m pip --no-cache-dir install \
     tqdm \
     jupyter \
     opencv-python \
-    lmdb
+    lmdb \
+    # bmnetm dependency
+    mxnet
 
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 10
 
