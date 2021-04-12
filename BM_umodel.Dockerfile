@@ -37,7 +37,9 @@ RUN apt-get update && \
 
 RUN python3 -m pip --no-cache-dir install --upgrade \
     pip \
-    setuptools \
+    setuptools
+
+RUN python3 -m pip --no-cache-dir install \
     # umodel dependency
     prefect \
     asciidag \
