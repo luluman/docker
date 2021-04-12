@@ -26,6 +26,7 @@ RUN apt-get update && \
             python3-setuptools \
             python3-scipy \
             # dev needed
+            curl \
             virtualenv \
             parallel \
             gdb \
@@ -35,8 +36,9 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 # ================================================================================
 
+RUN curl -fsSL -o- https://bootstrap.pypa.io/pip/3.5/get-pip.py | python3.5
+
 RUN python3 -m pip --no-cache-dir install --upgrade \
-    pip \
     setuptools
 
 RUN python3 -m pip --no-cache-dir install \
