@@ -26,6 +26,7 @@ RUN apt-get update && \
             python3-setuptools \
             python3-scipy \
             # dev needed
+            cmake \
             curl \
             virtualenv \
             parallel \
@@ -62,6 +63,8 @@ RUN python3 -m pip --no-cache-dir install \
     jupyter \
     opencv-python \
     lmdb
+
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 10
 
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
