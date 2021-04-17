@@ -124,16 +124,23 @@ RUN git clone --depth 1 --branch $BEAR_VERSION https://github.com/rizsotto/Bear.
 
 # ============================================================
 # Build clangd
-# https://gist.github.com/jakob/929ed728c96741a119798647a32618ca
+# https://github.com/clangd/clangd/blob/master/.github/workflows/autobuild.yaml
 
 RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
     mkdir llvm-project/build-clangd && \
     cd llvm-project/build-clangd && \
     cmake -G Ninja \
           ../llvm -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
+          -DCMAKE_EXE_LINKER_FLAGS_RELEASE=-static-libgcc -Wl,--compress-debug-sections=zlib \
+          -DLLVM_STATIC_LINK_CXX_STDLIB=ON \
+          -DLLVM_ENABLE_ZLIB=FORCE_ON \
+          -DLLVM_ENABLE_ASSERTIONS=OFF \
+          -DLLVM_ENABLE_BACKTRACES=ON \
+          -DLLVM_ENABLE_TERMINFO=OFF \
           -DCMAKE_BUILD_TYPE=Release \
-          -DLLVM_INCLUDE_TESTS=NO \
-          -DLLVM_TARGETS_TO_BUILD="X86" && \
+          -DCLANG_PLUGIN_SUPPORT=OFF \
+          -DLLVM_ENABLE_PLUGINS=OFF \
+          -DLLVM_INCLUDE_TESTS=NO && \
     ninja clangd clang-format clang-tidy clangd-indexer && \
     mkdir clangd-latest && \
     cd clangd-latest && \
