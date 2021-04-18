@@ -5,7 +5,7 @@ ARG UBUNTU_VERSION=16.04
 # stage 0
 # ********************************************************************************
 
-FROM ubuntu:${UBUNTU_VERSION} AS builder
+FROM ubuntu:${UBUNTU_VERSION} AS builder0
 
 # COPY ./sources.list /etc/apt/sources.list
 
@@ -123,36 +123,6 @@ RUN git clone --depth 1 --branch $BEAR_VERSION https://github.com/rizsotto/Bear.
     make install
 
 # ============================================================
-# Build clangd
-# https://github.com/clangd/clangd/blob/master/.github/workflows/autobuild.yaml
-
-RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
-    mkdir llvm-project/build-clangd && \
-    cd llvm-project/build-clangd && \
-    cmake -G Ninja \
-          ../llvm -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
-          -DCMAKE_EXE_LINKER_FLAGS_RELEASE=-static-libgcc -Wl,--compress-debug-sections=zlib \
-          -DLLVM_STATIC_LINK_CXX_STDLIB=ON \
-          -DLLVM_ENABLE_ZLIB=FORCE_ON \
-          -DLLVM_ENABLE_ASSERTIONS=OFF \
-          -DLLVM_ENABLE_BACKTRACES=ON \
-          -DLLVM_ENABLE_TERMINFO=OFF \
-          -DCMAKE_BUILD_TYPE=Release \
-          -DCLANG_PLUGIN_SUPPORT=OFF \
-          -DLLVM_ENABLE_PLUGINS=OFF \
-          -DLLVM_INCLUDE_TESTS=NO && \
-    ninja clangd clang-format clang-tidy clangd-indexer && \
-    mkdir clangd-latest && \
-    cd clangd-latest && \
-    mkdir bin && \
-    mkdir lib && \
-    cp ../bin/clangd* ./bin/ && \
-    cp ../bin/clang-format ./bin/ && \
-    cp ../bin/clang-tidy ./bin/ && \
-    cp -r ../lib/clang ./lib/ && \
-    cp -r ./* /usr/local
-
-# ============================================================
 # Build YCMD
 # https://github.com/AlexandreCarlton/ycmd-docker
 
@@ -234,6 +204,61 @@ COPY scripts/terminfo-24bit.src /usr/local/share/bash-color/
 # stage 1
 # ********************************************************************************
 
+FROM ubuntu:${UBUNTU_VERSION} AS builder1
+
+# ================================================================================
+# dependency of llvm
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+            build-essential \
+            git \
+            python3-dev \
+            pkg-config \
+            libz-dev \
+            libc-ares-dev \
+            && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN git config --global http.sslVerify false
+COPY --from=builder0 /usr/local /usr/local
+
+# ============================================================
+# Build clangd
+# https://github.com/clangd/clangd/blob/master/.github/workflows/autobuild.yaml
+
+RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
+    mkdir llvm-project/build-clangd && \
+    cd llvm-project/build-clangd && \
+    cmake -G Ninja \
+          ../llvm -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
+          -DCMAKE_EXE_LINKER_FLAGS_RELEASE=-static-libgcc -Wl,--compress-debug-sections=zlib \
+          -DLLVM_STATIC_LINK_CXX_STDLIB=ON \
+          -DLLVM_ENABLE_ZLIB=FORCE_ON \
+          -DLLVM_ENABLE_ASSERTIONS=OFF \
+          -DLLVM_ENABLE_BACKTRACES=ON \
+          -DLLVM_ENABLE_TERMINFO=OFF \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCLANG_PLUGIN_SUPPORT=OFF \
+          -DLLVM_ENABLE_PLUGINS=OFF \
+          -DLLVM_INCLUDE_TESTS=NO && \
+    ninja clangd clang-format clang-tidy clangd-indexer && \
+    mkdir clangd-latest && \
+    cd clangd-latest && \
+    mkdir bin && \
+    mkdir lib && \
+    cp ../bin/clangd* ./bin/ && \
+    cp ../bin/clang-format ./bin/ && \
+    cp ../bin/clang-tidy ./bin/ && \
+    cp -r ../lib/clang ./lib/ && \
+    cp -r ./* /usr/local
+
+
+# ********************************************************************************
+#
+# stage 2
+# ********************************************************************************
+
 FROM ubuntu:${UBUNTU_VERSION} AS base
 
 # COPY ./sources.list /etc/apt/sources.list
@@ -305,7 +330,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 # ================================================================================
 
-COPY --from=builder /usr/local /usr/local
+COPY --from=builder1 /usr/local /usr/local
 
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
