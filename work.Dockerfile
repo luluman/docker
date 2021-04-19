@@ -56,6 +56,10 @@ RUN apt-get update && \
             wget \
             xaw3dg-dev \
             zlib1g-dev \
+            # for llvm
+            pkg-config \
+            libz-dev \
+            libc-ares-dev \
             && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -301,6 +305,10 @@ RUN apt-get update && \
             parallel \
             gdb \
             unzip \
+            # for llvm
+            pkg-config \
+            libz-dev \
+            libc-ares-dev \
             && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
