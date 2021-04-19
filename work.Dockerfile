@@ -72,29 +72,6 @@ RUN git clone --depth 1 --branch emacs-27 https://github.com/emacs-mirror/emacs 
     make -j30 && \
     make install
 
-
-# ********************************************************************************
-#
-# stage 1
-# ********************************************************************************
-
-FROM ubuntu:${UBUNTU_VERSION} AS builder1
-
-# dependency of llvm
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-            build-essential \
-            git \
-            curl \
-            python3-dev \
-            unzip \
-            wget && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN git config --global http.sslVerify false
-COPY --from=builder0 /usr/local /usr/local
-
 # ============================================================
 # https://github.com/nodejs/docker-node
 
@@ -224,10 +201,10 @@ COPY scripts/terminfo-24bit.src /usr/local/share/bash-color/
 
 # ********************************************************************************
 #
-# stage 2
+# stage 1
 # ********************************************************************************
 
-FROM ubuntu:${UBUNTU_VERSION} AS builder2
+FROM ubuntu:${UBUNTU_VERSION} AS builder1
 
 # ================================================================================
 # dependency of llvm
@@ -244,7 +221,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 RUN git config --global http.sslVerify false
-COPY --from=builder1 /usr/local /usr/local
+COPY --from=builder0 /usr/local /usr/local
 
 # ============================================================
 # Build clangd
@@ -279,7 +256,7 @@ RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
 
 # ********************************************************************************
 #
-# stage 3
+# stage 2
 # ********************************************************************************
 
 FROM ubuntu:${UBUNTU_VERSION} AS base
@@ -348,15 +325,12 @@ RUN apt-get update && \
             parallel \
             gdb \
             unzip \
-            # llvm needed
-            libz-dev \
-            libc-ares-dev \
             && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 # ================================================================================
 
-COPY --from=builder2 /usr/local /usr/local
+COPY --from=builder1 /usr/local /usr/local
 
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
