@@ -144,6 +144,8 @@ RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
           -DCMAKE_BUILD_TYPE=Release \
           -DCLANG_PLUGIN_SUPPORT=OFF \
           -DLLVM_ENABLE_PLUGINS=OFF \
+          -DCMAKE_C_FLAGS_RELEASE="-O3 -DNDEBUG" \
+          -DCMAKE_CXX_FLAGS_RELEASE="-O3 -DNDEBUG" \
           -DLLVM_TARGETS_TO_BUILD="X86" \
           -DLLVM_INCLUDE_TESTS=NO && \
     ninja clangd clang-format clang-tidy clangd-indexer && \
