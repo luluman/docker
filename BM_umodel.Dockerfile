@@ -26,6 +26,7 @@ RUN apt-get update && \
             python3-setuptools \
             python3-scipy \
             # dev needed
+            openssh-client \
             cmake \
             curl \
             virtualenv \
