@@ -27,12 +27,14 @@ RUN apt-get update && \
             python3-scipy \
             # dev needed
             openssh-client \
+            openssh-server \
             cmake \
             curl \
             virtualenv \
             parallel \
             gdb \
             unzip \
+            vim \
             && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -41,7 +43,7 @@ RUN apt-get update && \
 RUN curl -fsSL -o- https://bootstrap.pypa.io/pip/3.5/get-pip.py | python3.5
 
 RUN python3 -m pip --no-cache-dir install --upgrade \
-    setuptools
+    setuptools==50.3.0
 
 RUN python3 -m pip --no-cache-dir install \
     # umodel dependency
