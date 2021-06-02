@@ -19,6 +19,7 @@ function work-linux()
   local home=$(realpath ~/.docker/home-work)
   local workspace=$(realpath ~/workspace)
   local data=$(realpath /data)
+  local share=$(realpath /share)
   docker run -t \
          --privileged \
          --name ${USER}-work \
@@ -28,6 +29,7 @@ function work-linux()
          --volume="${home}:/home/$USER":delegated \
          --volume="${workspace}:/workspace":cached \
          --volume="${data}:/data":cached \
+         --volume="${share}:/share":cached \
          --volume="/etc/group:/etc/group:ro" \
          --volume="/etc/passwd:/etc/passwd:ro" \
          --volume="/etc/shadow:/etc/shadow:ro" \
@@ -43,6 +45,7 @@ function explore-linux()
   local home=$(realpath ~/.docker/home-explore)
   local workspace=$(realpath ~/workspace)
   local data=$(realpath /data)
+  local share=$(realpath /share)
   docker run -t \
          --privileged \
          --name ${USER}-explore \
@@ -52,6 +55,7 @@ function explore-linux()
          --volume="${home}:/home/$USER":delegated \
          --volume="${workspace}:/workspace":cached \
          --volume="${data}:/data":cached \
+         --volume="${share}:/share":cached \
          --volume="/etc/group:/etc/group:ro" \
          --volume="/etc/passwd:/etc/passwd:ro" \
          --volume="/etc/shadow:/etc/shadow:ro" \
