@@ -169,7 +169,6 @@ RUN git clone --recursive https://github.com/ycm-core/ycmd && \
     git checkout  0abcfafbaf57e4d4d499680c13e1413a34672a58 && \
     git submodule update --init --recursive && \
     python3 build.py \
-          --clang-completer \
           --ts-completer \
           --ninja && \
     mkdir build && \

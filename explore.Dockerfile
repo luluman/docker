@@ -139,7 +139,8 @@ RUN apt-get update && \
             libspdlog-dev \
             nlohmann-json3-dev \
             libgrpc++-dev \
-            libssl-dev
+            libssl-dev \
+            libsqlite3-dev
 
 RUN git clone --depth 1 --branch $BEAR_VERSION https://github.com/rizsotto/Bear.git /opt/bear && \
     cd /opt/bear && \
