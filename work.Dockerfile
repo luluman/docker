@@ -60,7 +60,6 @@ RUN apt-get update && \
             pkg-config \
             libz-dev \
             libc-ares-dev \
-            clang \
             && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -138,7 +137,11 @@ RUN apt-get update && \
     && \
     apt-add-repository "deb https://apt.llvm.org/xenial/ llvm-toolchain-xenial-6.0 main" && \
     apt-get update && \
-    apt-get install -y clang-6.0
+    apt-get install -y clang-6.0 && \
+    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-6.0 1000 && \
+    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-6.0 1000 && \
+    update-alternatives --config clang && \
+    update-alternatives --config clang++
 
 # Build clangd
 # https://github.com/clangd/clangd/blob/master/.github/workflows/autobuild.yaml
@@ -148,17 +151,7 @@ RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
     cd llvm-project/build-clangd && \
     cmake -G Ninja \
           ../llvm -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
-          -DCMAKE_EXE_LINKER_FLAGS_RELEASE=-static-libgcc -Wl,--compress-debug-sections=zlib \
-          -DLLVM_STATIC_LINK_CXX_STDLIB=ON \
-          -DLLVM_ENABLE_ZLIB=FORCE_ON \
-          -DLLVM_ENABLE_ASSERTIONS=OFF \
-          -DLLVM_ENABLE_BACKTRACES=ON \
-          -DLLVM_ENABLE_TERMINFO=OFF \
           -DCMAKE_BUILD_TYPE=Release \
-          -DCLANG_PLUGIN_SUPPORT=OFF \
-          -DLLVM_ENABLE_PLUGINS=OFF \
-          -DCMAKE_C_FLAGS_RELEASE="-O3 -DNDEBUG" \
-          -DCMAKE_CXX_FLAGS_RELEASE="-O3 -DNDEBUG" \
           -DLLVM_TARGETS_TO_BUILD="X86" \
           -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ \
           -DLLVM_INCLUDE_TESTS=NO && \
