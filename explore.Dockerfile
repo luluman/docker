@@ -403,7 +403,7 @@ RUN ln -s $(which python3) /usr/local/bin/python
 # ================================================================================
 # dependency of Tensorflow-runtime
 
-ARG LLVM_VERSION=11.0.0
+ARG LLVM_VERSION=12.0.0
 ARG UBUNTU_VERSION
 
        # install llvm

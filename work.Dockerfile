@@ -130,10 +130,13 @@ RUN git clone --depth 1 --branch $BEAR_VERSION https://github.com/rizsotto/Bear.
 # ============================================================
 # install clang>=3.9 https://stackoverflow.com/a/47368753
 RUN apt-get update && \
-    apt-get install -y software-properties-common && \
+    apt-get install -y \
+            software-properties-common \
+            apt-transport-https \
+            ca-certificates && \
     wget --no-check-certificate -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - \
     && \
-    apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-6.0 main" && \
+    apt-add-repository "deb https://apt.llvm.org/xenial/ llvm-toolchain-xenial-6.0 main" && \
     apt-get update && \
     apt-get install -y clang-6.0
 
