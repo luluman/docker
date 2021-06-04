@@ -60,6 +60,7 @@ RUN apt-get update && \
             pkg-config \
             libz-dev \
             libc-ares-dev \
+            clang \
             && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -147,6 +148,7 @@ RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
           -DCMAKE_C_FLAGS_RELEASE="-O3 -DNDEBUG" \
           -DCMAKE_CXX_FLAGS_RELEASE="-O3 -DNDEBUG" \
           -DLLVM_TARGETS_TO_BUILD="X86" \
+          -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ \
           -DLLVM_INCLUDE_TESTS=NO && \
     ninja clangd clang-format clang-tidy clangd-indexer && \
     mkdir clangd-latest && \
