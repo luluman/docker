@@ -227,7 +227,7 @@ RUN    wget https://github.com/git-lfs/git-lfs/releases/download/v$GITLFS_VERSIO
 # https://github.com/tensorflow/tensorflow/blob/master/tensorflow/tools/dockerfiles/partials/ubuntu/bazelbuild.partial.Dockerfile
 # Install bazel
 
-ARG BAZEL_VERSION=4.0.0
+ARG BAZEL_VERSION=3.7.2
 RUN mkdir /bazel && \
     wget --no-check-certificate \
          -O /bazel/installer.sh "https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel-${BAZEL_VERSION}-installer-linux-x86_64.sh" && \
