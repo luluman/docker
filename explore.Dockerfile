@@ -75,7 +75,7 @@ RUN git clone --depth 1 --branch emacs-27 https://github.com/emacs-mirror/emacs 
 # ============================================================
 # https://github.com/nodejs/docker-node
 
-ENV NODE_VERSION 14.16.0
+ENV NODE_VERSION 14.17.6
 
 RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
       && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
@@ -93,7 +93,7 @@ RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-
 # ============================================================
 # https://hub.docker.com/r/rikorose/gcc-cmake/dockerfile
 
-ENV CMAKE_VERSION 3.20.0
+ENV CMAKE_VERSION 3.21.2
 
 RUN wget https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmake-$CMAKE_VERSION-Linux-x86_64.sh \
       --no-check-certificate \
@@ -130,7 +130,7 @@ RUN apt-get install -y autoconf automake libtool curl make g++ unzip && \
 # ============================================================
 # Build EAR (BEAR)
 
-ENV BEAR_VERSION 3.0.10
+ENV BEAR_VERSION 3.0.14
 
 RUN apt-get update && \
     apt-get install -y \
@@ -203,7 +203,7 @@ RUN     curl -SLOk "${ASPELL_SERVER}/aspell-${ASPELL_VERSION}.tar.gz" \
 # https://hub.docker.com/r/peccu/rg/dockerfile
 # build ripgrep
 
-ENV RG_VERSION=12.1.1
+ENV RG_VERSION=13.0.0
 RUN     set -x \
     &&  wget https://github.com/BurntSushi/ripgrep/releases/download/${RG_VERSION}/ripgrep-${RG_VERSION}-x86_64-unknown-linux-musl.tar.gz \
              --no-check-certificate \
@@ -214,7 +214,7 @@ RUN     set -x \
 # https://github.com/Valian/docker-git-lfs
 # build git-lfs
 
-ENV GITLFS_VERSION=2.13.2
+ENV GITLFS_VERSION=2.13.3
 
 RUN    wget https://github.com/git-lfs/git-lfs/releases/download/v$GITLFS_VERSION/git-lfs-linux-amd64-v$GITLFS_VERSION.tar.gz \
             -c --retry-connrefused --tries=0 --timeout=180 --no-check-certificate \
