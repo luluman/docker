@@ -87,7 +87,7 @@ RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-
       && npm --version \
       # install some LSP servers
       # && npm config set registry https://registry.npm.taobao.org \
-      && npm i -g typescript-language-server \
+      && npm i -g typescript typescript-language-server \
       && npm i -g bash-language-server
 
 # ============================================================
