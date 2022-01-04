@@ -11,51 +11,34 @@ ARG DEBIAN_FRONTEND
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-            apt-utils \
-            autoconf \
-            automake \
-            autotools-dev \
-            build-essential \
-            curl \
-            dpkg-dev \
-            gettext \
             git \
-            gnupg \
-            imagemagick \
-            iputils-ping \
-            ispell \
-            libacl1-dev \
-            libasound2-dev \
-            libcanberra-gtk3-module \
-            libdbus-1-dev \
-            libgif-dev \
-            libgnutls28-dev \
-            libgpm-dev \
-            libgtk-3-dev \
-            libjansson-dev \
-            libjpeg-dev \
-            liblcms2-dev \
-            liblockfile-dev \
-            libm17n-dev \
-            libmagick++-6.q16-dev \
-            libncurses5-dev \
-            libotf-dev \
-            libpng-dev \
-            librsvg2-dev \
-            libselinux1-dev \
-            libtiff-dev \
-            libtool \
-            libxaw7-dev \
-            libxml2-dev \
-            openssh-client \
-            perl \
-            python \
-            python3-dev \
+            autoconf \
             texinfo \
-            unzip \
-            wget \
-            xaw3dg-dev \
-            zlib1g-dev \
+            binutils \
+            flex \
+            bison \
+            libmpc-dev \
+            libmpfr-dev \
+            libgmp-dev \
+            coreutils \
+            make \
+            libtinfo5 \
+            texinfo \
+            libjpeg-dev \
+            libtiff-dev \
+            libgif-dev \
+            libxpm-dev \
+            libgtk-3-dev \
+            libgnutls28-dev \
+            libncurses5-dev \
+            libxml2-dev \
+            libxt-dev \
+            libjansson4 \
+            gcc-multilib \
+            g++ \
+            libcanberra-gtk3-module \
+            libjansson-dev \
+            librsvg2-dev \
             && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -63,19 +46,41 @@ RUN apt-get update && \
 RUN git config --global http.sslVerify false
 
 # ============================================================
-# https://github.com/Silex/docker-emacs
+# https://www.masteringemacs.org/article/speed-up-emacs-libjansson-native-elisp-compilation
+# https://gitlab.com/koral/emacs-nativecomp-dockerfile/-/blob/master/Dockerfile
 
-RUN git clone --depth 1 --branch emacs-27 https://github.com/emacs-mirror/emacs /opt/emacs && \
+# Needed for add-apt-repository, et al.
+RUN apt-get update \
+        && apt-get install -y \
+        apt-transport-https \
+        ca-certificates \
+        curl \
+        gnupg-agent \
+        software-properties-common \
+        # other package needed
+        wget \
+        unzip
+
+# Needed for gcc-10 and the build process.
+RUN add-apt-repository ppa:ubuntu-toolchain-r/ppa \
+        && apt-get update -y \
+        && apt-get install -y gcc-10 libgccjit0 libgccjit-10-dev
+
+ARG CC="gcc-10"
+
+RUN git clone --depth 1 --branch emacs-28 https://github.com/emacs-mirror/emacs /opt/emacs && \
     cd /opt/emacs && \
     ./autogen.sh && \
-    ./configure --build="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" --with-modules && \
+    ./configure --build="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
+        --with-modules \
+        --with-native-compilation && \
     make -j30 && \
     make install
 
 # ============================================================
 # https://github.com/nodejs/docker-node
 
-ENV NODE_VERSION 14.17.6
+ENV NODE_VERSION 16.13.1
 
 RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
       && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
@@ -93,9 +98,9 @@ RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-
 # ============================================================
 # https://hub.docker.com/r/rikorose/gcc-cmake/dockerfile
 
-ENV CMAKE_VERSION 3.21.2
+ENV CMAKE_VERSION 3.22.1
 
-RUN wget https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmake-$CMAKE_VERSION-Linux-x86_64.sh \
+RUN wget https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmake-$CMAKE_VERSION-linux-x86_64.sh \
       --no-check-certificate \
       -q -O /tmp/cmake-install.sh \
       && chmod u+x /tmp/cmake-install.sh \
@@ -116,7 +121,7 @@ RUN wget https://github.com/ninja-build/ninja/releases/download/v$NINJA_VERSION/
 # https://github.com/protocolbuffers/protobuf/blob/master/src/README.md
 # install latest protobuf
 
-ARG PROTOBUF_VERSION=3.15.6
+ARG PROTOBUF_VERSION=3.19.1
 
 RUN apt-get install -y autoconf automake libtool curl make g++ unzip && \
     git clone --depth 1 --recursive --branch v${PROTOBUF_VERSION} https://github.com/protocolbuffers/protobuf.git && \
@@ -130,7 +135,7 @@ RUN apt-get install -y autoconf automake libtool curl make g++ unzip && \
 # ============================================================
 # Build EAR (BEAR)
 
-ENV BEAR_VERSION 3.0.14
+ENV BEAR_VERSION 3.0.18
 
 RUN apt-get update && \
     apt-get install -y \
@@ -214,7 +219,7 @@ RUN     set -x \
 # https://github.com/Valian/docker-git-lfs
 # build git-lfs
 
-ENV GITLFS_VERSION=2.13.3
+ENV GITLFS_VERSION=3.0.2
 
 RUN    wget https://github.com/git-lfs/git-lfs/releases/download/v$GITLFS_VERSION/git-lfs-linux-amd64-v$GITLFS_VERSION.tar.gz \
             -c --retry-connrefused --tries=0 --timeout=180 --no-check-certificate \
@@ -227,7 +232,7 @@ RUN    wget https://github.com/git-lfs/git-lfs/releases/download/v$GITLFS_VERSIO
 # https://github.com/tensorflow/tensorflow/blob/master/tensorflow/tools/dockerfiles/partials/ubuntu/bazelbuild.partial.Dockerfile
 # Install bazel
 
-ARG BAZEL_VERSION=3.7.2
+ARG BAZEL_VERSION=4.2.2
 RUN mkdir /bazel && \
     wget --no-check-certificate \
          -O /bazel/installer.sh "https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel-${BAZEL_VERSION}-installer-linux-x86_64.sh" && \
@@ -326,32 +331,25 @@ ARG DEBIAN_FRONTEND
 # dependency of Emacs
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-            apt-utils \
-            curl \
-            gnupg \
-            gpm \
-            imagemagick \
-            ispell \
-            libacl1 \
-            libasound2 \
-            libcanberra-gtk3-module \
-            libdbus-1-3 \
-            libgif7 \
-            libgnutls30 \
-            libgtk-3-0 \
-            libjansson4 \
-            libjpeg8 \
-            liblcms2-2 \
-            libm17n-0 \
-            libpng16-16 \
-            librsvg2-2 \
-            libsm6 \
+            libmpc3 \
+            libmpfr6 \
+            libgmp10 \
+            coreutils \
+            libjpeg-turbo8 \
             libtiff5 \
-            libx11-xcb1 \
-            libxml2 \
+            libgif7 \
             libxpm4 \
-            openssh-client \
-            texinfo \
+            libgtk-3-0 \
+            libgnutlsxx28 \
+            libncurses5 \
+            libxml2 \
+            libxt6 \
+            libjansson4 \
+            libcanberra-gtk3-module \
+            libx11-xcb1 \
+            binutils \
+            libc6-dev \
+            librsvg2-2 \
             && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -403,7 +401,7 @@ RUN ln -s $(which python3) /usr/local/bin/python
 # ================================================================================
 # dependency of Tensorflow-runtime
 
-ARG LLVM_VERSION=12.0.0
+ARG LLVM_VERSION=13.0.0
 ARG UBUNTU_VERSION
 
        # install llvm

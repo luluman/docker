@@ -26,6 +26,7 @@ function work-linux()
          --user $UID:$GID \
          --detach-keys "ctrl-^,ctrl-@" \
          --network man.lu-net \
+         --publish 8080:8080 \
          --volume="${home}:/home/$USER":delegated \
          --volume="${workspace}:/workspace":cached \
          --volume="${data}:/data":cached \
