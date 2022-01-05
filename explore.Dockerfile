@@ -35,7 +35,7 @@ RUN apt-get update && \
             libxt-dev \
             libjansson4 \
             gcc-multilib \
-            g++ \
+            g++-8 \
             libcanberra-gtk3-module \
             libjansson-dev \
             librsvg2-dev \
@@ -61,21 +61,25 @@ RUN apt-get update \
         wget \
         unzip
 
-# Needed for gcc-10 and the build process.
-RUN add-apt-repository ppa:ubuntu-toolchain-r/ppa \
-        && apt-get update -y \
-        && apt-get install -y gcc-10 libgccjit0 libgccjit-10-dev
+RUN ln -s /usr/bin/g++-8 /usr/bin/g++
 
-ARG CC="gcc-10"
+RUN git clone --depth=1 git://gcc.gnu.org/git/gcc.git -b master /opt/gcc && \
+    cd /opt/gcc && \
+    ./configure --enable-host-shared --enable-languages=jit \
+         --disable-bootstrap --enable-checking=release && \
+    make -j$(nproc) && \
+    make install-strip
 
+RUN ldconfig
 RUN git clone --depth 1 --branch emacs-28 https://github.com/emacs-mirror/emacs /opt/emacs && \
     cd /opt/emacs && \
     ./autogen.sh && \
     ./configure --build="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
         --with-modules \
-        --with-native-compilation && \
-    make -j30 && \
-    make install
+        --with-native-compilation \
+        --prefix=/usr/local && \
+    make NATIVE_FULL_AOT=1 -j30 && \
+    make install-strip
 
 # ============================================================
 # https://github.com/nodejs/docker-node
