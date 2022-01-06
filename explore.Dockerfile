@@ -431,6 +431,7 @@ RUN apt-get update && \
             python3-venv \
             virtualenv \
             swig \
+            openssh-client \
             # onnx-mlir
             libssl-dev \
             zlib1g-dev \
@@ -454,6 +455,8 @@ RUN apt-get update && \
 # ================================================================================
 
 COPY --from=builder1 /usr/local /usr/local
+# emacs bug
+RUN find /usr/local/lib/emacs/ -name native-lisp | xargs -I{} ln -s {} /usr/
 
 ENV SHELL "/bin/bash"
 
