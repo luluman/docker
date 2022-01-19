@@ -7,7 +7,6 @@ function work-macos()
          --detach-keys "ctrl-^,ctrl-@" \
          --volume="${home}:/home/root":delegated \
          --volume="${workspace}:/workspace":cached \
-         --add-host=gerrit.ai.bitmaincorp.vip:10.128.0.97 \
          --detach \
          mattlu/work-dev:latest
 }
@@ -25,8 +24,6 @@ function work-linux()
          --name ${USER}-work \
          --user $UID:$GID \
          --detach-keys "ctrl-^,ctrl-@" \
-         --network man.lu-net \
-         --publish 8080:8080 \
          --volume="${home}:/home/$USER":delegated \
          --volume="${workspace}:/workspace":cached \
          --volume="${data}:/data":cached \
@@ -34,7 +31,6 @@ function work-linux()
          --volume="/etc/group:/etc/group:ro" \
          --volume="/etc/passwd:/etc/passwd:ro" \
          --volume="/etc/shadow:/etc/shadow:ro" \
-         --add-host=gerrit.ai.bitmaincorp.vip:10.128.0.97 \
          --detach \
          mattlu/work-dev:latest /bin/bash
 }
@@ -52,7 +48,6 @@ function explore-linux()
          --name ${USER}-explore \
          --user $UID:$GID \
          --detach-keys "ctrl-^,ctrl-@" \
-         --network man.lu-net \
          --volume="${home}:/home/$USER":delegated \
          --volume="${workspace}:/workspace":cached \
          --volume="${data}:/data":cached \
@@ -60,8 +55,6 @@ function explore-linux()
          --volume="/etc/group:/etc/group:ro" \
          --volume="/etc/passwd:/etc/passwd:ro" \
          --volume="/etc/shadow:/etc/shadow:ro" \
-         --add-host=gerrit.ai.bitmaincorp.vip:10.128.0.97 \
-         --add-host=gitlab.bitmaincorp.vip:10.128.1.4 \
          --detach \
          mattlu/explore-dev:latest /bin/bash
 }
