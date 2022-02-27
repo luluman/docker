@@ -281,6 +281,9 @@ RUN apt-get update && \
             libxpm4 \
             openssh-client \
             texinfo \
+            # for vterm
+            libtool \
+            libtool-bin \
             && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*

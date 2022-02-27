@@ -354,6 +354,9 @@ RUN apt-get update && \
             binutils \
             libc6-dev \
             librsvg2-2 \
+            # for vterm 
+            libtool \
+            libtool-bin \
             && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
