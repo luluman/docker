@@ -84,7 +84,7 @@ RUN git clone --depth 1 --branch emacs-28 https://github.com/emacs-mirror/emacs 
 # ============================================================
 # https://github.com/nodejs/docker-node
 
-ENV NODE_VERSION 16.13.1
+ENV NODE_VERSION 16.14.0
 
 RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
       && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
@@ -97,12 +97,13 @@ RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-
       # install some LSP servers
       # && npm config set registry https://registry.npm.taobao.org \
       && npm i -g typescript typescript-language-server \
-      && npm i -g bash-language-server
+      && npm i -g bash-language-server \
+      && npm i -g pyright
 
 # ============================================================
 # https://hub.docker.com/r/rikorose/gcc-cmake/dockerfile
 
-ENV CMAKE_VERSION 3.22.1
+ENV CMAKE_VERSION 3.22.3
 
 RUN wget https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmake-$CMAKE_VERSION-linux-x86_64.sh \
       --no-check-certificate \
@@ -125,7 +126,7 @@ RUN wget https://github.com/ninja-build/ninja/releases/download/v$NINJA_VERSION/
 # https://github.com/protocolbuffers/protobuf/blob/master/src/README.md
 # install latest protobuf
 
-ARG PROTOBUF_VERSION=3.19.1
+ARG PROTOBUF_VERSION=3.19.4
 
 RUN apt-get install -y autoconf automake libtool curl make g++ unzip && \
     git clone --depth 1 --recursive --branch v${PROTOBUF_VERSION} https://github.com/protocolbuffers/protobuf.git && \
@@ -159,28 +160,6 @@ RUN git clone --depth 1 --branch $BEAR_VERSION https://github.com/rizsotto/Bear.
     make all -j4 && \
     make install
 
-# ============================================================
-# Build YCMD
-# https://github.com/AlexandreCarlton/ycmd-docker
-
-RUN apt-get update && \
-    apt-get install -y \
-            python3-pip
-
-RUN git clone --depth 1 --recursive https://github.com/ycm-core/ycmd && \
-    cd ycmd && \
-    pip3 install requests && \
-    python3 build.py \
-          --clang-completer \
-          --ts-completer \
-          --ninja && \
-    mkdir build && \
-    cp CORE_VERSION ./build/ && \
-    cp -r third_party ./build/ && \
-    cp -r ycmd ./build/ && \
-    cp -r examples ./build/ && \
-    cp ycm_core*.so ./build/ && \
-    cp -r ./build /usr/local/lib/ycmd
 
 # ============================================================
 # Build Aspell
@@ -236,7 +215,7 @@ RUN    wget https://github.com/git-lfs/git-lfs/releases/download/v$GITLFS_VERSIO
 # https://github.com/tensorflow/tensorflow/blob/master/tensorflow/tools/dockerfiles/partials/ubuntu/bazelbuild.partial.Dockerfile
 # Install bazel
 
-ARG BAZEL_VERSION=4.2.2
+ARG BAZEL_VERSION=5.0.0
 RUN mkdir /bazel && \
     wget --no-check-certificate \
          -O /bazel/installer.sh "https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel-${BAZEL_VERSION}-installer-linux-x86_64.sh" && \
