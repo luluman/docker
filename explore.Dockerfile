@@ -68,7 +68,8 @@ RUN git clone --depth=1 git://gcc.gnu.org/git/gcc.git -b master /opt/gcc && \
     ./configure --enable-host-shared --enable-languages=jit \
          --disable-bootstrap --enable-checking=release && \
     make -j$(nproc) && \
-    make install-strip
+    make install-strip && \
+    rm /usr/local/bin/gcc*
 
 RUN ldconfig
 RUN git clone --depth 1 --branch emacs-28 https://github.com/emacs-mirror/emacs /opt/emacs && \
@@ -286,13 +287,17 @@ RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
     mkdir llvm-project/build-clangd && \
     cd llvm-project/build-clangd && \
     cmake -G Ninja \
-          ../llvm -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
+          ../llvm -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;openmp" \
+          -DLLVM_ENABLE_ASSERTIONS=OFF \
+          -DLLVM_ENABLE_BACKTRACES=ON \
+          -DLLVM_ENABLE_TERMINFO=OFF \
           -DCMAKE_BUILD_TYPE=Release \
           -DLLVM_TARGETS_TO_BUILD="X86" \
           -DLLVM_INCLUDE_TESTS=NO \
           -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ \
           && \
     ninja clangd clang-format clang-tidy clangd-indexer && \
+    cp ./projects/openmp/runtime/src/omp{,-tools}.h ./lib/clang/*/include/ || true && \
     mkdir clangd-latest && \
     cd clangd-latest && \
     mkdir bin && \
@@ -438,8 +443,7 @@ RUN apt-get update && \
 
 COPY --from=builder1 /usr/local /usr/local
 # emacs bug
-RUN find /usr/local/lib/emacs/ -name native-lisp | xargs -I{} ln -s {} /usr/ \
-    && rm /usr/local/bin/gcc*
+RUN find /usr/local/lib/emacs/ -name native-lisp | xargs -I{} ln -s {} /usr/ 
 
 ENV SHELL "/bin/bash"
 

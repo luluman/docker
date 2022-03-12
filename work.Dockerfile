@@ -151,12 +151,13 @@ RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
     mkdir llvm-project/build-clangd && \
     cd llvm-project/build-clangd && \
     cmake -G Ninja \
-          ../llvm -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
+          ../llvm -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;openmp" \
           -DCMAKE_BUILD_TYPE=Release \
           -DLLVM_TARGETS_TO_BUILD="X86" \
           -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ \
           -DLLVM_INCLUDE_TESTS=NO && \
     ninja clangd clang-format clang-tidy clangd-indexer && \
+    cp ./projects/openmp/runtime/src/omp{,-tools}.h ./lib/clang/*/include/ || true && \
     mkdir clangd-latest && \
     cd clangd-latest && \
     mkdir bin && \
