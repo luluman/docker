@@ -35,7 +35,6 @@ RUN apt-get update && \
             libxt-dev \
             libjansson4 \
             gcc-multilib \
-            g++-8 \
             libcanberra-gtk3-module \
             libjansson-dev \
             librsvg2-dev \
@@ -49,7 +48,6 @@ RUN git config --global http.sslVerify false
 # https://www.masteringemacs.org/article/speed-up-emacs-libjansson-native-elisp-compilation
 # https://gitlab.com/koral/emacs-nativecomp-dockerfile/-/blob/master/Dockerfile
 
-# Needed for add-apt-repository, et al.
 RUN apt-get update \
         && apt-get install -y \
         apt-transport-https \
@@ -61,15 +59,11 @@ RUN apt-get update \
         wget \
         unzip
 
-RUN ln -s /usr/bin/g++-8 /usr/bin/g++
-
-RUN git clone --depth=1 git://gcc.gnu.org/git/gcc.git -b master /opt/gcc && \
-    cd /opt/gcc && \
-    ./configure --enable-host-shared --enable-languages=jit \
-         --disable-bootstrap --enable-checking=release && \
-    make -j$(nproc) && \
-    make install-strip && \
-    rm /usr/local/bin/gcc*
+RUN add-apt-repository -y ppa:ubuntu-toolchain-r/test \
+        && apt-get update -y \
+        && apt-get install -y gcc-11 g++-11 libgccjit0 libgccjit-11-dev \
+        && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 60 --slave /usr/bin/g++ g++ /usr/bin/g++-11 \
+        && update-alternatives --config gcc
 
 RUN ldconfig
 RUN git clone --depth 1 --branch emacs-28 https://github.com/emacs-mirror/emacs /opt/emacs && \
@@ -253,64 +247,10 @@ RUN  ln -f -s "${INSTALL_DIR}/Bazel_and_CompileCommands-master/legalize_compile_
 RUN mkdir /usr/local/share/bash-color
 COPY scripts/terminfo-24bit.src /usr/local/share/bash-color/
 
-# ********************************************************************************
-#
-# satge 1
-# ********************************************************************************
-
-FROM ubuntu:${UBUNTU_VERSION} AS builder1
-ARG DEBIAN_FRONTEND
-# ================================================================================
-
-# dependency of llvm
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-            build-essential \
-            wget \
-            git \
-            libcurl3-dev \
-            python3-dev \
-            pkg-config \
-            clang \
-            && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN git config --global http.sslVerify false
-COPY --from=builder0 /usr/local /usr/local
-
-# ============================================================
-# Build clangd
-# https://gist.github.com/jakob/929ed728c96741a119798647a32618ca
-
-RUN git clone --depth 1 https://github.com/llvm/llvm-project.git && \
-    mkdir llvm-project/build-clangd && \
-    cd llvm-project/build-clangd && \
-    cmake -G Ninja \
-          ../llvm -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;openmp" \
-          -DLLVM_ENABLE_ASSERTIONS=OFF \
-          -DLLVM_ENABLE_BACKTRACES=ON \
-          -DLLVM_ENABLE_TERMINFO=OFF \
-          -DCMAKE_BUILD_TYPE=Release \
-          -DLLVM_TARGETS_TO_BUILD="X86" \
-          -DLLVM_INCLUDE_TESTS=NO \
-          -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ \
-          && \
-    ninja clangd clang-format clang-tidy clangd-indexer && \
-    cp ./projects/openmp/runtime/src/omp{,-tools}.h ./lib/clang/*/include/ || true && \
-    mkdir clangd-latest && \
-    cd clangd-latest && \
-    mkdir bin && \
-    mkdir lib && \
-    cp ../bin/clangd* ./bin/ && \
-    cp ../bin/clang-format ./bin/ && \
-    cp ../bin/clang-tidy ./bin/ && \
-    cp -r ../lib/clang ./lib/ && \
-    cp -r ./* /usr/local
 
 # ********************************************************************************
 #
-# satge 2
+# satge 1 
 # ********************************************************************************
 
 FROM ubuntu:${UBUNTU_VERSION} AS base
@@ -403,8 +343,10 @@ RUN    wget https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLV
     && rm  clang+llvm* -rf \
        # update gcc
     && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
-    && apt-get update \
-    && apt-get install -y gdb \
+    && apt-get update -y \
+    && apt-get install -y gcc-11 g++-11 gdb libgccjit0 libgccjit-11-dev \
+    && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 60 --slave /usr/bin/g++ g++ /usr/bin/g++-11 \
+    && update-alternatives --config gcc \ 
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -441,7 +383,7 @@ RUN apt-get update && \
 
 # ================================================================================
 
-COPY --from=builder1 /usr/local /usr/local
+COPY --from=builder0 /usr/local /usr/local
 # emacs bug
 RUN find /usr/local/lib/emacs/ -name native-lisp | xargs -I{} ln -s {} /usr/ 
 
