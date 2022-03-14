@@ -248,6 +248,18 @@ RUN mkdir /usr/local/share/bash-color
 COPY scripts/terminfo-24bit.src /usr/local/share/bash-color/
 
 
+# ============================================================
+# download latest clangd
+
+RUN curl -s https://github.com/clangd/clangd/releases \
+      | grep "clangd-linux-snapshot" \
+      | cut -d '"' -f 2 \
+      | head -n 1 \
+      | wget --no-check-certificate --base=http://github.com/ -i - && \
+      unzip clangd-linux-snapshot*.zip && \
+      cp -r ./clangd_snapshot_*/* /usr/local
+
+
 # ********************************************************************************
 #
 # satge 1 
