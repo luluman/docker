@@ -219,16 +219,6 @@ RUN mkdir /bazel && \
     rm -f /bazel/installer.sh
 
 # ============================================================
-# https://github.com/grailbio/bazel-compilation-database
-# install bazel-compilation-database
-
-ENV INSTALL_DIR /usr/local/lib
-ARG VERSION=0.4.5
-RUN    cd "${INSTALL_DIR}" \
-    && curl -Lk "https://github.com/grailbio/bazel-compilation-database/archive/${VERSION}.tar.gz" | tar -xz \
-    && ln -f -s "${INSTALL_DIR}/bazel-compilation-database-${VERSION}/generate.sh" /usr/local/bin/bazel-compdb
-
-# ============================================================
 # https://github.com/vincent-picaud/Bazel_and_CompileCommands
 # install Bazel_and_CompileCommands :) // really great and helpful
 
@@ -259,6 +249,17 @@ RUN curl -s https://github.com/clangd/clangd/releases \
       unzip clangd-linux-snapshot*.zip && \
       cp -r ./clangd_snapshot_*/* /usr/local
 
+# ============================================================
+# download flat-buffer-compiler
+
+RUN curl -s https://github.com/google/flatbuffers/releases \
+      | grep "Linux.flatc" \
+      | cut -d '"' -f 2 \
+      | head -n 1 \
+      | wget --no-check-certificate --base=http://github.com/ -i - && \
+      unzip Linux.flatc.binary*.zip && \
+      chmod +x ./flatc && \
+      cp ./flatc /usr/local/bin/
 
 # ********************************************************************************
 #
