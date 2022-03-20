@@ -261,9 +261,21 @@ RUN curl -s https://github.com/google/flatbuffers/releases \
       chmod +x ./flatc && \
       cp ./flatc /usr/local/bin/
 
+# ===========================================================
+# install ccache
+
+RUN git clone https://github.com/ccache/ccache --branch=1 --branch v4.6 && \
+        cd ccache && \
+        mkdir build && \
+        cd build && \
+        cmake -DZSTD_FROM_INTERNET=ON \
+              -DHIREDIS_FROM_INTERNET=ON \
+              -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=Release .. && \
+        make && make install
+
 # ********************************************************************************
 #
-# satge 1 
+# stage 1
 # ********************************************************************************
 
 FROM ubuntu:${UBUNTU_VERSION} AS base
