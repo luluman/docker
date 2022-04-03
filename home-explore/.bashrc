@@ -125,6 +125,37 @@ else
     export TERM=xterm-256color
 fi
 
+
+# vtrem configuration
+# The main goal of these additional functions is to enable
+# the shell to send information to vterm via properly escaped sequences.
+vterm_printf(){
+    if [ -n "$TMUX" ] && ([ "${TERM%%-*}" = "tmux" ] || [ "${TERM%%-*}" = "screen" ] ); then
+        # Tell tmux to pass the escape sequences through
+        printf "\ePtmux;\e\e]%s\007\e\\" "$1"
+    elif [ "${TERM%%-*}" = "screen" ]; then
+        # GNU screen (screen, screen-256color, screen-256color-bce)
+        printf "\eP\e]%s\007\e\\" "$1"
+    else
+        printf "\e]%s\e\\" "$1"
+    fi
+}
+vterm_prompt_end(){
+  vterm_printf "51;A$(whoami)@$(hostname):$(pwd)"
+}
+# clears the current buffer from the data that it is not currently visible.
+if [[ "$INSIDE_EMACS" = 'vterm' ]]; then
+    function clear(){
+        vterm_printf "51;Evterm-clear-scrollback";
+        tput clear;
+    }
+    # Directory tracking and Prompt tracking
+    PS1=$PS1'\[$(vterm_prompt_end)\]'
+    # rename buffer name
+    PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }"'echo -ne "\033]0;${HOSTNAME}:${PWD}\007"'
+fi
+# end vterm configuration
+
 alias make="bear make"
 
 export USER=$(whoami)
