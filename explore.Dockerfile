@@ -79,7 +79,7 @@ RUN git clone --depth 1 --branch emacs-28 https://github.com/emacs-mirror/emacs 
 # ============================================================
 # https://github.com/nodejs/docker-node
 
-ENV NODE_VERSION 16.14.0
+ENV NODE_VERSION 16.14.2
 
 RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
       && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
@@ -98,7 +98,7 @@ RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-
 # ============================================================
 # https://hub.docker.com/r/rikorose/gcc-cmake/dockerfile
 
-ENV CMAKE_VERSION 3.22.3
+ENV CMAKE_VERSION 3.23.0
 
 RUN wget https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmake-$CMAKE_VERSION-linux-x86_64.sh \
       --no-check-certificate \
@@ -121,7 +121,7 @@ RUN wget https://github.com/ninja-build/ninja/releases/download/v$NINJA_VERSION/
 # https://github.com/protocolbuffers/protobuf/blob/master/src/README.md
 # install latest protobuf
 
-ARG PROTOBUF_VERSION=3.19.4
+ARG PROTOBUF_VERSION=3.20.0
 
 RUN apt-get install -y autoconf automake libtool curl make g++ unzip && \
     git clone --depth 1 --recursive --branch v${PROTOBUF_VERSION} https://github.com/protocolbuffers/protobuf.git && \
@@ -210,7 +210,7 @@ RUN    wget https://github.com/git-lfs/git-lfs/releases/download/v$GITLFS_VERSIO
 # https://github.com/tensorflow/tensorflow/blob/master/tensorflow/tools/dockerfiles/partials/ubuntu/bazelbuild.partial.Dockerfile
 # Install bazel
 
-ARG BAZEL_VERSION=5.0.0
+ARG BAZEL_VERSION=5.1.0
 RUN mkdir /bazel && \
     wget --no-check-certificate \
          -O /bazel/installer.sh "https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel-${BAZEL_VERSION}-installer-linux-x86_64.sh" && \
