@@ -35,6 +35,29 @@ function work-linux()
          mattlu/work-dev:latest /bin/bash
 }
 
+function work-linux-18.04()
+{
+  local UID=$(id -u)
+  local GID=$(id -g)
+  local home=$(realpath ~/.docker/home-work-18.04)
+  local workspace=$(realpath ~/workspace)
+  local data=$(realpath /data)
+  local share=$(realpath /share)
+  docker run -t \
+         --privileged \
+         --name ${USER}-work-18.04 \
+         --user $UID:$GID \
+         --detach-keys "ctrl-^,ctrl-@" \
+         --volume="${home}:/home/$USER":delegated \
+         --volume="${workspace}:/workspace":cached \
+         --volume="${data}:/data":cached \
+         --volume="/etc/group:/etc/group:ro" \
+         --volume="/etc/passwd:/etc/passwd:ro" \
+         --volume="/etc/shadow:/etc/shadow:ro" \
+         --detach \
+         mattlu/work-dev:18.04 /bin/bash
+}
+
 function explore-linux()
 {
   local UID=$(id -u)
@@ -71,6 +94,14 @@ function work-linux-exec()
   docker exec -ti \
          --detach-keys "ctrl-^,ctrl-@" \
          ${USER}-work /bin/bash
+
+}
+
+function work-linux-exec-18.04()
+{
+  docker exec -ti \
+         --detach-keys "ctrl-^,ctrl-@" \
+         ${USER}-work-18.04 /bin/bash
 
 }
 

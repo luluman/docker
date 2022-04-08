@@ -1,0 +1,22 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ master ]
+#  pull_request:
+#    branches: [ master ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+     - uses: actions/checkout@v1
+     - name: Login to DockerHub Registry
+       run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+     - name: Build the latest Docker image
+       run: docker build . --file work-18.04.Dockerfile --tag mattlu/work-dev:18.04
+     - name: Push the latest Docker image
+       run: docker push mattlu/work-dev:18.04
