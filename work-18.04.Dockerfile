@@ -61,11 +61,10 @@ RUN apt-get update \
 
 RUN add-apt-repository -y ppa:ubuntu-toolchain-r/test \
         && apt-get update -y \
-        && apt-get install -y gcc-11 g++-11 libgccjit0 libgccjit-11-dev \
-        && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 60 --slave /usr/bin/g++ g++ /usr/bin/g++-11 \
-        && update-alternatives --config gcc
+        && apt-get install -y gcc-11 libgccjit0 libgccjit-11-dev 
 
 RUN ldconfig
+ENV CC="gcc-11"
 RUN git clone --depth 1 --branch emacs-28 https://github.com/emacs-mirror/emacs /opt/emacs && \
     cd /opt/emacs && \
     ./autogen.sh && \
@@ -294,9 +293,7 @@ RUN apt-get update \
        # update gcc for gccjit emacs
     && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
     && apt-get update -y \
-    && apt-get install -y gcc-11 gdb libgccjit0 libgccjit-11-dev \
-    && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 60 \
-    && update-alternatives --config gcc \ 
+    && apt-get install -y gcc-11 g++-11 gdb libgccjit0 libgccjit-11-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
