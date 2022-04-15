@@ -234,13 +234,6 @@ RUN git clone https://github.com/ccache/ccache --branch=1 --branch v4.6 && \
               -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=Release .. && \
         make && make install
 
-# ===========================================================
-# install gtest
-RUN git clone https://github.com/google/googletest.git -b release-1.11.0 && \
-       cd googletest && \
-       mkdir build && \
-       cd build && \
-       cmake .. && make && make install
 
 # ********************************************************************************
 #
@@ -318,12 +311,21 @@ RUN apt-get update && \
             virtualenv \
             swig \
             openssh-client \
-            # ufw 
-            libboost-all-dev \
+            # bmlang
+            swig \
+            # ufw
+            libatlas-base-dev \ 
+            libboost-dev \
+            libboost-filesystem-dev \
+            libboost-system-dev \
+            libboost-regex-dev \
+            libboost-thread-dev \
             libgflags-dev \
             libgoogle-glog-dev \
             libleveldb-dev \
             liblmdb-dev \
+            libopenblas-dev \
+            libhdf5-serial-dev \
             # llvm
             libncurses-dev \
             # dev needed
@@ -333,7 +335,6 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # ================================================================================
-
 COPY --from=builder0 /usr/local /usr/local
 # emacs bug
 RUN find /usr/local/lib/emacs/ -name native-lisp | xargs -I{} ln -s {} /usr/ 
