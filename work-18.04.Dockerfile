@@ -180,11 +180,20 @@ RUN     set -x \
     &&  mv ripgrep-${RG_VERSION}-x86_64-unknown-linux-musl/rg /usr/local/bin/
 
 # ============================================================
+# build fd-find
+
+ENV FD_VERSION=8.3.2
+RUN     set -x \
+    &&  wget https://github.com/sharkdp/fd/releases/download/v${FD_VERSION}/fd-v${FD_VERSION}-x86_64-unknown-linux-gnu.tar.gz \
+             --no-check-certificate \
+    &&  tar xzf fd-v${FD_VERSION}-x86_64-unknown-linux-gnu.tar.gz \
+    &&  mv fd-v${FD_VERSION}-x86_64-unknown-linux-gnu/fd /usr/local/bin/
+
+# ============================================================
 # https://github.com/Valian/docker-git-lfs
 # build git-lfs
 
 ENV GITLFS_VERSION=3.0.2
-
 RUN    wget https://github.com/git-lfs/git-lfs/releases/download/v$GITLFS_VERSION/git-lfs-linux-amd64-v$GITLFS_VERSION.tar.gz \
             -c --retry-connrefused --tries=0 --timeout=180 --no-check-certificate \
     && tar -zxf git-lfs-linux-amd64-v$GITLFS_VERSION.tar.gz \
