@@ -335,6 +335,8 @@ RUN apt-get update && \
             liblmdb-dev \
             libopenblas-dev \
             libhdf5-serial-dev \
+            # bmnetp
+            libnuma1 \
             # llvm
             libncurses-dev \
             # dev needed
