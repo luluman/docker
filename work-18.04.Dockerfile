@@ -277,6 +277,9 @@ RUN apt-get update && \
             # for vterm 
             libtool \
             libtool-bin \
+            # for monkeytype
+            fortune \
+            fortunes \
             && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
