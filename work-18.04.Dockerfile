@@ -244,6 +244,18 @@ RUN git clone https://github.com/ccache/ccache --branch=1 --branch v4.6 && \
         make && make install
 
 
+# ===========================================================
+# install fuz (fuzzy match scoring/matching functions for Emacs)
+
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
+    apt-get update && apt-get install -y clang llvm && \
+    git clone https://github.com/rustify-emacs/fuz.el fuz
+
+ENV PATH="/root/.cargo/bin:${PATH}"
+RUN cd fuz && \
+        cargo build --release && \
+        cp target/release/libfuz_core.so /usr/local/lib/
+
 # ********************************************************************************
 #
 # stage 1
