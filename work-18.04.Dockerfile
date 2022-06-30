@@ -78,7 +78,7 @@ RUN git clone --depth 1 --branch emacs-28 https://github.com/emacs-mirror/emacs 
 # ============================================================
 # https://github.com/nodejs/docker-node
 
-ENV NODE_VERSION 16.14.2
+ENV NODE_VERSION 16.15.1
 
 RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
       && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
@@ -246,7 +246,6 @@ RUN git clone https://github.com/ccache/ccache --branch=1 --branch v4.6 && \
 
 # ===========================================================
 # install fuz (fuzzy match scoring/matching functions for Emacs)
-
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
     apt-get update && apt-get install -y clang llvm && \
     git clone https://github.com/rustify-emacs/fuz.el fuz
@@ -255,6 +254,11 @@ ENV PATH="/root/.cargo/bin:${PATH}"
 RUN cd fuz && \
         cargo build --release && \
         cp target/release/libfuz_core.so /usr/local/lib/
+
+# ==========================================================
+# install rust-analyzer
+RUN curl -L https://github.com/rust-analyzer/rust-analyzer/releases/latest/download/rust-analyzer-x86_64-unknown-linux-gnu.gz | gunzip -c - > /usr/local/bin/rust-analyzer \
+    && chmod +x /usr/local/bin/rust-analyzer
 
 # ********************************************************************************
 #
