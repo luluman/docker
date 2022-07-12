@@ -12,7 +12,9 @@ RUN apt-get update && apt-get install -y apt-transport-https ca-certificates && 
         libncurses5-dev \
         python3.7-dev \
         python3-distutils \
-				curl wget \
+	curl wget \
+        # for opencv
+        libgl1 \
         libnuma1 libatlas-base-dev \
         unzip vim \
         graphviz \
@@ -46,11 +48,10 @@ RUN apt-get update && apt-get install -y apt-transport-https ca-certificates && 
 			nose \
 			numpy \
 			mxnet==1.8.0 \
-			onnx==1.7.0 \
+			onnx==1.12.0 \
 			onnxruntime==1.6.0 \
 			onnx-simplifier \
 			opencv-contrib-python \
-			opencv-python \
 			opencv-python-headless \
 			packaging \
 			pandas \
