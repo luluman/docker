@@ -34,13 +34,22 @@ RUN apt-get update && apt-get install -y apt-transport-https ca-certificates && 
 			argcomplete \
 			Cython \
 			decorator \
+                        dash \
+                        dash-bootstrap-components \
+                        dash-draggable \
+                        dash-cytoscape \
+                        dash-split-pane \
+                        dash-table \
 			enum34 \
 			gitpython \
+                        grpcio \
+                        ipykernel \
 			ipython \
 			jedi \
 			Jinja2 \
 			jupyterlab \
-			kaleido \
+                        jsonschema \
+                        kaleido \
 			leveldb \
 			lmdb \
 			matplotlib \
