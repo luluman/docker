@@ -68,7 +68,7 @@ RUN apt-get update && apt-get install -y apt-transport-https ca-certificates && 
 			Pillow \
 			plotly \
 			ply \
-			protobuf \
+			protobuf==3.20.1 \
 			pybind11[global] \
 			pycocotools \
 			python-dateutil \
