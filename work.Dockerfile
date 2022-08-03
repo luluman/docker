@@ -367,7 +367,7 @@ RUN apt-get update && \
 
 # ================================================================================
 COPY --from=builder0 /usr/local /usr/local
-# emacs bug
+# fix emacs bug
 RUN find /usr/local/lib/emacs/ -name native-lisp | xargs -I{} ln -s {} /usr/
 
 ENV SHELL "/bin/bash"

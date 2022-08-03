@@ -35,11 +35,11 @@ function work-linux()
          mattlu/work-dev:latest /bin/bash
 }
 
-function work-linux()
+function work-linux-16.04()
 {
   local UID=$(id -u)
   local GID=$(id -g)
-  local home=$(realpath ~/.docker/home-work-18.04)
+  local home=$(realpath ~/.docker/home-work-16.04)
   local workspace=$(realpath ~/workspace)
   local data=$(realpath /data)
   local share=$(realpath /share)
