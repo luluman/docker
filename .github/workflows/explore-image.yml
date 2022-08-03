@@ -1,8 +1,9 @@
-name: Docker Image CI
+name: explore
 
 on:
   push:
-    branches: [ master ]
+    paths:
+      - 'explore.Dockerfile'
 #  pull_request:
 #    branches: [ master ]
 

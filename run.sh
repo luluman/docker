@@ -35,7 +35,7 @@ function work-linux()
          mattlu/work-dev:latest /bin/bash
 }
 
-function work-linux-18.04()
+function work-linux()
 {
   local UID=$(id -u)
   local GID=$(id -g)
@@ -55,7 +55,7 @@ function work-linux-18.04()
          --volume="/etc/passwd:/etc/passwd:ro" \
          --volume="/etc/shadow:/etc/shadow:ro" \
          --detach \
-         mattlu/work-dev:18.04 /bin/bash
+         mattlu/work-dev:16.04 /bin/bash
 }
 
 function explore-linux()
@@ -97,11 +97,11 @@ function work-linux-exec()
 
 }
 
-function work-linux-exec-18.04()
+function work-linux-exec-16.04()
 {
   docker exec -ti \
          --detach-keys "ctrl-^,ctrl-@" \
-         ${USER}-work-18.04 /bin/bash
+         ${USER}-work-16.04 /bin/bash
 
 }
 

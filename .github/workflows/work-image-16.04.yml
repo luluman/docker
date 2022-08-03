@@ -1,8 +1,9 @@
-name: Docker Image CI
+name: work-dev-16.04
 
 on:
   push:
-    branches: [ master ]
+    paths:
+      - 'work-16.04.Dockerfile'
 #  pull_request:
 #    branches: [ master ]
 
@@ -17,6 +18,9 @@ jobs:
      - name: Login to DockerHub Registry
        run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
      - name: Build the latest Docker image
-       run: docker build . --file work-18.04.Dockerfile --tag mattlu/work-dev:18.04
+       run: |
+         docker build . --file work-16.04.Dockerfile --tag work-dev
+         # docker image tag work-dev --tag mattlu/work-dev:latest
+         docker image tag work-dev --tag mattlu/work-dev:16.04
      - name: Push the latest Docker image
-       run: docker push mattlu/work-dev:18.04
+       run: docker push --all-tags mattlu/work-dev
