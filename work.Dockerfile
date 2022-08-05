@@ -93,7 +93,10 @@ RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-
       && npm i --location=global typescript typescript-language-server \
       && npm i --location=global bash-language-server \
       && npm i --location=global pyright \
+      && npm i --location=global dockerfile-language-server-nodejs \
+      && npm i --location=global vscode-langservers-extracted  \
       && npm i --location=global yaml-language-server
+
 
 # ============================================================
 # https://hub.docker.com/r/rikorose/gcc-cmake/dockerfile
