@@ -90,10 +90,10 @@ RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-
       && npm --version \
       # install some LSP servers
       # && npm config set registry https://registry.npm.taobao.org \
-      && npm i -g typescript typescript-language-server \
-      && npm i -g bash-language-server \
-      && npm i -g pyright \
-      && npm i yaml-language-server
+      && npm i --location=global typescript typescript-language-server \
+      && npm i --location=global bash-language-server \
+      && npm i --location=global pyright \
+      && npm i --location=global yaml-language-server
 
 # ============================================================
 # https://hub.docker.com/r/rikorose/gcc-cmake/dockerfile

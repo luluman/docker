@@ -20,7 +20,7 @@ jobs:
      - name: Build the latest Docker image
        run: |
          docker build . --file work.Dockerfile --tag work-dev
-         docker image tag work-dev --tag mattlu/work-dev:latest
-         docker image tag work-dev --tag mattlu/work-dev:18.04
+         docker image tag work-dev mattlu/work-dev:latest
+         docker image tag work-dev mattlu/work-dev:18.04
      - name: Push the latest Docker image
        run: docker push --all-tags mattlu/work-dev
