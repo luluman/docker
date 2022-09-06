@@ -4,6 +4,8 @@ on:
   push:
     paths:
       - 'work.Dockerfile'
+
+  workflow_dispatch:
 #  pull_request:
 #    branches: [ master ]
 
