@@ -264,6 +264,12 @@ RUN cd fuz && \
 RUN curl -L https://github.com/rust-analyzer/rust-analyzer/releases/latest/download/rust-analyzer-x86_64-unknown-linux-gnu.gz | gunzip -c - > /usr/local/bin/rust-analyzer \
     && chmod +x /usr/local/bin/rust-analyzer
 
+# ==========================================================
+# install tectonic
+RUN curl -L "https://github.com/tectonic-typesetting/tectonic/releases/download/tectonic%400.9.0/tectonic-0.9.0-x86_64-unknown-linux-gnu.tar.gz" | gunzip -c - > /usr/local/bin/tectonic \
+    && chmod +x /usr/local/bin/tectonic
+
+
 # ********************************************************************************
 #
 # stage 1
