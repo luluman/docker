@@ -362,6 +362,8 @@ RUN apt-get update && \
     libhdf5-serial-dev \
     # bmnetp
     libnuma1 \
+    # bmnetu
+    liblzma-dev \
     # llvm
     libncurses-dev \
     # dev needed
