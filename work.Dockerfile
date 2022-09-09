@@ -378,8 +378,14 @@ RUN apt-get update && \
 
 # ================================================================================
 COPY --from=builder0 /usr/local /usr/local
-# fix emacs bug
-RUN find /usr/local/lib/emacs/ -name native-lisp | xargs -I{} ln -s {} /usr/
+
+RUN \
+    # fix emacs bug
+    find /usr/local/lib/emacs/ -name native-lisp | xargs -I{} ln -s {} /usr/ \
+    # install some fonts
+    && wget "http://mirrors.ctan.org/fonts/fandol.zip" -O /usr/share/fonts/fandol.zip \
+    && unzip /usr/share/fonts/fandol.zip -d /usr/share/fonts \
+    && rm /usr/share/fonts/fandol.zip
 
 ENV SHELL "/bin/bash"
 
