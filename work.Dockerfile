@@ -372,6 +372,7 @@ RUN apt-get update && \
     libfontconfig1-dev \
     # dev needed
     parallel \
+    rsync \
     && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
