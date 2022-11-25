@@ -63,14 +63,26 @@ RUN add-apt-repository -y ppa:ubuntu-toolchain-r/test \
     && apt-get update -y \
     && apt-get install -y gcc-11 libgccjit0 libgccjit-11-dev
 
+# install tree-sitter
+# https://www.reddit.com/r/emacs/comments/z25iyx/comment/ixll68j/?utm_source=share&utm_medium=web2x&context=3
+ENV CC="gcc-11" CFLAGS="-O3 -Wall -Wextra"
+RUN git clone --depth 1 https://github.com/tree-sitter/tree-sitter.git /opt/tree-sitter && \
+    cd /opt/tree-sitter && \
+    # NOTE: update version in Makefile to 0.20.7
+    sed -i 's/^VERSION := 0\.6\.3$/VERSION := 0.20.7/' Makefile && \
+    make -j4 && \
+    make install
+
 RUN ldconfig
-ENV CC="gcc-11"
-RUN git clone --depth 1 --branch emacs-28 https://github.com/emacs-mirror/emacs /opt/emacs && \
+ENV CC="gcc-11" CFLAGS="-O2"
+RUN git clone --depth 1 https://github.com/emacs-mirror/emacs /opt/emacs && \
     cd /opt/emacs && \
     ./autogen.sh && \
     ./configure --build="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
     --with-modules \
     --with-native-compilation \
+    --with-tree-sitter \
+    --with-json \
     --prefix=/usr/local && \
     make NATIVE_FULL_AOT=1 -j30 && \
     make install-strip
@@ -214,23 +226,20 @@ COPY scripts/terminfo-24bit.src /usr/local/share/bash-color/
 
 # ============================================================
 # download latest clangd
-
-RUN curl -s https://github.com/clangd/clangd/releases \
-    | grep "clangd-linux-snapshot" \
-    | cut -d '"' -f 2 \
-    | head -n 1 \
-    | wget --no-check-certificate --base=http://github.com/ -i - && \
-    unzip clangd-linux-snapshot*.zip && \
-    cp -r ./clangd_snapshot_*/* /usr/local
+# use lastversion
+RUN apt-get update && \
+    apt-get install -y \
+    python3-pip && \
+    pip3 install -U setuptools pip && \
+    pip3 install lastversion && \
+    lastversion --assets --filter clangd-linux download https://github.com/clangd/clangd/releases && \
+    unzip clangd-linux*.zip && \
+    cp -r ./clangd*/* /usr/local
 
 # ============================================================
 # download flat-buffer-compiler
 
-RUN curl -s https://github.com/google/flatbuffers/releases \
-    | grep "Linux.flatc" \
-    | cut -d '"' -f 2 \
-    | head -n 1 \
-    | wget --no-check-certificate --base=http://github.com/ -i - && \
+RUN lastversion --assets --filter Linux.flatc.binary.g download https://github.com/google/flatbuffers/releases && \
     unzip Linux.flatc.binary*.zip && \
     chmod +x ./flatc && \
     cp ./flatc /usr/local/bin/
