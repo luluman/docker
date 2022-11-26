@@ -16,9 +16,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Get current commit-hash
-        id: commit
-        run: echo "::set-output name=git_hash::$(git rev-parse --short '$GITHUB_SHA')"
+      - id: commit
+        uses: pr-mpt/actions-commit-hash@v2
       - uses: actions/checkout@v1
       - name: Login to DockerHub Registry
         run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
@@ -27,6 +26,6 @@ jobs:
           docker build . --file work.Dockerfile --tag work-dev
           docker image tag work-dev mattlu/work-dev:latest
           docker image tag work-dev mattlu/work-dev:18.04
-          docker image tag work-dev mattlu/work-dev:18.04-${{ steps.commit.outputs.git_hash }}
+          docker image tag work-dev mattlu/work-dev:18.04-${{ steps.commit.outputs.short }}
       - name: Push the latest Docker image
         run: docker push --all-tags mattlu/work-dev

@@ -90,8 +90,9 @@ RUN git clone --depth 1 https://github.com/emacs-mirror/emacs /opt/emacs && \
 # ============================================================
 # tree-sitter-language
 # https://github.com/orzechowskid/emacs-docker/blob/main/src/build-ts-modules.sh
-
-RUN git clone --depth 1 https://github.com/casouri/tree-sitter-module && \
+RUN apt-get update && \
+    apt-get install -y g++ && \
+    git clone --depth 1 https://github.com/casouri/tree-sitter-module && \
     cd tree-sitter-module && \
     ./batch.sh && \
     mv ./dist /usr/local/lib/tree-sitter-langs
