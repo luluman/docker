@@ -88,6 +88,15 @@ RUN git clone --depth 1 https://github.com/emacs-mirror/emacs /opt/emacs && \
     make install-strip
 
 # ============================================================
+# tree-sitter-language
+# https://github.com/orzechowskid/emacs-docker/blob/main/src/build-ts-modules.sh
+
+RUN git clone --depth 1 https://github.com/casouri/tree-sitter-module && \
+    cd tree-sitter-module && \
+    ./batch.sh && \
+    mv ./dist /usr/local/lib/tree-sitter-langs
+
+# ============================================================
 # https://github.com/nodejs/docker-node
 
 ENV NODE_VERSION 16.17.0
