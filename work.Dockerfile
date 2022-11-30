@@ -75,7 +75,7 @@ RUN git clone --depth 1 https://github.com/tree-sitter/tree-sitter.git /opt/tree
 
 RUN ldconfig
 ENV CC="gcc-11" CFLAGS="-O2"
-RUN git clone --depth 1 https://github.com/emacs-mirror/emacs /opt/emacs && \
+RUN git clone --depth 1 --branch emacs-29 https://github.com/emacs-mirror/emacs /opt/emacs && \
     cd /opt/emacs && \
     ./autogen.sh && \
     ./configure --build="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
