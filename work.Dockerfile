@@ -91,12 +91,13 @@ RUN git clone --depth 1 --branch emacs-29 https://github.com/emacs-mirror/emacs 
 # tree-sitter-language
 # https://github.com/orzechowskid/emacs-docker/blob/main/src/build-ts-modules.sh
 # https://github.com/emacs-mirror/emacs/tree/master/admin/notes/tree-sitter
+# https://emacs-china.org/t/treesit-master/22862/69
 RUN apt-get update && \
     apt-get install -y g++ && \
-    git clone --depth 1 https://github.com/casouri/tree-sitter-module && \
-    cd tree-sitter-module && \
+    cd /opt/emacs/admin/notes/tree-sitter/build-module && \
     ./batch.sh && \
-    mv ./dist /usr/local/lib/tree-sitter-langs
+    mv ./dist/* /usr/local/lib/ && \
+    cd /opt/
 
 # ============================================================
 # https://github.com/nodejs/docker-node
