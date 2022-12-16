@@ -66,7 +66,7 @@ RUN add-apt-repository -y ppa:ubuntu-toolchain-r/test \
 # install tree-sitter
 # https://www.reddit.com/r/emacs/comments/z25iyx/comment/ixll68j/?utm_source=share&utm_medium=web2x&context=3
 ENV CC="gcc-11" CFLAGS="-O3 -Wall -Wextra"
-RUN git clone --depth 1 https://github.com/tree-sitter/tree-sitter.git /opt/tree-sitter && \
+RUN git clone --depth 1 --branch v0.20.7 https://github.com/tree-sitter/tree-sitter.git /opt/tree-sitter && \
     cd /opt/tree-sitter && \
     # NOTE: update version in Makefile to 0.20.7
     sed -i 's/^VERSION := 0\.6\.3$/VERSION := 0.20.7/' Makefile && \
