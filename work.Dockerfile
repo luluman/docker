@@ -38,6 +38,7 @@ RUN apt-get update && \
     libcanberra-gtk3-module \
     libjansson-dev \
     librsvg2-dev \
+    libsqlite3-dev \
     && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -83,6 +84,7 @@ RUN git clone --depth 1 --branch emacs-29 https://github.com/emacs-mirror/emacs 
     --with-native-compilation \
     --with-tree-sitter \
     --with-json \
+    --with-sqlite3 \
     --prefix=/usr/local && \
     make NATIVE_FULL_AOT=1 -j30 && \
     make install-strip
@@ -315,6 +317,7 @@ RUN apt-get update && \
     binutils \
     libc6-dev \
     librsvg2-2 \
+    libsqlite3-dev \
     # for vterm
     libtool \
     libtool-bin \
