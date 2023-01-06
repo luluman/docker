@@ -121,7 +121,8 @@ RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-
     && npm i --location=global pyright \
     && npm i --location=global dockerfile-language-server-nodejs \
     && npm i --location=global vscode-langservers-extracted  \
-    && npm i --location=global yaml-language-server
+    && npm i --location=global yaml-language-server \
+    && npm i --location=global markdownlint-cli
 
 
 # ============================================================
@@ -250,8 +251,18 @@ RUN apt-get update && \
     unzip clangd-linux*.zip && \
     cp -r ./clangd*/* /usr/local
 
+
 # ============================================================
-# download flat-buffer-compiler
+# download latest shfmt
+
+RUN lastversion --assets --filter _linux_amd64 download https://github.com/mvdan/sh/releases && \
+    mv shfmt*linux_amd64 shfmt && \
+    chmod +x ./shfmt && \
+    cp ./shfmt /usr/local/bin/
+
+
+# ============================================================
+# download flatbuffer-compiler
 
 RUN lastversion --assets --filter Linux.flatc.binary.g download https://github.com/google/flatbuffers/releases && \
     unzip Linux.flatc.binary*.zip && \
