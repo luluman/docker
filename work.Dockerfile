@@ -408,6 +408,9 @@ RUN apt-get update && \
     # dev needed
     parallel \
     rsync \
+    # for BM
+    bison \
+    flex \
     && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
