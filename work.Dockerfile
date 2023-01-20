@@ -104,7 +104,7 @@ RUN apt-get update && \
 # ============================================================
 # https://github.com/nodejs/docker-node
 
-ENV NODE_VERSION 16.18.1
+ENV NODE_VERSION 18.13.0
 
 RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
     && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
