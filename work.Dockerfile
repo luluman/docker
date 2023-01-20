@@ -411,6 +411,7 @@ RUN apt-get update && \
     # for BM
     bison \
     flex \
+    bsdmainutils \
     && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
