@@ -298,6 +298,15 @@ RUN cd fuz && \
 RUN curl -L https://github.com/rust-analyzer/rust-analyzer/releases/latest/download/rust-analyzer-x86_64-unknown-linux-gnu.gz | gunzip -c - > /usr/local/bin/rust-analyzer \
     && chmod +x /usr/local/bin/rust-analyzer
 
+# ==========================================================
+# install groovy-lsp
+RUN apt-get update && \
+    apt-get install -y default-jre && \
+    git clone https://github.com/GroovyLanguageServer/groovy-language-server && \
+    cd groovy-language-server && \
+    ./gradlew build && \
+    cp build/libs/* /usr/local/lib/
+
 # ********************************************************************************
 #
 # stage 1
@@ -412,6 +421,8 @@ RUN apt-get update && \
     bison \
     flex \
     bsdmainutils \
+    # for groovy
+    default-jre \
     && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
