@@ -433,7 +433,7 @@ RUN apt-get update && \
 RUN curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/bionic.gpg | apt-key add - && \
     curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/bionic.list | tee /etc/apt/sources.list.d/tailscale.list && \
     apt-get update && \
-    apt-get install -y tailscale openssh-server && \
+    apt-get install -y tailscale openssh-server mosh && \
     apt-get clean && \
     rm -rf tmp/* /var/cache/* /usr/share/doc/* /usr/share/man/* /var/lib/apt/lists/*
 
