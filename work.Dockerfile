@@ -346,7 +346,7 @@ RUN apt-get update && \
     fortunes \
     && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf tmp/* /var/cache/* /usr/share/doc/* /usr/share/man/* /var/lib/apt/lists/*
 
 
 RUN apt-get update \
@@ -364,7 +364,7 @@ RUN apt-get update \
     && apt-get update -y \
     && apt-get install -y gcc-11 g++-11 gdb libgccjit0 libgccjit-11-dev \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf tmp/* /var/cache/* /usr/share/doc/* /usr/share/man/* /var/lib/apt/lists/*
 
 # ===============================================================================
 # upgrade python
@@ -375,7 +375,7 @@ RUN apt-get update && \
     update-alternatives --install /usr/bin/python python /usr/bin/python3.7 10 && \
     update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.7 10 && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf tmp/* /var/cache/* /usr/share/doc/* /usr/share/man/* /var/lib/apt/lists/*
 
 
 # ================================================================================
@@ -425,7 +425,19 @@ RUN apt-get update && \
     default-jre \
     && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf tmp/* /var/cache/* /usr/share/doc/* /usr/share/man/* /var/lib/apt/lists/*
+
+
+# ================================================================================
+#  tailscale
+RUN curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/bionic.gpg | apt-key add - && \
+    curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/bionic.list | tee /etc/apt/sources.list.d/tailscale.list && \
+    apt-get update && \
+    apt-get install -y tailscale openssh-server && \
+    apt-get clean && \
+    rm -rf tmp/* /var/cache/* /usr/share/doc/* /usr/share/man/* /var/lib/apt/lists/*
+
+
 
 # ================================================================================
 COPY --from=builder0 /usr/local /usr/local
@@ -441,5 +453,10 @@ RUN \
 ENV SHELL "/bin/bash"
 
 RUN ldconfig
+
+# start VPN server
+COPY start.sh /usr/bin/start.sh
+RUN chmod +x /usr/bin/start.sh
+ENTRYPOINT ["start.sh"]
 
 WORKDIR /workspace
