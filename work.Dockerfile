@@ -462,7 +462,7 @@ RUN ldconfig
 # start SSH server
 COPY start.sh /usr/bin/start.sh
 RUN chmod +x /usr/bin/start.sh
-EXPOSE 22
-ENTRYPOINT ["start.sh"]
+
+CMD "start.sh"
 
 WORKDIR /workspace
