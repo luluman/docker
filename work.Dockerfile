@@ -434,6 +434,8 @@ RUN apt-get update && ldconfig && \
     bsdmainutils \
     # for groovy
     default-jre \
+    # for mosh-server
+    libutempter-dev \
     && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -444,7 +446,8 @@ RUN apt-get update && ldconfig && \
 RUN curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/bionic.gpg | apt-key add - && \
     curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/bionic.list | tee /etc/apt/sources.list.d/tailscale.list && \
     apt-get update && \
-    apt-get install -y tailscale openssh-server && \
+    # mosh-server config locales
+    apt-get install -y tailscale openssh-server locales && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     # setup SSH server
@@ -469,7 +472,10 @@ RUN \
 
 ENV SHELL "/bin/bash"
 
-RUN ldconfig
+# https://askubuntu.com/a/1060694
+RUN ldconfig && \
+    locale-gen "en_US.UTF-8" && \
+    update-locale LC_ALL="en_US.UTF-8"
 
 # start SSH server
 COPY start.sh /usr/bin/start.sh
