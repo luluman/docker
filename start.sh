@@ -10,8 +10,9 @@ until tailscale up --authkey="${TAILSCALE_AUTH_KEY}" --hostname="${TAILSCALE_HOS
     sleep 0.1
 done
 tailscale status
-wait ${PID}
-wait ${PID}
 
 # do not detach (-D), log to stderr (-e), passthrough other arguments
-exec /usr/sbin/sshd -D -p 22
+exec /usr/sbin/sshd -e
+
+wait ${PID}
+wait ${PID}
