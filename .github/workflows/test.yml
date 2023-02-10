@@ -1,4 +1,4 @@
-name: work-dev-16.04
+name: test-docker
 
 on:
   push:
