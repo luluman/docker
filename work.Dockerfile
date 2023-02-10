@@ -307,6 +307,18 @@ RUN apt-get update && \
     ./gradlew build && \
     cp build/libs/* /usr/local/lib/
 
+# ==========================================================
+# install mosh
+RUN apt-get update && \
+    apt-get install -y \
+    pkg-config libutempter-dev zlib1g-dev libncurses5-dev \
+    libssl-dev bash-completion tmux less && \
+    git clone --branch=mosh-1.4.0 https://github.com/mobile-shell/mosh && \
+    cd mosh && \
+    ./autogen.sh && \
+    ./configure && \
+    make && make install
+
 # ********************************************************************************
 #
 # stage 1
@@ -432,7 +444,7 @@ RUN apt-get update && ldconfig && \
 RUN curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/bionic.gpg | apt-key add - && \
     curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/bionic.list | tee /etc/apt/sources.list.d/tailscale.list && \
     apt-get update && \
-    apt-get install -y tailscale openssh-server mosh && \
+    apt-get install -y tailscale openssh-server && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     # setup SSH server
