@@ -346,7 +346,7 @@ RUN apt-get update && \
     fortunes \
     && \
     apt-get clean && \
-    rm -rf tmp/* /var/cache/* /usr/share/doc/* /usr/share/man/* /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/*
 
 
 RUN apt-get update \
@@ -364,7 +364,7 @@ RUN apt-get update \
     && apt-get update -y \
     && apt-get install -y gcc-11 g++-11 gdb libgccjit0 libgccjit-11-dev \
     && apt-get clean \
-    && rm -rf tmp/* /var/cache/* /usr/share/doc/* /usr/share/man/* /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*
 
 # ===============================================================================
 # upgrade python
@@ -375,16 +375,15 @@ RUN apt-get update && \
     update-alternatives --install /usr/bin/python python /usr/bin/python3.7 10 && \
     update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.7 10 && \
     apt-get clean && \
-    rm -rf tmp/* /var/cache/* /usr/share/doc/* /usr/share/man/* /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/*
 
 
 # ================================================================================
 # some others
-RUN apt-get update && \
+RUN apt-get update && ldconfig && \
     apt-get install -y \
     build-essential \
     git \
-    # default-jre \
     valgrind \
     virtualenv \
     swig \
@@ -425,7 +424,7 @@ RUN apt-get update && \
     default-jre \
     && \
     apt-get clean && \
-    rm -rf tmp/* /var/cache/* /usr/share/doc/* /usr/share/man/* /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/*
 
 
 # ================================================================================
@@ -435,7 +434,7 @@ RUN curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/bionic.gpg | apt-key add
     apt-get update && \
     apt-get install -y tailscale openssh-server mosh && \
     apt-get clean && \
-    rm -rf tmp/* /var/cache/* /usr/share/doc/* /usr/share/man/* /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/*
 
 
 
