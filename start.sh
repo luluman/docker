@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -ex
 
+# generate host keys if not present
+ssh-keygen -A
+# do not detach (-D), log to stderr (-e), passthrough other arguments
+exec /usr/sbin/sshd -D -e &
+
 trap 'kill -TERM $PID' TERM INT
 echo "Starting Tailscale daemon"
 # -state=mem: will logout and remove ephemeral node from network immediately after ending.
@@ -10,9 +15,5 @@ until tailscale up --authkey="${TAILSCALE_AUTH_KEY}" --hostname="${TAILSCALE_HOS
     sleep 0.1
 done
 tailscale status
-
-# do not detach (-D), log to stderr (-e), passthrough other arguments
-exec /usr/sbin/sshd -e
-
 wait ${PID}
 wait ${PID}

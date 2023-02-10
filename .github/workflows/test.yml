@@ -1,0 +1,26 @@
+name: work-dev-16.04
+
+on:
+  push:
+    paths:
+      - 'test.Dockerfile'
+#  pull_request:
+#    branches: [ master ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+     - uses: actions/checkout@v1
+     - name: Login to DockerHub Registry
+       run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+     - name: Build the latest Docker image
+       run: |
+         docker build . --file test.Dockerfile --tag test
+         docker image tag test mattlu/test:latest
+
+     - name: Push the latest Docker image
+       run: docker push --all-tags mattlu/test

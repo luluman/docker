@@ -176,7 +176,7 @@ vterm_read_PYTHONPATH() {
 }
 # end vterm configuration
 
-alias make="bear make"
+# alias make="bear make"
 
 export USER=$(whoami)
 export LANG="en_US.UTF-8"
