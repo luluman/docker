@@ -434,9 +434,15 @@ RUN curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/bionic.gpg | apt-key add
     apt-get update && \
     apt-get install -y tailscale openssh-server mosh && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-
+    rm -rf /var/lib/apt/lists/* && \
+    # setup SSH server
+    sed -i /etc/ssh/sshd_config \
+    -e 's/#PermitRootLogin.*/PermitRootLogin no/' \
+    -e 's/#RSAAuthentication.*/RSAAuthentication yes/'  \
+    -e 's/#PasswordAuthentication.*/PasswordAuthentication no/' \
+    -e 's/#SyslogFacility.*/SyslogFacility AUTH/' \
+    -e 's/#LogLevel.*/LogLevel INFO/' && \
+    mkdir /var/run/sshd
 
 # ================================================================================
 COPY --from=builder0 /usr/local /usr/local
@@ -453,9 +459,10 @@ ENV SHELL "/bin/bash"
 
 RUN ldconfig
 
-# start VPN server
+# start SSH server
 COPY start.sh /usr/bin/start.sh
 RUN chmod +x /usr/bin/start.sh
+EXPOSE 22
 ENTRYPOINT ["start.sh"]
 
 WORKDIR /workspace

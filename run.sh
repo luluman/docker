@@ -35,6 +35,28 @@ function work-linux()
          mattlu/work-dev:latest /bin/bash
 }
 
+function work-linux-server()
+{
+  local home=$(realpath ~/.docker/home-work)
+  local workspace=$(realpath ~/workspace)
+  local data=$(realpath /data)
+  local share=$(realpath /share)
+  docker run -t \
+         --privileged \
+         --name ${USER}-work-server \
+         --detach-keys "ctrl-^,ctrl-@" \
+         --volume="${home}:/home/$USER":delegated \
+         --volume="${workspace}:/workspace":cached \
+         --volume="${data}:/data":cached \
+         --volume="${share}:/share":cached \
+         --volume="/etc/group:/etc/group:ro" \
+         --volume="/etc/passwd:/etc/passwd:ro" \
+         --volume="/etc/shadow:/etc/shadow:ro" \
+         --env-file ~/.docker/home-work/.ssh/vpn.cfg \
+         --detach \
+         mattlu/work-dev:latest
+}
+
 function work-linux-16.04()
 {
   local UID=$(id -u)
