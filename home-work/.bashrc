@@ -117,10 +117,10 @@ if ! shopt -oq posix; then
 fi
 
 if [ -d ~/.terminfo ]; then
-    export TERM=xterm-24bit
+    export TERM=xterm-24bits
 elif [ -f /usr/local/share/bash-color/terminfo-24bit.src ]; then
     tic -x -o ~/.terminfo /usr/local/share/bash-color/terminfo-24bit.src
-    export TERM=xterm-24bit
+    export TERM=xterm-24bits
 else
     export TERM=xterm-256color
 fi
