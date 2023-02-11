@@ -1,9 +1,12 @@
-name: test
+name: endpoint
 
 on:
   push:
     paths:
-      - 'test.Dockerfile'
+      - 'endpoint.Dockerfile'
+      - 'endpoint.sh'
+
+  workflow_dispatch:
 #  pull_request:
 #    branches: [ master ]
 
@@ -19,8 +22,8 @@ jobs:
        run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
      - name: Build the latest Docker image
        run: |
-         docker build . --file test.Dockerfile --tag test
-         docker image tag test mattlu/test:latest
+         docker build . --file endpoint.Dockerfile --tag endpoint
+         docker image tag endpoint mattlu/endpoint:latest
 
      - name: Push the latest Docker image
-       run: docker push --all-tags mattlu/test
+       run: docker push --all-tags mattlu/endpoint
