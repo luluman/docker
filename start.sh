@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -ex
+set -e
 
 # generate host keys if not present
 ssh-keygen -A
