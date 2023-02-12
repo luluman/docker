@@ -436,6 +436,8 @@ RUN apt-get update && ldconfig && \
     default-jre \
     # for mosh-server
     libutempter-dev \
+    # ping network
+    iputils-ping \
     && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*

@@ -1,10 +1,10 @@
-name: endpoint
+name: exit-node
 
 on:
   push:
     paths:
-      - 'endpoint.Dockerfile'
-      - 'endpoint.sh'
+      - 'exit-node.Dockerfile'
+      - 'exit-node.sh'
 
   workflow_dispatch:
 #  pull_request:
@@ -22,8 +22,8 @@ jobs:
        run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
      - name: Build the latest Docker image
        run: |
-         docker build . --file endpoint.Dockerfile --tag endpoint
-         docker image tag endpoint mattlu/endpoint:latest
+         docker build . --file exit-node.Dockerfile --tag exit-node
+         docker image tag exit-node mattlu/exit-node:latest
 
      - name: Push the latest Docker image
-       run: docker push --all-tags mattlu/endpoint
+       run: docker push --all-tags mattlu/exit-node

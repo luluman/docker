@@ -119,6 +119,14 @@ function work-linux-exec()
 
 }
 
+function work-linux-server-exec()
+{
+  docker exec -ti --user ${UID} \
+         --detach-keys "ctrl-^,ctrl-@" \
+         ${USER}-work-server /bin/bash
+
+}
+
 function work-linux-exec-16.04()
 {
   docker exec -ti \
