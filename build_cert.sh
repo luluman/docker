@@ -7,7 +7,10 @@ openssl req \
         -newkey rsa:4096 -nodes -keyout "$DERP_CERTS/${DERP_DOMAIN}.key" \
         -x509 -sha256 -days 365 -out "$DERP_CERTS/${DERP_DOMAIN}.crt" \
         -subj "/C=US/ST=WA/L=SEATTLE/O=MyCompany/OU=MyDivision/CN=${DERP_DOMAIN}" \
-        -addext "subjectAltName = DNS:${DERP_DOMAIN}, DNS:localhost, DNS:127.0.0.1, IP:${DERP_HOST}"
+        -addext "subjectAltName = DNS:${DERP_DOMAIN}, IP:${DERP_HOST}"
+        #  if you want to use a custom local domain
+        # -addext "subjectAltName = DNS:${DERP_DOMAIN}, DNS:localhost, DNS:127.0.0.1, IP:${DERP_HOST}"
+
 
 trap 'kill -TERM $PID' TERM INT
 echo "Starting Tailscale daemon"
