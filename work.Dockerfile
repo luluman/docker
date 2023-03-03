@@ -438,6 +438,8 @@ RUN apt-get update && ldconfig && \
     libutempter-dev \
     # ping network
     iputils-ping \
+    # SQL
+    sqlite3 postgresql-client \
     && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
