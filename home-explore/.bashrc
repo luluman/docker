@@ -154,9 +154,29 @@ if [[ "$INSIDE_EMACS" = 'vterm' ]]; then
     # rename buffer name
     PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }"'echo -ne "\033]0;${HOSTNAME}:${PWD}\007"'
 fi
+# vterm message passing
+vterm_cmd() {
+    local vterm_elisp
+    vterm_elisp=""
+    while [ $# -gt 0 ]; do
+        vterm_elisp="$vterm_elisp""$(printf '"%s" ' "$(printf "%s" "$1" | sed -e 's|\\|\\\\|g' -e 's|"|\\"|g')")"
+        shift
+    done
+    vterm_printf "51;E$vterm_elisp"
+}
+# track local directory
+vterm_read_PATH() {
+    vterm_cmd read-PATH "$PATH"
+}
+vterm_read_LD_LIBRARY_PATH() {
+    vterm_cmd read-LD_LIBRARY_PATH "$LD_LIBRARY_PATH"
+}
+vterm_read_PYTHONPATH() {
+    vterm_cmd read-PYTHONPATH "$PYTHONPATH"
+}
 # end vterm configuration
 
-alias make="bear make"
+# alias make="bear make"
 
 export USER=$(whoami)
 export LANG="en_US.UTF-8"

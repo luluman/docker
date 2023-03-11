@@ -23,7 +23,7 @@ RUN apk upgrade --update-cache --available && \
     rm -rf /var/cache/apk/*
 
 COPY --from=builder /go/bin/derper .
-COPY build_cert.sh /app/
+COPY scripts/build_cert.sh /app/
 
 # build self-signed certs && start derper
 CMD sh /app/build_cert.sh && \

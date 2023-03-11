@@ -38,7 +38,7 @@ ENV SHELL "/bin/bash"
 RUN ldconfig
 
 # start SSH server
-COPY start.sh /usr/bin/start.sh
+COPY scripts/start.sh /usr/bin/start.sh
 RUN chmod +x /usr/bin/start.sh
 
 CMD "start.sh"

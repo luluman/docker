@@ -1,4 +1,4 @@
-ARG UBUNTU_VERSION=20.04
+ARG UBUNTU_VERSION=22.04
 ARG DEBIAN_FRONTEND="noninteractive"
 
 # ********************************************************************************
@@ -11,34 +11,33 @@ ARG DEBIAN_FRONTEND
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-            git \
-            autoconf \
-            texinfo \
-            binutils \
-            flex \
-            bison \
-            libmpc-dev \
-            libmpfr-dev \
-            libgmp-dev \
-            coreutils \
-            make \
-            libtinfo5 \
-            texinfo \
-            libjpeg-dev \
-            libtiff-dev \
-            libgif-dev \
-            libxpm-dev \
-            libgtk-3-dev \
-            libgnutls28-dev \
-            libncurses5-dev \
-            libxml2-dev \
-            libxt-dev \
-            libjansson4 \
-            gcc-multilib \
-            libcanberra-gtk3-module \
-            libjansson-dev \
-            librsvg2-dev \
-            && \
+    git \
+    autoconf \
+    texinfo \
+    binutils \
+    flex \
+    bison \
+    libmpc-dev \
+    libmpfr-dev \
+    libgmp-dev \
+    coreutils \
+    make \
+    libtinfo5 \
+    texinfo \
+    libxpm-dev \
+    libgtk-3-dev \
+    libgnutls28-dev \
+    libncurses5-dev \
+    libxml2-dev \
+    libxt-dev \
+    libjansson4 \
+    gcc-multilib \
+    libcanberra-gtk3-module \
+    libjansson-dev \
+    librsvg2-dev \
+    libsqlite3-dev \
+    libgccjit-11-dev \
+    && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -49,109 +48,133 @@ RUN git config --global http.sslVerify false
 # https://gitlab.com/koral/emacs-nativecomp-dockerfile/-/blob/master/Dockerfile
 
 RUN apt-get update \
-        && apt-get install -y \
-        apt-transport-https \
-        ca-certificates \
-        curl \
-        gnupg-agent \
-        software-properties-common \
-        # other package needed
-        wget \
-        unzip
+    && apt-get install -y \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common \
+    # other package needed
+    wget \
+    unzip
 
-RUN add-apt-repository -y ppa:ubuntu-toolchain-r/test \
-        && apt-get update -y \
-        && apt-get install -y gcc-11 g++-11 libgccjit0 libgccjit-11-dev \
-        && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 60 --slave /usr/bin/g++ g++ /usr/bin/g++-11 \
-        && update-alternatives --config gcc
+# install tree-sitter
+# https://www.reddit.com/r/emacs/comments/z25iyx/comment/ixll68j/?utm_source=share&utm_medium=web2x&context=3
+ENV CC="gcc-11" CFLAGS="-O3 -Wall -Wextra"
+RUN git clone --depth 1 https://github.com/tree-sitter/tree-sitter.git /opt/tree-sitter && \
+    cd /opt/tree-sitter && \
+    # NOTE: update version in Makefile to 0.20.7
+    sed -i 's/^VERSION := 0\.6\.3$/VERSION := 0.20.7/' Makefile && \
+    make -j4 && \
+    make install
 
 RUN ldconfig
-RUN git clone --depth 1 --branch emacs-28 https://github.com/emacs-mirror/emacs /opt/emacs && \
+ENV CFLAGS="-O2"
+RUN git clone --depth 1 --branch emacs-29 https://github.com/emacs-mirror/emacs /opt/emacs && \
     cd /opt/emacs && \
     ./autogen.sh && \
     ./configure --build="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
-        --with-modules \
-        --with-native-compilation \
-        --prefix=/usr/local && \
+    --with-modules \
+    --with-native-compilation \
+    --with-tree-sitter \
+    --with-json \
+    --with-sqlite3 \
+    --prefix=/usr/local && \
     make NATIVE_FULL_AOT=1 -j30 && \
     make install-strip
 
 # ============================================================
+# tree-sitter-language
+# https://github.com/orzechowskid/emacs-docker/blob/main/src/build-ts-modules.sh
+# https://github.com/emacs-mirror/emacs/tree/master/admin/notes/tree-sitter
+# https://emacs-china.org/t/treesit-master/22862/69
+RUN apt-get update && \
+    apt-get install -y g++ && \
+    cd /opt/emacs/admin/notes/tree-sitter/build-module && \
+    ./batch.sh && \
+    mv ./dist/* /usr/local/lib/ && \
+    cd /opt/
+
+# ============================================================
 # https://github.com/nodejs/docker-node
 
-ENV NODE_VERSION 16.14.2
+ENV NODE_VERSION 18.15.0
 
 RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
-      && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
-      && rm /usr/local/*.md  /usr/local/LICENSE \
-      && rm "node-v$NODE_VERSION-linux-x64.tar.xz" \
-      && ln -s /usr/local/bin/node /usr/local/bin/nodejs \
-      # smoke tests
-      && node --version \
-      && npm --version \
-      # install some LSP servers
-      # && npm config set registry https://registry.npm.taobao.org \
-      && npm i -g typescript typescript-language-server \
-      && npm i -g bash-language-server \
-      && npm i -g pyright
+    && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
+    && rm /usr/local/*.md  /usr/local/LICENSE \
+    && rm "node-v$NODE_VERSION-linux-x64.tar.xz" \
+    && ln -s /usr/local/bin/node /usr/local/bin/nodejs \
+    # smoke tests
+    && node --version \
+    && npm --version \
+    # install some LSP servers
+    # && npm config set registry https://registry.npm.taobao.org \
+    && npm i --location=global typescript typescript-language-server \
+    && npm i --location=global bash-language-server \
+    && npm i --location=global pyright \
+    && npm i --location=global dockerfile-language-server-nodejs \
+    && npm i --location=global vscode-langservers-extracted  \
+    && npm i --location=global yaml-language-server \
+    && npm i --location=global markdownlint-cli
 
 # ============================================================
 # https://hub.docker.com/r/rikorose/gcc-cmake/dockerfile
 
-ENV CMAKE_VERSION 3.23.0
+ENV CMAKE_VERSION 3.25.3
 
 RUN wget https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmake-$CMAKE_VERSION-linux-x86_64.sh \
-      --no-check-certificate \
-      -q -O /tmp/cmake-install.sh \
-      && chmod u+x /tmp/cmake-install.sh \
-      && /tmp/cmake-install.sh --skip-license --prefix=/usr/local \
-      && rm /tmp/cmake-install.sh
+    --no-check-certificate \
+    -q -O /tmp/cmake-install.sh \
+    && chmod u+x /tmp/cmake-install.sh \
+    && /tmp/cmake-install.sh --skip-license --prefix=/usr/local \
+    && rm /tmp/cmake-install.sh
 
 # ============================================================
 # ninja
 
-ENV NINJA_VERSION 1.10.2
+ENV NINJA_VERSION 1.11.1
 
 RUN wget https://github.com/ninja-build/ninja/releases/download/v$NINJA_VERSION/ninja-linux.zip \
-      --no-check-certificate \
-      && unzip ninja-linux.zip \
-      && cp ninja /usr/local/bin
+    --no-check-certificate \
+    && unzip ninja-linux.zip \
+    && cp ninja /usr/local/bin
 
 # ============================================================
 # https://github.com/protocolbuffers/protobuf/blob/master/src/README.md
 # install latest protobuf
 
-ARG PROTOBUF_VERSION=3.20.0
+ARG PROTOBUF_VERSION=3.20.2
 
 RUN apt-get install -y autoconf automake libtool curl make g++ unzip && \
     git clone --depth 1 --recursive --branch v${PROTOBUF_VERSION} https://github.com/protocolbuffers/protobuf.git && \
-        cd protobuf && \
-        ./autogen.sh && \
-        ./configure && \
-        make -j10 && \
-        make install && \
-        ldconfig
+    cd protobuf && \
+    ./autogen.sh && \
+    ./configure && \
+    make -j10 && \
+    make install && \
+    ldconfig
 
 # ============================================================
 # Build EAR (BEAR)
 
-ENV BEAR_VERSION 3.0.18
+ENV BEAR_VERSION 3.1.1
 
 RUN apt-get update && \
     apt-get install -y \
-            pkg-config \
-            libfmt-dev \
-            libspdlog-dev \
-            nlohmann-json3-dev \
-            libgrpc++-dev \
-            libssl-dev \
-            libsqlite3-dev
+    pkg-config \
+    libfmt-dev \
+    libspdlog-dev \
+    nlohmann-json3-dev \
+    libgrpc++-dev \
+    libssl-dev \
+    libsqlite3-dev
 
 RUN git clone --depth 1 --branch $BEAR_VERSION https://github.com/rizsotto/Bear.git /opt/bear && \
     cd /opt/bear && \
     cmake . -DCMAKE_INSTALL_PREFIX=/usr/local \
-            -DPYTHON_EXECUTABLE=/usr/bin/python3 \
-            -DENABLE_UNIT_TESTS=OFF -DENABLE_FUNC_TESTS=OFF && \
+    -DPYTHON_EXECUTABLE=/usr/bin/python3 \
+    -DENABLE_UNIT_TESTS=OFF -DENABLE_FUNC_TESTS=OFF && \
     make all -j4 && \
     make install
 
@@ -165,22 +188,22 @@ ENV ASPELL_VERSION 0.60.8
 ENV ASPELL_EN 2019.10.06-0
 
 RUN     curl -SLOk "${ASPELL_SERVER}/aspell-${ASPELL_VERSION}.tar.gz" \
-     && curl -SLOk "${ASPELL_SERVER}/dict/en/aspell6-en-${ASPELL_EN}.tar.bz2" \
-     && tar -xzf "/aspell-${ASPELL_VERSION}.tar.gz" \
-     && tar -xjf "/aspell6-en-${ASPELL_EN}.tar.bz2" \
-     # build
-     && cd "/aspell-${ASPELL_VERSION}" \
-       && ./configure \
-       && make -j4 \
-       && make install \
-       && ldconfig \
-     # copy
-     && cd "/aspell6-en-${ASPELL_EN}" \
-       && ./configure \
-       && make -j4 \
-       && make install \
-     # cleanup
-     && rm -rf /aspell* /var/lib/apt/lists/*
+    && curl -SLOk "${ASPELL_SERVER}/dict/en/aspell6-en-${ASPELL_EN}.tar.bz2" \
+    && tar -xzf "/aspell-${ASPELL_VERSION}.tar.gz" \
+    && tar -xjf "/aspell6-en-${ASPELL_EN}.tar.bz2" \
+    # build
+    && cd "/aspell-${ASPELL_VERSION}" \
+    && ./configure \
+    && make -j4 \
+    && make install \
+    && ldconfig \
+    # copy
+    && cd "/aspell6-en-${ASPELL_EN}" \
+    && ./configure \
+    && make -j4 \
+    && make install \
+    # cleanup
+    && rm -rf /aspell* /var/lib/apt/lists/*
 
 # ============================================================
 # https://hub.docker.com/r/peccu/rg/dockerfile
@@ -189,7 +212,7 @@ RUN     curl -SLOk "${ASPELL_SERVER}/aspell-${ASPELL_VERSION}.tar.gz" \
 ENV RG_VERSION=13.0.0
 RUN     set -x \
     &&  wget https://github.com/BurntSushi/ripgrep/releases/download/${RG_VERSION}/ripgrep-${RG_VERSION}-x86_64-unknown-linux-musl.tar.gz \
-             --no-check-certificate \
+    --no-check-certificate \
     &&  tar xzf ripgrep-${RG_VERSION}-x86_64-unknown-linux-musl.tar.gz \
     &&  mv ripgrep-${RG_VERSION}-x86_64-unknown-linux-musl/rg /usr/local/bin/
 
@@ -200,7 +223,7 @@ RUN     set -x \
 ENV GITLFS_VERSION=3.0.2
 
 RUN    wget https://github.com/git-lfs/git-lfs/releases/download/v$GITLFS_VERSION/git-lfs-linux-amd64-v$GITLFS_VERSION.tar.gz \
-            -c --retry-connrefused --tries=0 --timeout=180 --no-check-certificate \
+    -c --retry-connrefused --tries=0 --timeout=180 --no-check-certificate \
     && tar -zxf git-lfs-linux-amd64-v$GITLFS_VERSION.tar.gz \
     && mv git-lfs /usr/local/bin/ \
     && rm -rf git-lfs-* \
@@ -210,10 +233,10 @@ RUN    wget https://github.com/git-lfs/git-lfs/releases/download/v$GITLFS_VERSIO
 # https://github.com/tensorflow/tensorflow/blob/master/tensorflow/tools/dockerfiles/partials/ubuntu/bazelbuild.partial.Dockerfile
 # Install bazel
 
-ARG BAZEL_VERSION=5.1.0
+ARG BAZEL_VERSION=5.3.0
 RUN mkdir /bazel && \
     wget --no-check-certificate \
-         -O /bazel/installer.sh "https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel-${BAZEL_VERSION}-installer-linux-x86_64.sh" && \
+    -O /bazel/installer.sh "https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel-${BAZEL_VERSION}-installer-linux-x86_64.sh" && \
     chmod +x /bazel/installer.sh && \
     /bazel/installer.sh && \
     rm -f /bazel/installer.sh
@@ -240,38 +263,81 @@ COPY scripts/terminfo-24bit.src /usr/local/share/bash-color/
 
 # ============================================================
 # download latest clangd
-
-RUN curl -s https://github.com/clangd/clangd/releases \
-      | grep "clangd-linux-snapshot" \
-      | cut -d '"' -f 2 \
-      | head -n 1 \
-      | wget --no-check-certificate --base=http://github.com/ -i - && \
-      unzip clangd-linux-snapshot*.zip && \
-      cp -r ./clangd_snapshot_*/* /usr/local
+# use lastversion
+RUN apt-get update && \
+    apt-get install -y \
+    python3-pip && \
+    pip3 install -U setuptools pip && \
+    pip3 install lastversion && \
+    lastversion --assets --filter clangd-linux download https://github.com/clangd/clangd/releases && \
+    unzip clangd-linux*.zip && \
+    cp -r ./clangd*/* /usr/local
 
 # ============================================================
-# download flat-buffer-compiler
+# download latest shfmt
 
-RUN curl -s https://github.com/google/flatbuffers/releases \
-      | grep "Linux.flatc" \
-      | cut -d '"' -f 2 \
-      | head -n 1 \
-      | wget --no-check-certificate --base=http://github.com/ -i - && \
-      unzip Linux.flatc.binary*.zip && \
-      chmod +x ./flatc && \
-      cp ./flatc /usr/local/bin/
+RUN lastversion --assets --filter _linux_amd64 download https://github.com/mvdan/sh/releases && \
+    mv shfmt*linux_amd64 shfmt && \
+    chmod +x ./shfmt && \
+    cp ./shfmt /usr/local/bin/
+
+
+# ============================================================
+# download flatbuffer-compiler
+
+RUN lastversion --assets --filter Linux.flatc.binary.g download https://github.com/google/flatbuffers/releases && \
+    unzip Linux.flatc.binary*.zip && \
+    chmod +x ./flatc && \
+    cp ./flatc /usr/local/bin/
 
 # ===========================================================
 # install ccache
 
 RUN git clone https://github.com/ccache/ccache --branch=1 --branch v4.6 && \
-        cd ccache && \
-        mkdir build && \
-        cd build && \
-        cmake -DZSTD_FROM_INTERNET=ON \
-              -DHIREDIS_FROM_INTERNET=ON \
-              -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=Release .. && \
-        make && make install
+    cd ccache && \
+    mkdir build && \
+    cd build && \
+    cmake -DZSTD_FROM_INTERNET=ON \
+    -DHIREDIS_FROM_INTERNET=ON \
+    -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=Release .. && \
+    make && make install
+
+# ===========================================================
+# install fuz (fuzzy match scoring/matching functions for Emacs)
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
+    apt-get update && apt-get install -y clang llvm && \
+    git clone https://github.com/rustify-emacs/fuz.el fuz
+
+ENV PATH="/root/.cargo/bin:${PATH}"
+RUN cd fuz && \
+    cargo build --release && \
+    cp target/release/libfuz_core.so /usr/local/lib/
+
+# ==========================================================
+# install rust-analyzer
+RUN curl -L https://github.com/rust-analyzer/rust-analyzer/releases/latest/download/rust-analyzer-x86_64-unknown-linux-gnu.gz | gunzip -c - > /usr/local/bin/rust-analyzer \
+    && chmod +x /usr/local/bin/rust-analyzer
+
+# ==========================================================
+# install groovy-lsp
+RUN apt-get update && \
+    apt-get install -y default-jre && \
+    git clone https://github.com/GroovyLanguageServer/groovy-language-server && \
+    cd groovy-language-server && \
+    ./gradlew build && \
+    cp build/libs/* /usr/local/lib/
+
+# ==========================================================
+# install mosh
+RUN apt-get update && \
+    apt-get install -y \
+    pkg-config libutempter-dev zlib1g-dev libncurses5-dev \
+    libssl-dev bash-completion tmux less && \
+    git clone --branch=mosh-1.4.0 https://github.com/mobile-shell/mosh && \
+    cd mosh && \
+    ./autogen.sh && \
+    ./configure && \
+    make && make install
 
 # ********************************************************************************
 #
@@ -284,56 +350,36 @@ ARG DEBIAN_FRONTEND
 # dependency of Emacs
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-            libmpc3 \
-            libmpfr6 \
-            libgmp10 \
-            coreutils \
-            libjpeg-turbo8 \
-            libtiff5 \
-            libgif7 \
-            libxpm4 \
-            libgtk-3-0 \
-            libgnutlsxx28 \
-            libncurses5 \
-            libxml2 \
-            libxt6 \
-            libjansson4 \
-            libcanberra-gtk3-module \
-            libx11-xcb1 \
-            binutils \
-            libc6-dev \
-            librsvg2-2 \
-            # for vterm 
-            libtool \
-            libtool-bin \
-            && \
+    libmpc3 \
+    libmpfr6 \
+    libgmp10 \
+    coreutils \
+    libjpeg-turbo8 \
+    libtiff5 \
+    libgif7 \
+    libxpm4 \
+    libgtk-3-0 \
+    libgnutlsxx28 \
+    libncurses5 \
+    libxml2 \
+    libxt6 \
+    libjansson4 \
+    libcanberra-gtk3-module \
+    libx11-xcb1 \
+    binutils \
+    libc6-dev \
+    librsvg2-2 \
+    libgccjit \
+    # for vterm
+    libtool \
+    libtool-bin \
+    # for monkeytype
+    fortune \
+    fortunes \
+    && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# ================================================================================
-# dependency of Tensorflow
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-            build-essential \
-            curl \
-            wget \
-            git \
-            libcurl3-dev \
-            libfreetype6-dev \
-            libhdf5-serial-dev \
-            libzmq3-dev \
-            pkg-config \
-            rsync \
-            software-properties-common \
-            sudo \
-            unzip \
-            zip \
-            zlib1g-dev \
-            openjdk-11-jdk \
-            openjdk-11-jre-headless \
-            && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
 
 # See http://bugs.python.org/issue19846
 ENV LANG C.UTF-8
@@ -341,9 +387,9 @@ ENV LC_ALL C.UTF-8
 
 RUN apt-get update && \
     apt-get install -y \
-            python3 \
-            python3-pip \
-            && \
+    python3 \
+    python3-pip \
+    && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -355,65 +401,82 @@ RUN python3 -m pip --no-cache-dir install --upgrade \
 RUN ln -s $(which python3) /usr/local/bin/python
 
 # ================================================================================
-# dependency of Tensorflow-runtime
-
-ARG LLVM_VERSION=14.0.0
-ARG UBUNTU_VERSION=18.04
-
-       # install llvm
-RUN    wget https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/clang+llvm-${LLVM_VERSION}-x86_64-linux-gnu-ubuntu-${UBUNTU_VERSION}.tar.xz \
-              --no-check-certificate \
-    && tar -xf clang+llvm-${LLVM_VERSION}-x86_64-linux-gnu-ubuntu-${UBUNTU_VERSION}.tar.xz \
-    && cp -rf clang+llvm-${LLVM_VERSION}-x86_64-linux-gnu-ubuntu-${UBUNTU_VERSION}/* /usr/local/ \
-    && rm  clang+llvm* -rf \
-       # update gcc
-    && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
-    && apt-get update -y \
-    && apt-get install -y gcc-11 g++-11 gdb libgccjit0 libgccjit-11-dev \
-    && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 60 --slave /usr/bin/g++ g++ /usr/bin/g++-11 \
-    && update-alternatives --config gcc \ 
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-# ================================================================================
 # some others
 RUN apt-get update && \
     apt-get install -y \
-            build-essential \
-            git \
-            python3-dev \
-            python3-venv \
-            virtualenv \
-            swig \
-            openssh-client \
-            # onnx-mlir
-            libssl-dev \
-            zlib1g-dev \
-            libbz2-dev \
-            libreadline-dev \
-            libsqlite3-dev \
-            libncurses5-dev \
-            libncursesw5-dev \
-            xz-utils \
-            libffi-dev \
-            liblzma-dev \
-            # bear make
-            libfmt-dev \
-            libspdlog-dev \
-            nlohmann-json3-dev \
-            libgrpc++-dev \
-            && \
+    build-essential \
+    git \
+    valgrind \
+    python3-dev \
+    python3-venv \
+    virtualenv \
+    swig \
+    openssh-client \
+    # onnx-mlir
+    libssl-dev \
+    zlib1g-dev \
+    libbz2-dev \
+    libreadline-dev \
+    libsqlite3-dev \
+    libncurses5-dev \
+    libncursesw5-dev \
+    xz-utils \
+    libffi-dev \
+    liblzma-dev \
+    # tectonic
+    libfreetype6-dev \
+    libssl-dev \
+    libfontconfig1-dev \
+    # dev needed
+    parallel \
+    rsync \
+    # for groovy
+    default-jre \
+    # for mosh-server
+    libutempter-dev \
+    # ping network
+    iputils-ping \
+    # SQL
+    sqlite3 postgresql-client \
+    && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+# ================================================================================
+#  tailscale
+RUN curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/bionic.gpg | apt-key add - && \
+    curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/bionic.list | tee /etc/apt/sources.list.d/tailscale.list && \
+    apt-get update && \
+    # mosh-server config locales
+    apt-get install -y tailscale openssh-server locales && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    # setup SSH server
+    sed -i /etc/ssh/sshd_config \
+    -e 's/#PermitRootLogin.*/PermitRootLogin no/' \
+    -e 's/#RSAAuthentication.*/RSAAuthentication yes/'  \
+    -e 's/#PasswordAuthentication.*/PasswordAuthentication no/' \
+    -e 's/#SyslogFacility.*/SyslogFacility AUTH/' \
+    -e 's/#LogLevel.*/LogLevel INFO/' && \
+    mkdir /var/run/sshd
 
 # ================================================================================
 
 COPY --from=builder0 /usr/local /usr/local
 # emacs bug
-RUN find /usr/local/lib/emacs/ -name native-lisp | xargs -I{} ln -s {} /usr/ 
+RUN find /usr/local/lib/emacs/ -name native-lisp | xargs -I{} ln -s {} /usr/
 
 ENV SHELL "/bin/bash"
 
-RUN ldconfig
+# https://askubuntu.com/a/1060694
+RUN ldconfig && \
+    locale-gen "en_US.UTF-8" && \
+    update-locale LC_ALL="en_US.UTF-8"
+
+# start SSH server
+COPY scripts/start.sh /usr/bin/start.sh
+RUN chmod +x /usr/bin/start.sh
+
+CMD "start.sh"
 
 WORKDIR /workspace

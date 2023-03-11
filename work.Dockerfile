@@ -140,7 +140,7 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmak
 # ============================================================
 # ninja
 
-ENV NINJA_VERSION 1.11.0
+ENV NINJA_VERSION 1.11.1
 
 RUN wget https://github.com/ninja-build/ninja/releases/download/v$NINJA_VERSION/ninja-linux.zip \
     --no-check-certificate \
@@ -482,7 +482,7 @@ RUN ldconfig && \
     update-locale LC_ALL="en_US.UTF-8"
 
 # start SSH server
-COPY start.sh /usr/bin/start.sh
+COPY scripts/start.sh /usr/bin/start.sh
 RUN chmod +x /usr/bin/start.sh
 
 CMD "start.sh"

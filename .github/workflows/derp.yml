@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - 'derp.Dockerfile'
-      - 'build_cert.sh'
+      - 'scripts/build_cert.sh'
 
 
   workflow_dispatch:
