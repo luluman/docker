@@ -79,6 +79,7 @@ RUN git clone --depth 1 --branch emacs-29 https://github.com/emacs-mirror/emacs 
     --with-tree-sitter \
     --with-json \
     --with-sqlite3 \
+    --with-gif=ifavailable \
     --prefix=/usr/local && \
     make NATIVE_FULL_AOT=1 -j30 && \
     make install-strip
@@ -100,10 +101,10 @@ RUN apt-get update && \
 
 ENV NODE_VERSION 18.15.0
 
-RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
-    && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
+RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz" \
+    && tar -xJf "node-v${NODE_VERSION}-linux-x64.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
     && rm /usr/local/*.md  /usr/local/LICENSE \
-    && rm "node-v$NODE_VERSION-linux-x64.tar.xz" \
+    && rm "node-v${NODE_VERSION}-linux-x64.tar.xz" \
     && ln -s /usr/local/bin/node /usr/local/bin/nodejs \
     # smoke tests
     && node --version \
@@ -160,15 +161,8 @@ RUN apt-get install -y autoconf automake libtool curl make g++ unzip && \
 
 ENV BEAR_VERSION 3.1.1
 
-RUN apt-get update && \
-    apt-get install -y \
-    pkg-config \
-    libfmt-dev \
-    libspdlog-dev \
-    nlohmann-json3-dev \
-    libgrpc++-dev \
-    libssl-dev \
-    libsqlite3-dev
+RUN apt-get install -y libssl-dev && \
+    ldconfig
 
 RUN git clone --depth 1 --branch $BEAR_VERSION https://github.com/rizsotto/Bear.git /opt/bear && \
     cd /opt/bear && \
@@ -186,6 +180,9 @@ RUN git clone --depth 1 --branch $BEAR_VERSION https://github.com/rizsotto/Bear.
 ENV ASPELL_SERVER ftp://ftp.gnu.org/gnu/aspell
 ENV ASPELL_VERSION 0.60.8
 ENV ASPELL_EN 2019.10.06-0
+
+RUN apt-get install -y bzip2 && \
+    ldconfig
 
 RUN     curl -SLOk "${ASPELL_SERVER}/aspell-${ASPELL_VERSION}.tar.gz" \
     && curl -SLOk "${ASPELL_SERVER}/dict/en/aspell6-en-${ASPELL_EN}.tar.bz2" \
@@ -369,7 +366,7 @@ RUN apt-get update && \
     binutils \
     libc6-dev \
     librsvg2-2 \
-    libgccjit \
+    libgccjit-11-dev \
     # for vterm
     libtool \
     libtool-bin \
@@ -412,6 +409,7 @@ RUN apt-get update && \
     virtualenv \
     swig \
     openssh-client \
+    gdb g++ \
     # onnx-mlir
     libssl-dev \
     zlib1g-dev \
@@ -438,6 +436,7 @@ RUN apt-get update && \
     iputils-ping \
     # SQL
     sqlite3 postgresql-client \
+    wget curl \
     && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
