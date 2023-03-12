@@ -104,6 +104,30 @@ function explore-linux()
          mattlu/explore-dev:latest /bin/bash
 }
 
+function explore-linux-server()
+{
+  local UID=$(id -u)
+  local GID=$(id -g)
+  local home=$(realpath ~/.docker/home-explore)
+  local workspace=$(realpath ~/workspace)
+  local data=$(realpath /data)
+  local share=$(realpath /share)
+  docker run -t \
+         --privileged \
+         --name ${USER}-explore-server \
+         --detach-keys "ctrl-^,ctrl-@" \
+         --volume="${home}:/home/$USER":delegated \
+         --volume="${workspace}:/workspace":cached \
+         --volume="${data}:/data":cached \
+         --volume="${share}:/share":cached \
+         --volume="/etc/group:/etc/group:ro" \
+         --volume="/etc/passwd:/etc/passwd:ro" \
+         --volume="/etc/shadow:/etc/shadow:ro" \
+         --env-file ~/.docker/home-explore/.ssh/vpn.cfg \
+         --detach \
+         mattlu/explore-dev:latest
+}
+
 function work-linux-attach()
 {
   docker attach \
