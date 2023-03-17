@@ -213,7 +213,7 @@ RUN     set -x \
 # ============================================================
 # build fd-find
 
-ENV FD_VERSION=8.4.0
+ENV FD_VERSION=8.7.0
 RUN     set -x \
     &&  wget https://github.com/sharkdp/fd/releases/download/v${FD_VERSION}/fd-v${FD_VERSION}-x86_64-unknown-linux-gnu.tar.gz \
     --no-check-certificate \

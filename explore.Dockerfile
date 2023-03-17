@@ -214,6 +214,16 @@ RUN     set -x \
     &&  mv ripgrep-${RG_VERSION}-x86_64-unknown-linux-musl/rg /usr/local/bin/
 
 # ============================================================
+# build fd-find
+
+ENV FD_VERSION=8.7.0
+RUN     set -x \
+    &&  wget https://github.com/sharkdp/fd/releases/download/v${FD_VERSION}/fd-v${FD_VERSION}-x86_64-unknown-linux-gnu.tar.gz \
+    --no-check-certificate \
+    &&  tar xzf fd-v${FD_VERSION}-x86_64-unknown-linux-gnu.tar.gz \
+    &&  mv fd-v${FD_VERSION}-x86_64-unknown-linux-gnu/fd /usr/local/bin/
+
+# ============================================================
 # https://github.com/Valian/docker-git-lfs
 # build git-lfs
 
