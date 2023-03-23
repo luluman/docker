@@ -91,7 +91,8 @@ RUN git clone --depth 1 --branch emacs-29 https://github.com/emacs-mirror/emacs 
 # https://emacs-china.org/t/treesit-master/22862/69
 RUN apt-get update && \
     apt-get install -y g++ && \
-    cd /opt/emacs/admin/notes/tree-sitter/build-module && \
+    git clone https://github.com/casouri/tree-sitter-module /opt/tree-sitter-module && \
+    cd /opt/tree-sitter-module && \
     ./batch.sh && \
     mv ./dist/* /usr/local/lib/ && \
     cd /opt/
@@ -177,17 +178,17 @@ RUN git clone --depth 1 --branch $BEAR_VERSION https://github.com/rizsotto/Bear.
 # Build Aspell
 # https://github.com/Starefossen/docker-aspell
 
-ENV ASPELL_SERVER ftp://ftp.gnu.org/gnu/aspell
+ENV ASPELL_SERVER https://ftp.gnu.org/gnu/aspell
 ENV ASPELL_VERSION 0.60.8
-ENV ASPELL_EN 2019.10.06-0
+ENV ASPELL_EN 2020.12.07-0
 
 RUN apt-get install -y bzip2 && \
     ldconfig
 
-RUN     curl -SLOk "${ASPELL_SERVER}/aspell-${ASPELL_VERSION}.tar.gz" \
-    && curl -SLOk "${ASPELL_SERVER}/dict/en/aspell6-en-${ASPELL_EN}.tar.bz2" \
-    && tar -xzf "/aspell-${ASPELL_VERSION}.tar.gz" \
-    && tar -xjf "/aspell6-en-${ASPELL_EN}.tar.bz2" \
+RUN    wget "${ASPELL_SERVER}/aspell-${ASPELL_VERSION}.tar.gz" \
+    && wget "${ASPELL_SERVER}/dict/en/aspell6-en-${ASPELL_EN}.tar.bz2" \
+    && tar -xzf "aspell-${ASPELL_VERSION}.tar.gz" \
+    && tar -xjf "aspell6-en-${ASPELL_EN}.tar.bz2" \
     # build
     && cd "/aspell-${ASPELL_VERSION}" \
     && ./configure \
