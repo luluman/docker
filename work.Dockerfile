@@ -442,6 +442,8 @@ RUN apt-get update && ldconfig && \
     iputils-ping \
     # SQL
     sqlite3 postgresql-client \
+    # smb
+    smbclient \
     && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
