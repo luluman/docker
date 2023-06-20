@@ -430,6 +430,7 @@ RUN apt-get update && ldconfig && \
     # dev needed
     parallel \
     rsync \
+    graphviz \
     # for BM
     bison \
     flex \

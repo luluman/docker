@@ -439,12 +439,15 @@ RUN apt-get update && \
     # dev needed
     parallel \
     rsync \
+    graphviz \
     # for groovy
     default-jre \
     # for mosh-server
     libutempter-dev \
     # ping network
     iputils-ping \
+    # smb
+    smbclient \
     # SQL
     sqlite3 postgresql-client \
     wget curl \
