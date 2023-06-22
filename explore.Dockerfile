@@ -421,6 +421,8 @@ RUN apt-get update && \
     swig \
     openssh-client \
     gdb g++ \
+    # g++12 header for clangd
+    libstdc++-12-dev \
     # onnx-mlir
     libssl-dev \
     zlib1g-dev \
