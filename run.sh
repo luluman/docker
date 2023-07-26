@@ -19,6 +19,7 @@ function work-linux()
   local workspace=$(realpath ~/workspace)
   local data=$(realpath /data)
   local share=$(realpath /share)
+  local tmp=$(realpath ~/.docker/tmp)
   docker run -t \
          --privileged \
          --name ${USER}-work \
@@ -28,6 +29,7 @@ function work-linux()
          --volume="${workspace}:/workspace":cached \
          --volume="${data}:/data":cached \
          --volume="${share}:/share":cached \
+         --volume="${tmp}:/tmp":cached \
          --volume="/etc/group:/etc/group:ro" \
          --volume="/etc/passwd:/etc/passwd:ro" \
          --volume="/etc/shadow:/etc/shadow:ro" \
@@ -41,6 +43,7 @@ function work-linux-server()
   local workspace=$(realpath ~/workspace)
   local data=$(realpath /data)
   local share=$(realpath /share)
+  local tmp=$(realpath ~/.docker/tmp)
   docker run -t \
          --privileged \
          --name ${USER}-work-server \
@@ -49,35 +52,13 @@ function work-linux-server()
          --volume="${workspace}:/workspace":cached \
          --volume="${data}:/data":cached \
          --volume="${share}:/share":cached \
+         --volume="${tmp}:/tmp":cached \
          --volume="/etc/group:/etc/group:ro" \
          --volume="/etc/passwd:/etc/passwd:ro" \
          --volume="/etc/shadow:/etc/shadow:ro" \
          --env-file ~/.docker/home-work/.ssh/vpn.cfg \
          --detach \
          mattlu/work-dev:latest
-}
-
-function work-linux-16.04()
-{
-  local UID=$(id -u)
-  local GID=$(id -g)
-  local home=$(realpath ~/.docker/home-work-16.04)
-  local workspace=$(realpath ~/workspace)
-  local data=$(realpath /data)
-  local share=$(realpath /share)
-  docker run -t \
-         --privileged \
-         --name ${USER}-work-18.04 \
-         --user $UID:$GID \
-         --detach-keys "ctrl-^,ctrl-@" \
-         --volume="${home}:/home/$USER":delegated \
-         --volume="${workspace}:/workspace":cached \
-         --volume="${data}:/data":cached \
-         --volume="/etc/group:/etc/group:ro" \
-         --volume="/etc/passwd:/etc/passwd:ro" \
-         --volume="/etc/shadow:/etc/shadow:ro" \
-         --detach \
-         mattlu/work-dev:16.04 /bin/bash
 }
 
 function explore-linux()
@@ -88,6 +69,7 @@ function explore-linux()
   local workspace=$(realpath ~/workspace)
   local data=$(realpath /data)
   local share=$(realpath /share)
+  local tmp=$(realpath ~/.docker/tmp)
   docker run -t \
          --privileged \
          --name ${USER}-explore \
@@ -97,6 +79,7 @@ function explore-linux()
          --volume="${workspace}:/workspace":cached \
          --volume="${data}:/data":cached \
          --volume="${share}:/share":cached \
+         --volume="${tmp}:/tmp":cached \
          --volume="/etc/group:/etc/group:ro" \
          --volume="/etc/passwd:/etc/passwd:ro" \
          --volume="/etc/shadow:/etc/shadow:ro" \
@@ -112,6 +95,7 @@ function explore-linux-server()
   local workspace=$(realpath ~/workspace)
   local data=$(realpath /data)
   local share=$(realpath /share)
+  local tmp=$(realpath ~/.docker/tmp)
   docker run -t \
          --privileged \
          --name ${USER}-explore-server \
@@ -120,6 +104,7 @@ function explore-linux-server()
          --volume="${workspace}:/workspace":cached \
          --volume="${data}:/data":cached \
          --volume="${share}:/share":cached \
+         --volume="${tmp}:/tmp":cached \
          --volume="/etc/group:/etc/group:ro" \
          --volume="/etc/passwd:/etc/passwd:ro" \
          --volume="/etc/shadow:/etc/shadow:ro" \
@@ -148,14 +133,6 @@ function work-linux-server-exec()
   docker exec -ti --user ${UID} \
          --detach-keys "ctrl-^,ctrl-@" \
          ${USER}-work-server /bin/bash
-
-}
-
-function work-linux-exec-16.04()
-{
-  docker exec -ti \
-         --detach-keys "ctrl-^,ctrl-@" \
-         ${USER}-work-16.04 /bin/bash
 
 }
 
