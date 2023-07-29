@@ -22,6 +22,7 @@ function work-linux()
   local tmp=$(realpath ~/.docker/tmp)
   docker run -t \
          --privileged \
+         --log-driver=none \
          --name ${USER}-work \
          --user $UID:$GID \
          --detach-keys "ctrl-^,ctrl-@" \
@@ -72,6 +73,7 @@ function explore-linux()
   local tmp=$(realpath ~/.docker/tmp)
   docker run -t \
          --privileged \
+         --log-driver=none \
          --name ${USER}-explore \
          --user $UID:$GID \
          --detach-keys "ctrl-^,ctrl-@" \
@@ -98,6 +100,7 @@ function explore-linux-server()
   local tmp=$(realpath ~/.docker/tmp)
   docker run -t \
          --privileged \
+         --log-driver=none \
          --name ${USER}-explore-server \
          --detach-keys "ctrl-^,ctrl-@" \
          --volume="${home}:/home/$USER":delegated \
