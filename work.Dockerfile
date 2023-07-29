@@ -376,7 +376,9 @@ RUN apt-get update \
     # update gcc for gccjit emacs
     && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
     && apt-get update -y \
-    && apt-get install -y gcc-11 g++-11 gdb libgccjit0 libgccjit-11-dev \
+    # libgccjit-11-dev use libgcc-13-dev ???? to compatible with
+    # clangd libstdc++-13-dev is also needed.
+    && apt-get install -y gcc-11 g++-11 gdb libgccjit0 libgccjit-11-dev libstdc++-13-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
