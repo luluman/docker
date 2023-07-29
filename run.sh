@@ -47,6 +47,7 @@ function work-linux-server()
   local tmp=$(realpath ~/.docker/tmp)
   docker run -t \
          --privileged \
+         --log-driver=none \
          --name ${USER}-work-server \
          --detach-keys "ctrl-^,ctrl-@" \
          --volume="${home}:/home/$USER":delegated \
