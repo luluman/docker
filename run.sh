@@ -34,6 +34,7 @@ function work-linux()
          --volume="/etc/group:/etc/group:ro" \
          --volume="/etc/passwd:/etc/passwd:ro" \
          --volume="/etc/shadow:/etc/shadow:ro" \
+         --volume=/var/run/docker.sock:/var/run/docker.sock \
          --detach \
          mattlu/work-dev:latest /bin/bash
 }
@@ -58,6 +59,7 @@ function work-linux-server()
          --volume="/etc/group:/etc/group:ro" \
          --volume="/etc/passwd:/etc/passwd:ro" \
          --volume="/etc/shadow:/etc/shadow:ro" \
+         --volume=/var/run/docker.sock:/var/run/docker.sock \
          --env-file ~/.docker/home-work/.ssh/vpn.cfg \
          --detach \
          mattlu/work-dev:latest
@@ -86,6 +88,7 @@ function explore-linux()
          --volume="/etc/group:/etc/group:ro" \
          --volume="/etc/passwd:/etc/passwd:ro" \
          --volume="/etc/shadow:/etc/shadow:ro" \
+         --volume=/var/run/docker.sock:/var/run/docker.sock \
          --detach \
          mattlu/explore-dev:latest /bin/bash
 }
@@ -112,6 +115,7 @@ function explore-linux-server()
          --volume="/etc/group:/etc/group:ro" \
          --volume="/etc/passwd:/etc/passwd:ro" \
          --volume="/etc/shadow:/etc/shadow:ro" \
+         --volume=/var/run/docker.sock:/var/run/docker.sock \
          --env-file ~/.docker/home-explore/.ssh/vpn.cfg \
          --detach \
          mattlu/explore-dev:latest
