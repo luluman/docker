@@ -321,9 +321,6 @@ RUN apt-get update && \
     ./configure && \
     make && make install
 
-# fix copy issue
-RUN rm /usr/local/man
-
 # ********************************************************************************
 #
 # stage 1
@@ -333,7 +330,7 @@ FROM ubuntu:${UBUNTU_VERSION} AS base
 ARG DEBIAN_FRONTEND
 # ================================================================================
 # dependency of Emacs
-RUN apt-get update && \
+RUN apt-get update && rm /usr/local/man && \
     apt-get install -y --no-install-recommends \
     libmpc3 \
     libmpfr6 \
