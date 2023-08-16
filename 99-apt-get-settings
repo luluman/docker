@@ -1,0 +1,2 @@
+APT::Get::Upgrade "false";
+APT::Install-Recommends "false";

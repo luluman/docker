@@ -1,4 +1,4 @@
-ARG UBUNTU_VERSION=18.04
+ARG UBUNTU_VERSION=22.04
 ARG DEBIAN_FRONTEND="noninteractive"
 
 # ********************************************************************************
@@ -24,9 +24,6 @@ RUN apt-get update && \
     make \
     libtinfo5 \
     texinfo \
-    libjpeg-dev \
-    libtiff-dev \
-    libgif-dev \
     libxpm-dev \
     libgtk-3-dev \
     libgnutls28-dev \
@@ -39,6 +36,9 @@ RUN apt-get update && \
     libjansson-dev \
     librsvg2-dev \
     libsqlite3-dev \
+    libgccjit-12-dev \
+    # libgccjit-11 needs gcc-12 ?
+    gcc-12 g++-12 \
     && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -60,13 +60,9 @@ RUN apt-get update \
     wget \
     unzip
 
-RUN add-apt-repository -y ppa:ubuntu-toolchain-r/test \
-    && apt-get update -y \
-    && apt-get install -y gcc-11 libgccjit0 libgccjit-11-dev
-
 # install tree-sitter
 # https://www.reddit.com/r/emacs/comments/z25iyx/comment/ixll68j/?utm_source=share&utm_medium=web2x&context=3
-ENV CC="gcc-11" CFLAGS="-O3 -Wall -Wextra"
+ENV CC="gcc-12" CFLAGS="-O3 -Wall -Wextra"
 RUN git clone --depth 1 https://github.com/tree-sitter/tree-sitter.git /opt/tree-sitter && \
     cd /opt/tree-sitter && \
     # NOTE: update version in Makefile to 0.20.7
@@ -75,7 +71,7 @@ RUN git clone --depth 1 https://github.com/tree-sitter/tree-sitter.git /opt/tree
     make install
 
 RUN ldconfig
-ENV CC="gcc-11" CFLAGS="-O2"
+ENV CFLAGS="-O2"
 RUN git clone --depth 1 --branch emacs-29 https://github.com/emacs-mirror/emacs /opt/emacs && \
     cd /opt/emacs && \
     ./autogen.sh && \
@@ -85,6 +81,7 @@ RUN git clone --depth 1 --branch emacs-29 https://github.com/emacs-mirror/emacs 
     --with-tree-sitter \
     --with-json \
     --with-sqlite3 \
+    --with-gif=ifavailable \
     --prefix=/usr/local && \
     make NATIVE_FULL_AOT=1 -j30 && \
     make install-strip
@@ -105,7 +102,7 @@ RUN apt-get update && \
 # ============================================================
 # https://github.com/nodejs/docker-node
 
-ENV NODE_VERSION 16.18.1
+ENV NODE_VERSION 18.17.0
 
 RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
     && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
@@ -129,7 +126,7 @@ RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-
 # ============================================================
 # https://hub.docker.com/r/rikorose/gcc-cmake/dockerfile
 
-ENV CMAKE_VERSION 3.23.3
+ENV CMAKE_VERSION 3.25.3
 
 RUN wget https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmake-$CMAKE_VERSION-linux-x86_64.sh \
     --no-check-certificate \
@@ -138,30 +135,6 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmak
     && /tmp/cmake-install.sh --skip-license --prefix=/usr/local \
     && rm /tmp/cmake-install.sh
 
-# ============================================================
-# ninja
-
-ENV NINJA_VERSION 1.11.1
-
-RUN wget https://github.com/ninja-build/ninja/releases/download/v$NINJA_VERSION/ninja-linux.zip \
-    --no-check-certificate \
-    && unzip ninja-linux.zip \
-    && cp ninja /usr/local/bin
-
-# ============================================================
-# https://github.com/protocolbuffers/protobuf/blob/master/src/README.md
-# install latest protobuf
-
-ARG PROTOBUF_VERSION=3.20.0
-
-RUN apt-get install -y autoconf automake libtool curl make g++ unzip && \
-    git clone --depth 1 --recursive --branch v${PROTOBUF_VERSION} https://github.com/protocolbuffers/protobuf.git && \
-    cd protobuf && \
-    ./autogen.sh && \
-    ./configure && \
-    make -j10 && \
-    make install && \
-    ldconfig
 
 # ============================================================
 # Build EAR (BEAR)
@@ -182,6 +155,9 @@ RUN git clone --depth 1 --branch $BEAR_VERSION https://github.com/rizsotto/Bear.
 ENV ASPELL_SERVER https://ftp.gnu.org/gnu/aspell
 ENV ASPELL_VERSION 0.60.8
 ENV ASPELL_EN 2020.12.07-0
+
+RUN apt-get install -y bzip2 && \
+    ldconfig
 
 RUN    wget "${ASPELL_SERVER}/aspell-${ASPELL_VERSION}.tar.gz" \
     && wget "${ASPELL_SERVER}/dict/en/aspell6-en-${ASPELL_EN}.tar.bz2" \
@@ -240,7 +216,6 @@ RUN    wget https://github.com/git-lfs/git-lfs/releases/download/v$GITLFS_VERSIO
 RUN mkdir /usr/local/share/bash-color
 COPY scripts/terminfo-24bit.src /usr/local/share/bash-color/
 
-
 # ============================================================
 # download latest clangd
 # use lastversion
@@ -253,7 +228,6 @@ RUN apt-get update && \
     unzip clangd-linux*.zip && \
     cp -r ./clangd*/* /usr/local
 
-
 # ============================================================
 # download latest shfmt
 
@@ -261,28 +235,6 @@ RUN lastversion --assets --filter _linux_amd64 download https://github.com/mvdan
     mv shfmt*linux_amd64 shfmt && \
     chmod +x ./shfmt && \
     cp ./shfmt /usr/local/bin/
-
-
-# ============================================================
-# download flatbuffer-compiler
-
-RUN lastversion --assets --filter Linux.flatc.binary.g download https://github.com/google/flatbuffers/releases && \
-    unzip Linux.flatc.binary*.zip && \
-    chmod +x ./flatc && \
-    cp ./flatc /usr/local/bin/
-
-# ===========================================================
-# install ccache
-
-RUN git clone https://github.com/ccache/ccache --branch=1 --branch v4.6 && \
-    cd ccache && \
-    mkdir build && \
-    cd build && \
-    cmake -DZSTD_FROM_INTERNET=ON \
-    -DHIREDIS_FROM_INTERNET=ON \
-    -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=Release .. && \
-    make && make install
-
 
 # ===========================================================
 # install fuz (fuzzy match scoring/matching functions for Emacs)
@@ -313,7 +265,8 @@ RUN apt-get update && \
 # install mosh
 RUN apt-get update && \
     apt-get install -y \
-    pkg-config libutempter-dev zlib1g-dev libncurses5-dev \
+    automake \
+    pkg-config protobuf-compiler libutempter-dev zlib1g-dev libncurses5-dev \
     libssl-dev bash-completion tmux less && \
     git clone --branch=mosh-1.4.0 https://github.com/mobile-shell/mosh && \
     cd mosh && \
@@ -326,19 +279,21 @@ RUN apt-get update && \
 # stage 1
 # ********************************************************************************
 
-FROM ubuntu:${UBUNTU_VERSION} AS base
+FROM sophgo/tpuc_dev:v3.0-base AS base
 ARG DEBIAN_FRONTEND
 # ================================================================================
+# --no-upgrade --no-install-recommends
+COPY 99-apt-get-settings /etc/apt/apt.conf.d/
+
 # dependency of Emacs
-RUN apt-get update && rm /usr/local/man && \
-    apt-get install -y --no-install-recommends \
+RUN apt-get update && rm -rf /usr/local/man && \
+    apt-get install -y \
     libmpc3 \
     libmpfr6 \
     libgmp10 \
     coreutils \
     libjpeg-turbo8 \
     libtiff5 \
-    libgif7 \
     libxpm4 \
     libgtk-3-0 \
     libgnutlsxx28 \
@@ -351,6 +306,9 @@ RUN apt-get update && rm /usr/local/man && \
     binutils \
     libc6-dev \
     librsvg2-2 \
+    libgccjit-12-dev \
+    # libgccjit-11 needs gcc-12 ?
+    gcc-12 g++-12 \
     libsqlite3-dev \
     # for vterm
     libtool \
@@ -362,69 +320,13 @@ RUN apt-get update && rm /usr/local/man && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-
-RUN apt-get update \
-    && apt-get install -y \
-    apt-transport-https \
-    ca-certificates \
-    curl \
-    gnupg-agent \
-    software-properties-common \
-    # other package needed
-    wget \
-    unzip \
-    # update gcc for gccjit emacs
-    && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
-    && apt-get update -y \
-    # libgccjit-11-dev use libgcc-13-dev ???? to compatible with
-    # clangd libstdc++-13-dev is also needed.
-    && apt-get install -y gcc-11 g++-11 gdb libgccjit0 libgccjit-11-dev libstdc++-13-dev \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-# ===============================================================================
-# upgrade python
-RUN apt-get update && \
-    apt-get install -y \
-    python3.7-dev \
-    python3.7-venv && \
-    update-alternatives --install /usr/bin/python python /usr/bin/python3.7 10 && \
-    update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.7 10 && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-
 # ================================================================================
 # some others
 RUN apt-get update && ldconfig && \
     apt-get install -y \
     build-essential \
-    git \
     valgrind \
-    virtualenv \
-    swig \
     openssh-client \
-    # bmlang
-    swig \
-    # ufw
-    libatlas-base-dev \
-    libboost-dev \
-    libboost-filesystem-dev \
-    libboost-system-dev \
-    libboost-regex-dev \
-    libboost-thread-dev \
-    libgflags-dev \
-    libgoogle-glog-dev \
-    libleveldb-dev \
-    liblmdb-dev \
-    libopenblas-dev \
-    libhdf5-serial-dev \
-    # bmnetp
-    libnuma1 \
-    # bmnetu
-    liblzma-dev \
-    # llvm
-    libncurses-dev \
     # tectonic
     libfreetype6-dev \
     libssl-dev \
@@ -490,11 +392,7 @@ COPY --from=builder0 /usr/local /usr/local
 
 RUN \
     # fix emacs bug
-    find /usr/local/lib/emacs/ -name native-lisp | xargs -I{} ln -s {} /usr/ \
-    # install some fonts
-    && wget "http://mirrors.ctan.org/fonts/fandol.zip" -O /usr/share/fonts/fandol.zip \
-    && unzip /usr/share/fonts/fandol.zip -d /usr/share/fonts \
-    && rm /usr/share/fonts/fandol.zip
+    find /usr/local/lib/emacs/ -name native-lisp | xargs -I{} ln -s {} /usr/
 
 ENV SHELL "/bin/bash"
 
