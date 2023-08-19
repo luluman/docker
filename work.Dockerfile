@@ -199,18 +199,6 @@ RUN     set -x \
     &&  mv fd-v${FD_VERSION}-x86_64-unknown-linux-gnu/fd /usr/local/bin/
 
 # ============================================================
-# https://github.com/Valian/docker-git-lfs
-# build git-lfs
-
-ENV GITLFS_VERSION=3.0.2
-RUN    wget https://github.com/git-lfs/git-lfs/releases/download/v$GITLFS_VERSION/git-lfs-linux-amd64-v$GITLFS_VERSION.tar.gz \
-    -c --retry-connrefused --tries=0 --timeout=180 --no-check-certificate \
-    && tar -zxf git-lfs-linux-amd64-v$GITLFS_VERSION.tar.gz \
-    && mv git-lfs /usr/local/bin/ \
-    && rm -rf git-lfs-* \
-    && rm -rf install.sh
-
-# ============================================================
 # other scripts
 
 RUN mkdir /usr/local/share/bash-color
@@ -279,7 +267,8 @@ RUN apt-get update && \
 # stage 1
 # ********************************************************************************
 
-FROM sophgo/tpuc_dev:v3.0-base AS base
+FROM mattlu/tpumlir-dev:22.04-base AS base
+# FROM sophgo/tpuc_dev:v3.0-base AS base
 ARG DEBIAN_FRONTEND
 # ================================================================================
 # --no-upgrade --no-install-recommends
