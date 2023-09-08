@@ -358,6 +358,18 @@ RUN apt-get update && apt-get install -y \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+
+# Modular GPG
+RUN apt-get  update && apt-get install -y apt-transport-https && \
+    keyring_location=/usr/share/keyrings/modular-installer-archive-keyring.gpg && \
+    curl -1sLf 'https://dl.modular.com/bBNWiLZX5igwHXeu/installer/gpg.0E4925737A3895AD.key' |  gpg --dearmor >> ${keyring_location} && \
+    curl -1sLf 'https://dl.modular.com/bBNWiLZX5igwHXeu/installer/config.deb.txt?distro=debian&codename=wheezy' > /etc/apt/sources.list.d/modular-installer.list && \
+    apt-get update && \
+    apt-get install -y modular && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+
 # ================================================================================
 #  tailscale
 RUN curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/bionic.gpg | apt-key add - && \
