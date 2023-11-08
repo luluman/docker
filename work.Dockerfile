@@ -268,7 +268,7 @@ RUN apt-get update && \
 # ********************************************************************************
 
 # FROM mattlu/tpumlir-dev:22.04-base AS base
-FROM sophgo/tpuc_dev:v3.1-base AS base
+FROM sophgo/tpuc_dev:v3.2-base AS base
 ARG DEBIAN_FRONTEND
 # ================================================================================
 # --no-upgrade --no-install-recommends
