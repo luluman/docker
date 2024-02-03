@@ -65,8 +65,6 @@ RUN apt-get update \
 ENV CC="gcc-12" CFLAGS="-O3 -Wall -Wextra"
 RUN git clone --depth 1 https://github.com/tree-sitter/tree-sitter.git /opt/tree-sitter && \
     cd /opt/tree-sitter && \
-    # NOTE: update version in Makefile to 0.20.7
-    sed -i 's/^VERSION := 0\.6\.3$/VERSION := 0.20.7/' Makefile && \
     make -j4 && \
     make install
 
@@ -102,7 +100,7 @@ RUN apt-get update && \
 # ============================================================
 # https://github.com/nodejs/docker-node
 
-ENV NODE_VERSION 18.17.0
+ENV NODE_VERSION 20.11.0
 
 RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
     && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
@@ -181,7 +179,7 @@ RUN    wget "${ASPELL_SERVER}/aspell-${ASPELL_VERSION}.tar.gz" \
 # https://hub.docker.com/r/peccu/rg/dockerfile
 # build ripgrep
 
-ENV RG_VERSION=13.0.0
+ENV RG_VERSION=14.1.0
 RUN     set -x \
     &&  wget https://github.com/BurntSushi/ripgrep/releases/download/${RG_VERSION}/ripgrep-${RG_VERSION}-x86_64-unknown-linux-musl.tar.gz \
     --no-check-certificate \
@@ -191,7 +189,7 @@ RUN     set -x \
 # ============================================================
 # build fd-find
 
-ENV FD_VERSION=8.7.0
+ENV FD_VERSION=9.0.0
 RUN     set -x \
     &&  wget https://github.com/sharkdp/fd/releases/download/v${FD_VERSION}/fd-v${FD_VERSION}-x86_64-unknown-linux-gnu.tar.gz \
     --no-check-certificate \
