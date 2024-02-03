@@ -204,20 +204,15 @@ COPY scripts/terminfo-24bit.src /usr/local/share/bash-color/
 
 # ============================================================
 # download latest clangd
-# use lastversion
-RUN apt-get update && \
-    apt-get install -y \
-    python3-pip && \
-    pip3 install -U setuptools pip && \
-    pip3 install lastversion && \
-    lastversion --assets --filter clangd-linux download https://github.com/clangd/clangd/releases && \
+ENV CLANGD_VERSION=17.0.3
+RUN wget https://github.com/clangd/clangd/releases/download/${CLANGD_VERSION}/clangd-linux-${CLANGD_VERSION}.zip && \
     unzip clangd-linux*.zip && \
     cp -r ./clangd*/* /usr/local
 
 # ============================================================
 # download latest shfmt
-
-RUN lastversion --assets --filter _linux_amd64 download https://github.com/mvdan/sh/releases && \
+ENV SHFMT_VERSION=3.7.0
+RUN wget https://github.com/mvdan/sh/releases/download/v${SHFMT_VERSION}/shfmt_v${SHFMT_VERSION}_linux_amd64 && \
     mv shfmt*linux_amd64 shfmt && \
     chmod +x ./shfmt && \
     cp ./shfmt /usr/local/bin/
