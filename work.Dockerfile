@@ -187,6 +187,16 @@ RUN     set -x \
     &&  mv ripgrep-${RG_VERSION}-x86_64-unknown-linux-musl/rg /usr/local/bin/
 
 # ============================================================
+# get jq
+
+ENV JQ_VERSION=1.7.1
+RUN     set -x \
+    &&  wget https://github.com/jqlang/jq/releases/download/jq-${JQ_VERSION}/jq-linux-amd64 \
+    --no-check-certificate -O jq \
+    &&  chmod +x ./jq \
+    &&  mv ./jq /usr/local/bin/
+
+# ============================================================
 # build fd-find
 
 ENV FD_VERSION=9.0.0
