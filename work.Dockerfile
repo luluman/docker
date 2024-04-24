@@ -1,4 +1,4 @@
-ARG UBUNTU_VERSION=22.04
+ARG UBUNTU_VERSION=20.04
 ARG DEBIAN_FRONTEND="noninteractive"
 
 # ********************************************************************************
@@ -36,9 +36,9 @@ RUN apt-get update && \
     libjansson-dev \
     librsvg2-dev \
     libsqlite3-dev \
-    libgccjit-12-dev \
+    libgccjit-10-dev \
     # libgccjit-11 needs gcc-12 ?
-    gcc-12 g++-12 \
+    gcc-10 g++-10 \
     && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -62,7 +62,7 @@ RUN apt-get update \
 
 # install tree-sitter
 # https://www.reddit.com/r/emacs/comments/z25iyx/comment/ixll68j/?utm_source=share&utm_medium=web2x&context=3
-ENV CC="gcc-12" CFLAGS="-O3 -Wall -Wextra"
+ENV CC="gcc-10" CFLAGS="-O3 -Wall -Wextra"
 RUN git clone --depth 1 https://github.com/tree-sitter/tree-sitter.git /opt/tree-sitter && \
     cd /opt/tree-sitter && \
     make -j4 && \
@@ -80,6 +80,8 @@ RUN git clone --depth 1 --branch emacs-29 https://github.com/emacs-mirror/emacs 
     --with-json \
     --with-sqlite3 \
     --with-gif=ifavailable \
+    --with-jpeg=ifavailable \
+    --with-tiff=ifavailable \
     --prefix=/usr/local && \
     make NATIVE_FULL_AOT=1 -j30 && \
     make install-strip
@@ -214,7 +216,7 @@ COPY scripts/terminfo-24bit.src /usr/local/share/bash-color/
 
 # ============================================================
 # download latest clangd
-ENV CLANGD_VERSION=17.0.3
+ENV CLANGD_VERSION=18.1.3
 RUN wget https://github.com/clangd/clangd/releases/download/${CLANGD_VERSION}/clangd-linux-${CLANGD_VERSION}.zip && \
     unzip clangd-linux*.zip && \
     cp -r ./clangd*/* /usr/local
@@ -270,8 +272,7 @@ RUN apt-get update && \
 # stage 1
 # ********************************************************************************
 
-# FROM mattlu/tpumlir-dev:22.04-base AS base
-FROM sophgo/tpuc_dev:v3.2-base AS base
+FROM ubuntu:${UBUNTU_VERSION} AS builder1
 ARG DEBIAN_FRONTEND
 # ================================================================================
 # --no-upgrade --no-install-recommends
@@ -298,9 +299,9 @@ RUN apt-get update && rm -rf /usr/local/man && \
     binutils \
     libc6-dev \
     librsvg2-2 \
-    libgccjit-12-dev \
+    libgccjit-10-dev \
     # libgccjit-11 needs gcc-12 ?
-    gcc-12 g++-12 \
+    gcc-10 g++-10 \
     libsqlite3-dev \
     # for vterm
     libtool \
@@ -341,7 +342,37 @@ RUN apt-get update && ldconfig && \
     sqlite3 postgresql-client \
     # smb
     smbclient \
+    # python3
+    python3-dev \
+    python3-venv \
+    python3-pip \
+    virtualenv \
+    tzdata \
+    # tablegen
+    libncurses5-dev \
+    libncurses5 \
+    # tools
+    ninja-build \
+    curl wget \
+    unzip \
+    gdb \
+    ccache \
+    git-lfs \
+    patchelf \
     && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Clang
+RUN apt-get update && apt-get install -y software-properties-common gpg-agent && \
+    wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
+    apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-14 main" && \
+    apt-get install -y clang-14 lld lldb clang-format-14 libomp-dev && \
+    update-alternatives --install /usr/bin/python python /usr/bin/python3 10 && \
+    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-14 100 && \
+    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-14 100 && \
+    update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-14 100 && \
+    update-alternatives --install /usr/bin/clang-format-diff clang-format-diff /usr/bin/clang-format-diff-14 100 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -390,6 +421,12 @@ RUN curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/bionic.gpg | apt-key add
     -e 's/#SyslogFacility.*/SyslogFacility AUTH/' \
     -e 's/#LogLevel.*/LogLevel INFO/' && \
     mkdir /var/run/sshd
+
+# timeZone
+RUN TZ=Asia/Shanghai \
+    && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
+    && echo $TZ > /etc/timezone \
+    && dpkg-reconfigure -f noninteractive tzdata
 
 # ================================================================================
 COPY --from=builder0 /usr/local /usr/local
