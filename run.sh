@@ -15,11 +15,10 @@ function work-linux()
 {
   local UID=$(id -u)
   local GID=$(id -g)
-  local home=$(realpath ~/.docker/home-work)
+  local home=$(realpath ~/workspace/.docker/home-work)
   local workspace=$(realpath ~/workspace)
-  local data=$(realpath /data)
-  local share=$(realpath /share)
-  local tmp=$(realpath ~/.docker/tmp)
+  local bjnfsdata01=$(realpath /bjnfsdata01)
+  local tmp=$(realpath ~/workspace/.docker/tmp)
   docker run -t \
          --privileged \
          --log-driver=none \
@@ -28,8 +27,7 @@ function work-linux()
          --detach-keys "ctrl-^,ctrl-@" \
          --volume="${home}:/home/$USER":delegated \
          --volume="${workspace}:/workspace":cached \
-         --volume="${data}:/data":cached \
-         --volume="${share}:/share":cached \
+         --volume="${bjnfsdata01}:/bjnfsdata01":cached \
          --volume="${tmp}:/tmp":cached \
          --volume="/etc/group:/etc/group:ro" \
          --volume="/etc/passwd:/etc/passwd:ro" \
@@ -41,11 +39,10 @@ function work-linux()
 
 function work-linux-server()
 {
-  local home=$(realpath ~/.docker/home-work)
+  local home=$(realpath ~/workspace/.docker/home-work)
   local workspace=$(realpath ~/workspace)
-  local data=$(realpath /data)
-  local share=$(realpath /share)
-  local tmp=$(realpath ~/.docker/tmp)
+  local bjnfsdata01=$(realpath /bjnfsdata01)
+  local tmp=$(realpath ~/workspace/.docker/tmp)
   docker run -t \
          --privileged \
          --log-driver=none \
@@ -53,14 +50,13 @@ function work-linux-server()
          --detach-keys "ctrl-^,ctrl-@" \
          --volume="${home}:/home/$USER":delegated \
          --volume="${workspace}:/workspace":cached \
-         --volume="${data}:/data":cached \
-         --volume="${share}:/share":cached \
+         --volume="${bjnfsdata01}:/bjnfsdata01":cached \
          --volume="${tmp}:/tmp":cached \
          --volume="/etc/group:/etc/group:ro" \
          --volume="/etc/passwd:/etc/passwd:ro" \
          --volume="/etc/shadow:/etc/shadow:ro" \
          --volume=/var/run/docker.sock:/var/run/docker.sock \
-         --env-file ~/.docker/home-work/.ssh/vpn.cfg \
+         --env-file ~/workspace/.docker/home-work/.ssh/vpn.cfg \
          --detach \
          mattlu/work-dev:latest
 }
@@ -82,8 +78,7 @@ function explore-linux()
          --detach-keys "ctrl-^,ctrl-@" \
          --volume="${home}:/home/$USER":delegated \
          --volume="${workspace}:/workspace":cached \
-         --volume="${data}:/data":cached \
-         --volume="${share}:/share":cached \
+         --volume="${bjnfsdata01}:/bjnfsdata01":cached \
          --volume="${tmp}:/tmp":cached \
          --volume="/etc/group:/etc/group:ro" \
          --volume="/etc/passwd:/etc/passwd:ro" \
