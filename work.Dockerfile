@@ -137,6 +137,21 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmak
 
 
 # ============================================================
+# https://github.com/protocolbuffers/protobuf/blob/master/src/README.md
+# install latest protobuf
+
+ARG PROTOBUF_VERSION=3.20.0
+
+RUN apt-get install -y autoconf automake libtool curl make g++ unzip && \
+    git clone --depth 1 --recursive --branch v${PROTOBUF_VERSION} https://github.com/protocolbuffers/protobuf.git && \
+    cd protobuf && \
+    ./autogen.sh && \
+    ./configure && \
+    make -j10 && \
+    make install && \
+    ldconfig
+
+# ============================================================
 # Build EAR (BEAR)
 
 ENV BEAR_VERSION 2.4.4
@@ -318,6 +333,10 @@ RUN apt-get update && rm -rf /usr/local/man && \
 RUN apt-get update && ldconfig && \
     apt-get install -y \
     build-essential \
+    apt-transport-https \
+    gnupg-agent \
+    software-properties-common \
+    ca-certificates \
     valgrind \
     openssh-client \
     # tectonic
@@ -367,11 +386,12 @@ RUN apt-get update && ldconfig && \
 RUN apt-get update && apt-get install -y software-properties-common gpg-agent && \
     wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-14 main" && \
-    apt-get install -y clang-14 lld lldb clang-format-14 libomp-dev && \
+    apt-get install -y clang-14 lld lldb clang-format-14 clang-tidy-14 libomp-dev && \
     update-alternatives --install /usr/bin/python python /usr/bin/python3 10 && \
     update-alternatives --install /usr/bin/clang clang /usr/bin/clang-14 100 && \
     update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-14 100 && \
     update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-14 100 && \
+    update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-14 100 && \
     update-alternatives --install /usr/bin/clang-format-diff clang-format-diff /usr/bin/clang-format-diff-14 100 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
