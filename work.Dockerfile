@@ -252,6 +252,7 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
 
 ENV PATH="/root/.cargo/bin:${PATH}"
 RUN cd fuz && \
+    sed -i 's/fuzzy-matcher = "0\.2\.1"/fuzzy-matcher = "0.3.7"/' Cargo.toml && \
     cargo build --release && \
     cp target/release/libfuz_core.so /usr/local/lib/
 
