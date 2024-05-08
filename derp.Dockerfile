@@ -29,6 +29,7 @@ COPY scripts/init_derp.sh /app/
 CMD sh /app/init_derp.sh && \
     # https://github.com/tailscale/tailscale/issues/2794
     /app/derper \
+    -a $DERP_ADDR \
     --hostname=$DERP_DOMAIN \
     --stun=$DERP_STUN  \
     --verify-clients=$DERP_VERIFY_CLIENTS
