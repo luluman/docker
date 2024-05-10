@@ -283,6 +283,12 @@ RUN apt-get update && \
     ./configure && \
     make && make install
 
+# ==========================================================
+# install clash
+RUN curl -L https://downloads.clash.wiki/ClashPremium/clash-linux-amd64-v3-2023.08.17.gz | gunzip -c - > /usr/local/bin/clash \
+    && chmod +x /usr/local/bin/clash
+
+
 # ********************************************************************************
 #
 # stage 1
