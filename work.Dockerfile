@@ -377,6 +377,8 @@ RUN apt-get update && ldconfig && \
     # tablegen
     libncurses5-dev \
     libncurses5 \
+    # riscv-isa-sim
+    device-tree-compiler libboost-regex-dev \
     # tools
     ninja-build \
     curl wget \
