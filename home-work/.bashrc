@@ -184,3 +184,4 @@ export LANGUAGE="en_US:en"
 export LC_ALL=C.UTF-8
 export LANG=C.UTF-8
 export GIT_SSL_NO_VERIFY=1
+export PATH="$HOME/.local/bin:$PATH"
