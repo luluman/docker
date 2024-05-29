@@ -346,6 +346,7 @@ RUN apt-get update && ldconfig && \
     ca-certificates \
     valgrind \
     openssh-client \
+    sudo \
     # tectonic
     libfreetype6-dev \
     libssl-dev \
