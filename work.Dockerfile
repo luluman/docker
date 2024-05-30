@@ -402,11 +402,11 @@ RUN apt-get update && apt-get install -y software-properties-common gpg-agent &&
     update-alternatives --install /usr/bin/clang clang /usr/bin/clang-14 100 && \
     update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-14 100 && \
     update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-14 100 && \
-    update-alternatives --install /usr/bin/clang-format-diff clang-format-diff /usr/bin/clang-format-diff-14 100 && \
     # install clang-format-18
     apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-18 main" && \
     apt-get install -y clang-format-18 lld-18 lldb-18 && \
     update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-18 100 && \
+    update-alternatives --install /usr/bin/clang-format-diff clang-format-diff /usr/bin/clang-format-diff-18 100 && \
     update-alternatives --install /usr/bin/lld lld /usr/bin/lld-18 100 && \
     update-alternatives --install /usr/bin/lldb lldb /usr/bin/lldb-18 100 && \
     apt-get clean && \
