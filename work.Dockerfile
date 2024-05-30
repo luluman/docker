@@ -409,6 +409,8 @@ RUN apt-get update && apt-get install -y software-properties-common gpg-agent &&
     update-alternatives --install /usr/bin/clang-format-diff clang-format-diff /usr/bin/clang-format-diff-18 100 && \
     update-alternatives --install /usr/bin/lld lld /usr/bin/lld-18 100 && \
     update-alternatives --install /usr/bin/lldb lldb /usr/bin/lldb-18 100 && \
+    update-alternatives --install /usr/bin/lldb-dap lldb-dap /usr/bin/lldb-dap-18 100 && \
+    update-alternatives --install /usr/bin/lldb-server lldb-server /usr/bin/lldb-server-18 100 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
