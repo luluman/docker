@@ -230,13 +230,6 @@ RUN mkdir /usr/local/share/bash-color
 COPY scripts/terminfo-24bit.src /usr/local/share/bash-color/
 
 # ============================================================
-# download latest clangd
-ENV CLANGD_VERSION=18.1.3
-RUN wget https://github.com/clangd/clangd/releases/download/${CLANGD_VERSION}/clangd-linux-${CLANGD_VERSION}.zip && \
-    unzip clangd-linux*.zip && \
-    cp -r ./clangd*/* /usr/local
-
-# ============================================================
 # download latest shfmt
 ENV SHFMT_VERSION=3.7.0
 RUN wget https://github.com/mvdan/sh/releases/download/v${SHFMT_VERSION}/shfmt_v${SHFMT_VERSION}_linux_amd64 && \
@@ -404,13 +397,14 @@ RUN apt-get update && apt-get install -y software-properties-common gpg-agent &&
     update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-14 100 && \
     # install clang-format-18
     apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-18 main" && \
-    apt-get install -y clang-format-18 lld-18 lldb-18 && \
+    apt-get install -y clang-format-18 lld-18 lldb-18 clangd-18 && \
     update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-18 100 && \
     update-alternatives --install /usr/bin/clang-format-diff clang-format-diff /usr/bin/clang-format-diff-18 100 && \
     update-alternatives --install /usr/bin/lld lld /usr/bin/lld-18 100 && \
     update-alternatives --install /usr/bin/lldb lldb /usr/bin/lldb-18 100 && \
     update-alternatives --install /usr/bin/lldb-dap lldb-dap /usr/bin/lldb-dap-18 100 && \
     update-alternatives --install /usr/bin/lldb-server lldb-server /usr/bin/lldb-server-18 100 && \
+    update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-18 100 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
