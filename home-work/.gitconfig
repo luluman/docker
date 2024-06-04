@@ -1,0 +1,6 @@
+[core]
+	editor = emacs -q
+[http]
+	# proxy = socks5h://127.0.0.1:7891
+[https]
+	# proxy = socks5h://127.0.0.1:7891
