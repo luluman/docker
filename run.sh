@@ -86,7 +86,7 @@ function explore-linux()
          --volume="/etc/shadow:/etc/shadow:ro" \
          --volume=/var/run/docker.sock:/var/run/docker.sock \
          --detach \
-         --restart=unless-stopped \
+         --restart=always \
          mattlu/explore-dev:latest /bin/bash
 }
 
@@ -115,6 +115,7 @@ function explore-linux-server()
          --volume=/var/run/docker.sock:/var/run/docker.sock \
          --env-file ~/.docker/home-explore/.ssh/vpn.cfg \
          --detach \
+         --restart=always \
          mattlu/explore-dev:latest
 }
 
