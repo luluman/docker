@@ -100,11 +100,22 @@ RUN apt-get update && \
     cd /opt/
 
 # ============================================================
+# Install GDB
+# https://www.linuxfromscratch.org/blfs/view/svn/general/gdb.html
+RUN apt-get update && \
+    apt-get install -y python3-dev && \
+    wget https://ftp.gnu.org/gnu/gdb/gdb-14.2.tar.gz && \
+    tar -xvf gdb-14.2.tar.gz && \
+    cd gdb-14.2 && \
+    ./configure --with-python=yes --prefix=/usr/local --with-system-readline && \
+    make -j30 && make install
+
+# ============================================================
 # https://github.com/nodejs/docker-node
 
 ENV NODE_VERSION 20.11.0
 
-RUN      curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
+RUN curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
     && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
     && rm /usr/local/*.md  /usr/local/LICENSE \
     && rm "node-v$NODE_VERSION-linux-x64.tar.xz" \
@@ -378,7 +389,6 @@ RUN apt-get update && ldconfig && \
     ninja-build \
     curl wget \
     unzip \
-    gdb \
     ccache \
     git-lfs \
     patchelf \
