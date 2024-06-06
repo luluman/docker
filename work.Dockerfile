@@ -402,17 +402,17 @@ RUN apt-get update && ldconfig && \
 RUN apt-get update && apt-get install -y software-properties-common gpg-agent && \
     wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-14 main" && \
-    apt-get install -y clang-14 clang-tidy-14 libomp-dev && \
+    apt-get install -y clang-14 lld-14 clang-tidy-14 libomp-dev && \
     update-alternatives --install /usr/bin/python python /usr/bin/python3 10 && \
     update-alternatives --install /usr/bin/clang clang /usr/bin/clang-14 100 && \
     update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-14 100 && \
+    update-alternatives --install /usr/bin/lld lld /usr/bin/lld-14 100 && \
     update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-14 100 && \
     # install clang-format-18
     apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-18 main" && \
-    apt-get install -y clang-format-18 lld-18 lldb-18 clangd-18 && \
+    apt-get install -y clang-format-18 lldb-18 clangd-18 && \
     update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-18 100 && \
     update-alternatives --install /usr/bin/clang-format-diff clang-format-diff /usr/bin/clang-format-diff-18 100 && \
-    update-alternatives --install /usr/bin/lld lld /usr/bin/lld-18 100 && \
     update-alternatives --install /usr/bin/lldb lldb /usr/bin/lldb-18 100 && \
     update-alternatives --install /usr/bin/lldb-dap lldb-dap /usr/bin/lldb-dap-18 100 && \
     update-alternatives --install /usr/bin/lldb-server lldb-server /usr/bin/lldb-server-18 100 && \
