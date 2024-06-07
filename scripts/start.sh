@@ -7,7 +7,7 @@ ssh-keygen -A
 exec /usr/sbin/sshd -D -e &
 
 echo "Download config file and start clash"
-exec `~/.ssh/vpn-config.py "${CLASH_SUBSCRIPTION_URL}"` &
+exec `/opt/vpn-config.py "${CLASH_SUBSCRIPTION_URL}"` &
 
 trap 'kill -TERM $PID' TERM INT
 echo "Starting Tailscale daemon"

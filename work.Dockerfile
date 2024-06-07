@@ -479,7 +479,9 @@ RUN ldconfig && \
 
 # start SSH server
 COPY scripts/start.sh /usr/bin/start.sh
-RUN chmod +x /usr/bin/start.sh
+COPY scripts/vpn-config.py /opt/vpn-config.py
+COPY scripts/Country.mmdb /opt/Country.mmdb
+RUN chmod +x /usr/bin/start.sh /opt/vpn-config.py
 
 CMD "start.sh"
 
