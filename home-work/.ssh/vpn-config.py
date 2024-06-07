@@ -2,18 +2,16 @@
 
 import requests
 import yaml
-import os
+import os, sys
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 config_file = "clash_config.yaml"
-clash_config_path = f"{script_dir}/{config_file}"
+clash_config_path = f"/opt/{config_file}"
 
 
-def get_server_config():
+def get_server_config(url):
     # Step 1: Download the file from the URL
-    url = open(f"{script_dir}/subscription-url").read().strip()
-
-    response = requests.get(url)
+    response = requests.get(url.strip())
     yaml_content = response.text
 
     # Step 2: Read the file and modify the specified field
@@ -38,10 +36,9 @@ def get_server_config():
     with open(clash_config_path, "w", encoding="utf-8") as file:
         yaml.dump(data, file, allow_unicode=True)
 
+    os.chmod(clash_config_path, 0o666)
 
-try:
-    get_server_config()
-except:
-    pass
 
-print(f"clash -f {clash_config_path}", end="")
+if __name__ == "__main__":
+    get_server_config(sys.argv[1])
+    print(f"clash -f {clash_config_path}", end="")

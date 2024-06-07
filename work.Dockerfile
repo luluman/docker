@@ -266,15 +266,6 @@ RUN curl -L https://github.com/rust-analyzer/rust-analyzer/releases/latest/downl
     && chmod +x /usr/local/bin/rust-analyzer
 
 # ==========================================================
-# install groovy-lsp
-RUN apt-get update && \
-    apt-get install -y default-jre && \
-    git clone https://github.com/GroovyLanguageServer/groovy-language-server && \
-    cd groovy-language-server && \
-    ./gradlew build && \
-    cp build/libs/* /usr/local/lib/
-
-# ==========================================================
 # install mosh
 RUN apt-get update && \
     apt-get install -y \
@@ -365,8 +356,6 @@ RUN apt-get update && ldconfig && \
     bison \
     flex \
     bsdmainutils \
-    # for groovy
-    default-jre \
     # for mosh-server
     libutempter-dev \
     # ping network
@@ -466,11 +455,13 @@ RUN curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/bionic.gpg | apt-key add
     -e 's/#LogLevel.*/LogLevel INFO/' && \
     mkdir /var/run/sshd
 
-# timeZone
+# timeZone and some pip packages
 RUN TZ=Asia/Shanghai \
     && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
     && echo $TZ > /etc/timezone \
-    && dpkg-reconfigure -f noninteractive tzdata
+    && dpkg-reconfigure -f noninteractive tzdata && \
+    # packages for vpn
+    pip3 install --no-cache-dir requests pyyaml
 
 # ================================================================================
 COPY --from=builder0 /usr/local /usr/local

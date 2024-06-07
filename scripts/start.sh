@@ -6,6 +6,9 @@ ssh-keygen -A
 # do not detach (-D), log to stderr (-e), passthrough other arguments
 exec /usr/sbin/sshd -D -e &
 
+echo "Download config file and start clash"
+exec `~/.ssh/vpn-config.py "${CLASH_SUBSCRIPTION_URL}"` &
+
 trap 'kill -TERM $PID' TERM INT
 echo "Starting Tailscale daemon"
 # -state=mem: will logout and remove ephemeral node from network immediately after ending.
