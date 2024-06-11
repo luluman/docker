@@ -95,6 +95,8 @@ RUN apt-get update && \
     apt-get install -y g++ && \
     git clone https://github.com/casouri/tree-sitter-module /opt/tree-sitter-module && \
     cd /opt/tree-sitter-module && \
+    # bugfix: https://github.com/tree-sitter/tree-sitter-cpp/issues/271
+    sed -i '/case "${lang}" in/a\    "cpp")\n        branch="v0.22.0"\n        ;;' build.sh && \
     ./batch.sh && \
     mv ./dist/* /usr/local/lib/ && \
     cd /opt/
