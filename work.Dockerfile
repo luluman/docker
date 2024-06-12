@@ -1,4 +1,5 @@
 ARG UBUNTU_VERSION=20.04
+ARG UBUNTU_NAME=focal
 ARG DEBIAN_FRONTEND="noninteractive"
 
 # ********************************************************************************
@@ -9,7 +10,8 @@ ARG DEBIAN_FRONTEND="noninteractive"
 FROM ubuntu:${UBUNTU_VERSION} AS builder0
 ARG DEBIAN_FRONTEND
 
-RUN apt-get update && apt-get install -y software-properties-common gpg-agent && \
+RUN apt-get update && \
+    apt-get install -y software-properties-common gpg-agent --no-install-recommends && \
     apt-add-repository ppa:ubuntu-toolchain-r/test && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -148,22 +150,6 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmak
     && /tmp/cmake-install.sh --skip-license --prefix=/usr/local \
     && rm /tmp/cmake-install.sh
 
-
-# ============================================================
-# https://github.com/protocolbuffers/protobuf/blob/master/src/README.md
-# install latest protobuf
-
-ARG PROTOBUF_VERSION=3.20.0
-
-RUN apt-get install -y autoconf automake libtool curl make g++ unzip && \
-    git clone --depth 1 --recursive --branch v${PROTOBUF_VERSION} https://github.com/protocolbuffers/protobuf.git && \
-    cd protobuf && \
-    ./autogen.sh && \
-    ./configure && \
-    make -j10 && \
-    make install && \
-    ldconfig
-
 # ============================================================
 # Build EAR (BEAR)
 
@@ -272,7 +258,7 @@ RUN curl -L https://github.com/rust-analyzer/rust-analyzer/releases/latest/downl
 RUN apt-get update && \
     apt-get install -y \
     automake \
-    pkg-config protobuf-compiler libutempter-dev zlib1g-dev libncurses5-dev \
+    pkg-config protobuf-compiler libprotobuf-dev libutempter-dev zlib1g-dev libncurses5-dev \
     libssl-dev bash-completion tmux less && \
     git clone --branch=mosh-1.4.0 https://github.com/mobile-shell/mosh && \
     cd mosh && \
@@ -298,10 +284,11 @@ ARG DEBIAN_FRONTEND
 COPY 99-apt-get-settings /etc/apt/apt.conf.d/
 
 # dependency of Emacs
-RUN apt-get update && apt-get install -y software-properties-common gpg-agent && \
+RUN apt-get update && \
+    apt-get install -y software-properties-common gpg-agent --no-install-recommends && \
     apt-add-repository ppa:ubuntu-toolchain-r/test && \
     apt-get update && rm -rf /usr/local/man && \
-    apt-get install -y \
+    apt-get install -y --no-install-recommends \
     libmpc3 \
     libmpfr6 \
     libgmp10 \
@@ -337,7 +324,7 @@ RUN apt-get update && apt-get install -y software-properties-common gpg-agent &&
 # ================================================================================
 # some others
 RUN apt-get update && ldconfig && \
-    apt-get install -y \
+    apt-get install -y  --no-install-recommends \
     build-essential \
     apt-transport-https \
     ca-certificates \
@@ -359,6 +346,7 @@ RUN apt-get update && ldconfig && \
     flex \
     bsdmainutils \
     # for mosh-server
+    libprotobuf-dev \
     libutempter-dev \
     # ping network
     iputils-ping \
@@ -391,8 +379,8 @@ RUN apt-get update && ldconfig && \
 
 # Clang
 RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
-    apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-16 main" && \
-    apt-get install -y clang-16 lld-16 libomp-dev && \
+    apt-add-repository "deb http://apt.llvm.org/${UBUNTU_NAME}/ llvm-toolchain-${UBUNTU_NAME}-16 main" && \
+    apt-get install -y --no-install-recommends clang-16 lld-16 libomp-dev && \
     # config gcc and python
     update-alternatives --install /usr/bin/python python /usr/bin/python3 10 && \
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 10 --slave /usr/bin/g++ g++ /usr/bin/g++-13 && \
@@ -401,8 +389,8 @@ RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-16 100 && \
     update-alternatives --install /usr/bin/lld lld /usr/bin/lld-16 100 && \
     # install clang-format-18
-    apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-18 main" && \
-    apt-get install -y clang-format-18 clang-tidy-18 lldb-18 clangd-18 && \
+    apt-add-repository "deb http://apt.llvm.org/${UBUNTU_NAME}/ llvm-toolchain-${UBUNTU_NAME}-18 main" && \
+    apt-get install -y --no-install-recommends clang-format-18 clang-tidy-18 lldb-18 clangd-18 && \
     update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-18 100 && \
     update-alternatives --install /usr/bin/clang-format-diff clang-format-diff /usr/bin/clang-format-diff-18 100 && \
     update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-18 100 && \
@@ -414,7 +402,7 @@ RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     rm -rf /var/lib/apt/lists/*
 
 # DOCKER CLI
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates gnupg && \
     install -m 0755 -d /etc/apt/keyrings && \
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
@@ -423,7 +411,7 @@ RUN apt-get update && apt-get install -y \
     "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
     "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
     tee /etc/apt/sources.list.d/docker.list > /dev/null && \
-    apt-get update && apt-get install -y \
+    apt-get update && apt-get install -y --no-install-recommends \
     docker-ce-cli \
     && \
     apt-get clean && \
@@ -431,23 +419,24 @@ RUN apt-get update && apt-get install -y \
 
 
 # Modular GPG
-RUN apt-get  update && apt-get install -y apt-transport-https && \
+RUN apt-get  update && apt-get install -y --no-install-recommends apt-transport-https && \
     keyring_location=/usr/share/keyrings/modular-installer-archive-keyring.gpg && \
     curl -1sLf 'https://dl.modular.com/bBNWiLZX5igwHXeu/installer/gpg.0E4925737A3895AD.key' |  gpg --dearmor >> ${keyring_location} && \
     curl -1sLf 'https://dl.modular.com/bBNWiLZX5igwHXeu/installer/config.deb.txt?distro=debian&codename=wheezy' > /etc/apt/sources.list.d/modular-installer.list && \
     apt-get update && \
-    apt-get install -y modular && \
+    apt-get install -y --no-install-recommends modular && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 
 # ================================================================================
 #  tailscale
-RUN curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/bionic.gpg | apt-key add - && \
-    curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/bionic.list | tee /etc/apt/sources.list.d/tailscale.list && \
+
+RUN curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/${UBUNTU_NAME}.gpg | apt-key add - && \
+    curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/${UBUNTU_NAME}.list | tee /etc/apt/sources.list.d/tailscale.list && \
     apt-get update && \
     # mosh-server config locales
-    apt-get install -y tailscale openssh-server locales && \
+    apt-get install -y --no-install-recommends tailscale openssh-server locales && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     # setup SSH server
