@@ -9,7 +9,9 @@ ARG DEBIAN_FRONTEND="noninteractive"
 FROM ubuntu:${UBUNTU_VERSION} AS builder0
 ARG DEBIAN_FRONTEND
 
-RUN apt-get update && \
+RUN apt-get update && apt-get install -y software-properties-common gpg-agent && \
+    apt-add-repository ppa:ubuntu-toolchain-r/test && \
+    apt-get update && \
     apt-get install -y --no-install-recommends \
     git \
     autoconf \
@@ -36,9 +38,9 @@ RUN apt-get update && \
     libjansson-dev \
     librsvg2-dev \
     libsqlite3-dev \
-    libgccjit-10-dev \
+    libgccjit-13-dev \
     # libgccjit-11 needs gcc-12 ?
-    gcc-10 g++-10 \
+    gcc-13 g++-13 \
     && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -54,15 +56,13 @@ RUN apt-get update \
     apt-transport-https \
     ca-certificates \
     curl \
-    gnupg-agent \
-    software-properties-common \
     # other package needed
     wget \
     unzip
 
 # install tree-sitter
 # https://www.reddit.com/r/emacs/comments/z25iyx/comment/ixll68j/?utm_source=share&utm_medium=web2x&context=3
-ENV CC="gcc-10" CFLAGS="-O3 -Wall -Wextra"
+ENV CC="gcc-13" CFLAGS="-O3 -Wall -Wextra"
 RUN git clone --depth 1 --branch v0.22.6 https://github.com/tree-sitter/tree-sitter.git /opt/tree-sitter && \
     cd /opt/tree-sitter && \
     make -j4 && \
@@ -298,7 +298,9 @@ ARG DEBIAN_FRONTEND
 COPY 99-apt-get-settings /etc/apt/apt.conf.d/
 
 # dependency of Emacs
-RUN apt-get update && rm -rf /usr/local/man && \
+RUN apt-get update && apt-get install -y software-properties-common gpg-agent && \
+    apt-add-repository ppa:ubuntu-toolchain-r/test && \
+    apt-get update && rm -rf /usr/local/man && \
     apt-get install -y \
     libmpc3 \
     libmpfr6 \
@@ -318,9 +320,9 @@ RUN apt-get update && rm -rf /usr/local/man && \
     binutils \
     libc6-dev \
     librsvg2-2 \
-    libgccjit-10-dev \
+    libgccjit-13-dev \
     # libgccjit-11 needs gcc-12 ?
-    gcc-10 g++-10 \
+    gcc-13 g++-13 \
     libsqlite3-dev \
     # for vterm
     libtool \
@@ -338,8 +340,6 @@ RUN apt-get update && ldconfig && \
     apt-get install -y \
     build-essential \
     apt-transport-https \
-    gnupg-agent \
-    software-properties-common \
     ca-certificates \
     valgrind \
     openssh-client \
@@ -390,14 +390,16 @@ RUN apt-get update && ldconfig && \
     rm -rf /var/lib/apt/lists/*
 
 # Clang
-RUN apt-get update && apt-get install -y software-properties-common gpg-agent && \
-    wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
-    apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-14 main" && \
-    apt-get install -y clang-14 lld-14 libomp-dev && \
+RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
+    apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-16 main" && \
+    apt-get install -y clang-16 lld-16 libomp-dev && \
+    # config gcc and python
     update-alternatives --install /usr/bin/python python /usr/bin/python3 10 && \
-    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-14 100 && \
-    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-14 100 && \
-    update-alternatives --install /usr/bin/lld lld /usr/bin/lld-14 100 && \
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 10 --slave /usr/bin/g++ g++ /usr/bin/g++-13 && \
+    # clang config
+    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-16 100 && \
+    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-16 100 && \
+    update-alternatives --install /usr/bin/lld lld /usr/bin/lld-16 100 && \
     # install clang-format-18
     apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-18 main" && \
     apt-get install -y clang-format-18 clang-tidy-18 lldb-18 clangd-18 && \
