@@ -8,6 +8,7 @@ ARG DEBIAN_FRONTEND="noninteractive"
 # ********************************************************************************
 
 FROM ubuntu:${UBUNTU_VERSION} AS builder0
+ARG UBUNTU_NAME
 ARG DEBIAN_FRONTEND
 
 RUN apt-get update && \
@@ -119,7 +120,9 @@ RUN apt-get update && \
 
 ENV NODE_VERSION 20.14.0
 
-RUN curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
+RUN apt-get update && \
+    apt-get install xz-utils && \
+    curl -fsSLOk --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
     && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
     && rm /usr/local/*.md  /usr/local/LICENSE \
     && rm "node-v$NODE_VERSION-linux-x64.tar.xz" \
@@ -278,7 +281,9 @@ RUN curl -L https://downloads.clash.wiki/ClashPremium/clash-linux-amd64-v3-2023.
 # ********************************************************************************
 
 FROM ubuntu:${UBUNTU_VERSION} AS builder1
+ARG UBUNTU_NAME
 ARG DEBIAN_FRONTEND
+
 # ================================================================================
 # --no-upgrade --no-install-recommends
 COPY 99-apt-get-settings /etc/apt/apt.conf.d/
