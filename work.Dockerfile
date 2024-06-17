@@ -30,14 +30,12 @@ RUN apt-get update && \
     libtinfo5 \
     texinfo \
     libxpm-dev \
-    libgtk-3-dev \
     libgnutls28-dev \
     libncurses5-dev \
     libxml2-dev \
     libxt-dev \
     libjansson4 \
     gcc-multilib \
-    libcanberra-gtk3-module \
     libjansson-dev \
     librsvg2-dev \
     libsqlite3-dev \
@@ -85,6 +83,8 @@ RUN git clone --depth 1 --branch emacs-29 https://github.com/emacs-mirror/emacs 
     --with-gif=ifavailable \
     --with-jpeg=ifavailable \
     --with-tiff=ifavailable \
+    # no need GUI and silent the `--with-x-toolkit=lucid` warning.
+    --without-x --without-x-toolkit-scroll-bars \
     --prefix=/usr/local && \
     make NATIVE_FULL_AOT=1 -j30 && \
     make install-strip
@@ -301,13 +301,11 @@ RUN apt-get update && \
     libjpeg-turbo8 \
     libtiff5 \
     libxpm4 \
-    libgtk-3-0 \
     libgnutlsxx28 \
     libncurses5 \
     libxml2 \
     libxt6 \
     libjansson4 \
-    libcanberra-gtk3-module \
     libx11-xcb1 \
     binutils \
     libc6-dev \
