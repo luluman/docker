@@ -12,10 +12,10 @@ ARG UBUNTU_NAME
 ARG DEBIAN_FRONTEND
 
 RUN apt-get update && \
-    apt-get install -y software-properties-common gpg-agent --no-install-recommends && \
+    apt-get install -y software-properties-common gpg-agent && \
     apt-add-repository ppa:ubuntu-toolchain-r/test && \
     apt-get update && \
-    apt-get install -y --no-install-recommends \
+    apt-get install -y \
     git \
     autoconf \
     texinfo \
@@ -290,10 +290,10 @@ COPY 99-apt-get-settings /etc/apt/apt.conf.d/
 
 # dependency of Emacs
 RUN apt-get update && \
-    apt-get install -y software-properties-common gpg-agent --no-install-recommends && \
+    apt-get install -y software-properties-common gpg-agent && \
     apt-add-repository ppa:ubuntu-toolchain-r/test && \
     apt-get update && rm -rf /usr/local/man && \
-    apt-get install -y --no-install-recommends \
+    apt-get install -y  \
     libmpc3 \
     libmpfr6 \
     libgmp10 \
@@ -317,6 +317,8 @@ RUN apt-get update && \
     # for vterm
     libtool \
     libtool-bin \
+    # for jinx
+    libenchant-2-dev pkgconf \
     # for monkeytype
     fortune \
     fortunes \
@@ -327,7 +329,7 @@ RUN apt-get update && \
 # ================================================================================
 # some others
 RUN apt-get update && ldconfig && \
-    apt-get install -y  --no-install-recommends \
+    apt-get install -y   \
     build-essential \
     apt-transport-https \
     ca-certificates \
@@ -383,7 +385,7 @@ RUN apt-get update && ldconfig && \
 # Clang
 RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     apt-add-repository "deb http://apt.llvm.org/${UBUNTU_NAME}/ llvm-toolchain-${UBUNTU_NAME}-16 main" && \
-    apt-get install -y --no-install-recommends clang-16 lld-16 libomp-dev && \
+    apt-get install -y  clang-16 lld-16 libomp-dev && \
     # config gcc and python
     update-alternatives --install /usr/bin/python python /usr/bin/python3 10 && \
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 10 --slave /usr/bin/g++ g++ /usr/bin/g++-13 && \
@@ -393,7 +395,7 @@ RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     update-alternatives --install /usr/bin/lld lld /usr/bin/lld-16 100 && \
     # install clang-format-18
     apt-add-repository "deb http://apt.llvm.org/${UBUNTU_NAME}/ llvm-toolchain-${UBUNTU_NAME}-18 main" && \
-    apt-get install -y --no-install-recommends clang-format-18 clang-tidy-18 lldb-18 clangd-18 && \
+    apt-get install -y  clang-format-18 clang-tidy-18 lldb-18 clangd-18 && \
     update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-18 100 && \
     update-alternatives --install /usr/bin/clang-format-diff clang-format-diff /usr/bin/clang-format-diff-18 100 && \
     update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-18 100 && \
@@ -405,7 +407,7 @@ RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     rm -rf /var/lib/apt/lists/*
 
 # DOCKER CLI
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y  \
     ca-certificates gnupg && \
     install -m 0755 -d /etc/apt/keyrings && \
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
@@ -414,7 +416,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
     "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
     tee /etc/apt/sources.list.d/docker.list > /dev/null && \
-    apt-get update && apt-get install -y --no-install-recommends \
+    apt-get update && apt-get install -y  \
     docker-ce-cli \
     && \
     apt-get clean && \
@@ -422,12 +424,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 
 # Modular GPG
-RUN apt-get  update && apt-get install -y --no-install-recommends apt-transport-https && \
+RUN apt-get  update && apt-get install -y  apt-transport-https && \
     keyring_location=/usr/share/keyrings/modular-installer-archive-keyring.gpg && \
     curl -1sLf 'https://dl.modular.com/bBNWiLZX5igwHXeu/installer/gpg.0E4925737A3895AD.key' |  gpg --dearmor >> ${keyring_location} && \
     curl -1sLf 'https://dl.modular.com/bBNWiLZX5igwHXeu/installer/config.deb.txt?distro=debian&codename=wheezy' > /etc/apt/sources.list.d/modular-installer.list && \
     apt-get update && \
-    apt-get install -y --no-install-recommends modular && \
+    apt-get install -y  modular && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -439,7 +441,7 @@ RUN curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/${UBUNTU_NAME}.gpg | apt
     curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/${UBUNTU_NAME}.list | tee /etc/apt/sources.list.d/tailscale.list && \
     apt-get update && \
     # mosh-server config locales
-    apt-get install -y --no-install-recommends tailscale openssh-server locales && \
+    apt-get install -y  tailscale openssh-server locales && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     # setup SSH server
