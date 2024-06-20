@@ -125,59 +125,6 @@ else
     export TERM=xterm-256color
 fi
 
-
-# vtrem configuration
-# The main goal of these additional functions is to enable
-# the shell to send information to vterm via properly escaped sequences.
-vterm_printf(){
-    if [ -n "$TMUX" ] && ([ "${TERM%%-*}" = "tmux" ] || [ "${TERM%%-*}" = "screen" ] ); then
-        # Tell tmux to pass the escape sequences through
-        printf "\ePtmux;\e\e]%s\007\e\\" "$1"
-    elif [ "${TERM%%-*}" = "screen" ]; then
-        # GNU screen (screen, screen-256color, screen-256color-bce)
-        printf "\eP\e]%s\007\e\\" "$1"
-    else
-        printf "\e]%s\e\\" "$1"
-    fi
-}
-vterm_prompt_end(){
-  vterm_printf "51;A$(whoami)@$(hostname):$(pwd)"
-}
-# clears the current buffer from the data that it is not currently visible.
-if [[ "$INSIDE_EMACS" = 'vterm' ]]; then
-    function clear(){
-        vterm_printf "51;Evterm-clear-scrollback";
-        tput clear;
-    }
-    # Directory tracking and Prompt tracking
-    PS1=$PS1'\[$(vterm_prompt_end)\]'
-    # rename buffer name
-    PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }"'echo -ne "\033]0;${HOSTNAME}:${PWD}\007"'
-fi
-# vterm message passing
-vterm_cmd() {
-    local vterm_elisp
-    vterm_elisp=""
-    while [ $# -gt 0 ]; do
-        vterm_elisp="$vterm_elisp""$(printf '"%s" ' "$(printf "%s" "$1" | sed -e 's|\\|\\\\|g' -e 's|"|\\"|g')")"
-        shift
-    done
-    vterm_printf "51;E$vterm_elisp"
-}
-# track local directory
-vterm_read_PATH() {
-    vterm_cmd read-PATH "$PATH"
-}
-vterm_read_LD_LIBRARY_PATH() {
-    vterm_cmd read-LD_LIBRARY_PATH "$LD_LIBRARY_PATH"
-}
-vterm_read_PYTHONPATH() {
-    vterm_cmd read-PYTHONPATH "$PYTHONPATH"
-}
-# end vterm configuration
-
-# alias make="bear make"
-
 export USER=$(whoami)
 export LANG="en_US.UTF-8"
 export LANGUAGE="en_US:en"
@@ -185,3 +132,7 @@ export LC_ALL=C.UTF-8
 export LANG=C.UTF-8
 export GIT_SSL_NO_VERIFY=1
 export PATH="$HOME/.local/bin:$PATH"
+
+if [[ "$INSIDE_EMACS" = 'vterm' ]]; then
+  source ~/emacs-vterm-bash.sh
+fi
