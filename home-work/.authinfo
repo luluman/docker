@@ -1,0 +1,3 @@
+machine api.openai.com login apikey password TOKEN
+machine api.anthropic.com login apikey password TOKEN
+machine generativelanguage.googleapis.com login apikey password TOKEN
