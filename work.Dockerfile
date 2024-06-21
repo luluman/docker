@@ -168,7 +168,6 @@ RUN git clone --depth 1 --branch $BEAR_VERSION https://github.com/rizsotto/Bear.
 # Build Aspell
 # https://github.com/Starefossen/docker-aspell
 
-
 ENV ASPELL_SERVER https://ftp.gnu.org/gnu/aspell
 ENV ASPELL_VERSION 0.60.8
 ENV ASPELL_EN 2020.12.07-0
@@ -176,7 +175,7 @@ ENV ASPELL_EN 2020.12.07-0
 RUN apt-get install -y bzip2 && \
     ldconfig
 
-RUN    wget "${ASPELL_SERVER}/aspell-${ASPELL_VERSION}.tar.gz" \
+RUN wget "${ASPELL_SERVER}/aspell-${ASPELL_VERSION}.tar.gz" \
     && wget "${ASPELL_SERVER}/dict/en/aspell6-en-${ASPELL_EN}.tar.bz2" \
     && tar -xzf "aspell-${ASPELL_VERSION}.tar.gz" \
     && tar -xjf "aspell6-en-${ASPELL_EN}.tar.bz2" \
@@ -191,8 +190,22 @@ RUN    wget "${ASPELL_SERVER}/aspell-${ASPELL_VERSION}.tar.gz" \
     && ./configure \
     && make -j4 \
     && make install \
-    # cleanup
-    && rm -rf /aspell* /var/lib/apt/lists/*
+
+# ============================================================
+# Build libEnchant for jinx
+
+ENV ENCHANT_VERSION 2.8.1
+
+RUN apt-get install groff && \
+    wget "https://github.com/AbiWord/enchant/releases/download/v${ENCHANT_VERSION}/enchant-${ENCHANT_VERSION}.tar.gz" \
+    && tar -xf "enchant-${ENCHANT_VERSION}.tar.gz" \
+    # build
+    && cd "enchant-${ENCHANT_VERSION}" \
+    && test -f configure \
+    && ./configure \
+    && make -j4 \
+    && make install \
+    && ldconfig
 
 # ============================================================
 # https://hub.docker.com/r/peccu/rg/dockerfile
@@ -317,8 +330,8 @@ RUN apt-get update && \
     # for vterm
     libtool \
     libtool-bin \
-    # for jinx
-    libenchant-2-dev pkgconf \
+    # libenchant for jinx
+    groff \
     # for monkeytype
     fortune \
     fortunes \
