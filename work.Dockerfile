@@ -189,21 +189,21 @@ RUN wget "${ASPELL_SERVER}/aspell-${ASPELL_VERSION}.tar.gz" \
     && cd "/aspell6-en-${ASPELL_EN}" \
     && ./configure \
     && make -j4 \
-    && make install \
+    && make install
 
 # ============================================================
 # Build libEnchant for jinx
 
-ENV ENCHANT_VERSION 2.8.1
+ENV ENCHANT_VERSION 2.6.9
 
-RUN apt-get install groff && \
+RUN apt-get update && apt-get install -y libglib2.0-dev groff && \
     wget "https://github.com/AbiWord/enchant/releases/download/v${ENCHANT_VERSION}/enchant-${ENCHANT_VERSION}.tar.gz" \
     && tar -xf "enchant-${ENCHANT_VERSION}.tar.gz" \
     # build
     && cd "enchant-${ENCHANT_VERSION}" \
     && test -f configure \
     && ./configure \
-    && make -j4 \
+    && make \
     && make install \
     && ldconfig
 
@@ -331,7 +331,7 @@ RUN apt-get update && \
     libtool \
     libtool-bin \
     # libenchant for jinx
-    groff \
+    libglib2.0-dev \
     # for monkeytype
     fortune \
     fortunes \
