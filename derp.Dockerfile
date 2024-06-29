@@ -23,13 +23,16 @@ RUN apk upgrade --update-cache --available && \
     rm -rf /var/cache/apk/*
 
 COPY --from=builder /go/bin/derper .
-COPY scripts/init_derp.sh /app/
+COPY scripts/build_cert.sh /app/
 
 # build self-signed certs && start derper
-CMD sh /app/init_derp.sh && \
+CMD sh /app/build_cert.sh && \
     # https://github.com/tailscale/tailscale/issues/2794
     /app/derper \
-    -a $DERP_ADDR \
     --hostname=$DERP_DOMAIN \
+    --certmode=manual \
+    --certdir=$DERP_CERTS \
     --stun=$DERP_STUN  \
+    --a=$DERP_ADDR \
+    --http-port=$DERP_HTTP_PORT \
     --verify-clients=$DERP_VERIFY_CLIENTS
