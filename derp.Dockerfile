@@ -2,9 +2,11 @@
 
 FROM golang:alpine AS builder
 RUN go install tailscale.com/cmd/derper@main
+RUN go install tailscale.com/cmd/tailscaled@main
+RUN go install tailscale.com/cmd/tailscale@main
 
 # FROM alpine
-FROM tailscale/tailscale:stable
+FROM alpine
 WORKDIR /app
 
 # ========= CONFIG =========
@@ -22,13 +24,13 @@ RUN apk upgrade --update-cache --available && \
     apk add openssl && \
     rm -rf /var/cache/apk/*
 
-COPY --from=builder /go/bin/derper .
+COPY --from=builder /go/bin/* /usr/bin/
 COPY scripts/build_cert.sh /app/
 
 # build self-signed certs && start derper
 CMD sh /app/build_cert.sh && \
     # https://github.com/tailscale/tailscale/issues/2794
-    /app/derper \
+    derper \
     --hostname=$DERP_DOMAIN \
     --certmode=manual \
     --certdir=$DERP_CERTS \
