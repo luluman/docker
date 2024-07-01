@@ -347,6 +347,11 @@ RUN apt-get update && ldconfig && \
     apt-transport-https \
     ca-certificates \
     valgrind \
+    # perf tools
+    linux-tools-5.15.0-56-generic \
+    linux-cloud-tools-5.15.0-56-generic \
+    linux-tools-common \
+    # open-ssh
     openssh-client \
     sudo \
     # gdb \
@@ -416,22 +421,6 @@ RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     update-alternatives --install /usr/bin/lldb-dap lldb-dap /usr/bin/lldb-dap-18 100 && \
     update-alternatives --install /usr/bin/lldb-server lldb-server /usr/bin/lldb-server-18 100 && \
     update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-18 100 && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# DOCKER CLI
-RUN apt-get update && apt-get install -y  \
-    ca-certificates gnupg && \
-    install -m 0755 -d /etc/apt/keyrings && \
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
-    chmod a+r /etc/apt/keyrings/docker.gpg && \
-    echo \
-    "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-    "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
-    tee /etc/apt/sources.list.d/docker.list > /dev/null && \
-    apt-get update && apt-get install -y  \
-    docker-ce-cli \
-    && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 

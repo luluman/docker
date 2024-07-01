@@ -5,7 +5,6 @@ function work-linux-server() {
     # ln -s your/original/workspace/path workspace
     local home=$(realpath ~/.docker/home-work)
     local workspace=$(realpath ~/workspace)
-    local bjnfsdata01=$(realpath /bjnfsdata01)
     local tmp=$(realpath ~/.docker/tmp)
     docker run -t \
         --privileged \
@@ -13,14 +12,12 @@ function work-linux-server() {
         --hostname=$(hostname) \
         --name ${USER}-work-server \
         --detach-keys "ctrl-^,ctrl-@" \
-        --volume="${home}:/home/$USER":delegated \
+        --volume="${home}:${HOME}":DELEGATED \
         --volume="${workspace}:/workspace":cached \
-        --volume="${bjnfsdata01}:/bjnfsdata01":cached \
         --volume="${tmp}:/tmp":cached \
         --volume="/etc/group:/etc/group:ro" \
         --volume="/etc/passwd:/etc/passwd:ro" \
         --volume="/etc/shadow:/etc/shadow:ro" \
-        --volume=/var/run/docker.sock:/var/run/docker.sock \
         --env-file ${home}/.ssh/vpn.cfg \
         --detach \
         mattlu/work-dev:latest
