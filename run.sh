@@ -6,6 +6,7 @@ function work-linux-server() {
     local home=$(realpath ~/.docker/home-work)
     local workspace=$(realpath ~/workspace)
     local tmp=$(realpath ~/.docker/tmp)
+    local opt=$(realpath ~/.docker/opt)
     docker run -t \
         --privileged \
         --log-driver=none \
@@ -15,9 +16,11 @@ function work-linux-server() {
         --volume="${home}:${HOME}":delegated \
         --volume="${workspace}:/workspace":cached \
         --volume="${tmp}:/tmp":cached \
+        --volume="${opt}:/opt":cached \
         --volume="/etc/group:/etc/group:ro" \
         --volume="/etc/passwd:/etc/passwd:ro" \
         --volume="/etc/shadow:/etc/shadow:ro" \
+        --volume=/var/run/docker.sock:/var/run/docker.sock \
         --env-file ${home}/.ssh/vpn.cfg \
         --detach \
         mattlu/work-dev:latest
