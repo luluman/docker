@@ -12,7 +12,7 @@ function work-linux-server() {
         --hostname=$(hostname) \
         --name ${USER}-work-server \
         --detach-keys "ctrl-^,ctrl-@" \
-        --volume="${home}:${HOME}":DELEGATED \
+        --volume="${home}:${HOME}":delegated \
         --volume="${workspace}:/workspace":cached \
         --volume="${tmp}:/tmp":cached \
         --volume="/etc/group:/etc/group:ro" \
