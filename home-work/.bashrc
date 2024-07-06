@@ -133,6 +133,8 @@ export LANG=C.UTF-8
 export GIT_SSL_NO_VERIFY=1
 export PATH="$HOME/.local/bin:$PATH"
 
-if [[ "$INSIDE_EMACS" = 'vterm' ]]; then
-  source ~/emacs-vterm-bash.sh
+if [[ "$INSIDE_EMACS" = 'vterm' ]] \
+    && [[ -n ${EMACS_VTERM_PATH} ]] \
+    && [[ -f ${EMACS_VTERM_PATH}/etc/emacs-vterm-bash.sh ]]; then
+	source ${EMACS_VTERM_PATH}/etc/emacs-vterm-bash.sh
 fi
