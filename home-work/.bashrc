@@ -37,7 +37,7 @@ fi
 
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
-    xterm-color|*-256color|*-direct) color_prompt=yes;;
+    xterm-color|*-256color) color_prompt=yes;;
 esac
 
 # uncomment for a colored prompt, if the terminal has the capability; turned
@@ -116,8 +116,14 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# https://www.gnu.org/software/emacs/manual/html_node/efaq/Colors-on-a-TTY.html
-TERM=xterm-direct
+if [ -d ~/.terminfo ]; then
+    export TERM=xterm-24bits
+elif [ -f /usr/local/share/bash-color/terminfo-24bit.src ]; then
+    tic -x -o ~/.terminfo /usr/local/share/bash-color/terminfo-24bit.src
+    export TERM=xterm-24bits
+else
+    export TERM=xterm-256color
+fi
 
 export USER=$(whoami)
 export LANG="en_US.UTF-8"

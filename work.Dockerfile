@@ -239,6 +239,12 @@ RUN     set -x \
     &&  mv fd-v${FD_VERSION}-x86_64-unknown-linux-gnu/fd /usr/local/bin/
 
 # ============================================================
+# other scripts
+
+RUN mkdir /usr/local/share/bash-color
+COPY scripts/terminfo-24bit.src /usr/local/share/bash-color/
+
+# ============================================================
 # download latest shfmt
 ENV SHFMT_VERSION=3.7.0
 RUN wget https://github.com/mvdan/sh/releases/download/v${SHFMT_VERSION}/shfmt_v${SHFMT_VERSION}_linux_amd64 && \
@@ -320,8 +326,6 @@ RUN apt-get update && \
     libgccjit-13-dev \
     # libgccjit-11 needs gcc-12 ?
     gcc-13 g++-13 \
-    # terminfo to get xterm-direct
-    ncurses-term \
     libsqlite3-dev \
     # for vterm
     libtool \
