@@ -5,6 +5,7 @@ function work-linux-server() {
     # ln -s your/original/workspace/path workspace
     local home=$(realpath ~/.docker/home-work)
     local workspace=$(realpath ~/workspace)
+    local share=$(realpath ~/share)
     local tmp=$(realpath ~/.docker/tmp)
     local opt=$(realpath ~/.docker/opt)
     docker run -t \
@@ -17,6 +18,7 @@ function work-linux-server() {
         --volume="${workspace}:/workspace":cached \
         --volume="${tmp}:/tmp":cached \
         --volume="${opt}:/opt":cached \
+        --volume="${share}:/share:ro" \
         --volume="/etc/group:/etc/group:ro" \
         --volume="/etc/passwd:/etc/passwd:ro" \
         --volume="/etc/shadow:/etc/shadow:ro" \
