@@ -37,7 +37,7 @@ fi
 
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
-xterm-color | *-256color | *-24bits) color_prompt=yes ;;
+*color | *-24bits) color_prompt=yes ;;
 esac
 
 # uncomment for a colored prompt, if the terminal has the capability; turned
@@ -115,13 +115,15 @@ if ! shopt -oq posix; then
     fi
 fi
 
-if [ -d ~/.terminfo ]; then
-    export TERM=xterm-24bits
-elif [ -f /usr/local/share/bash-color/terminfo-24bit.src ]; then
-    tic -x -o ~/.terminfo /usr/local/share/bash-color/terminfo-24bit.src
-    export TERM=xterm-24bits
-else
-    export TERM=xterm-256color
+if [[ "${TERM:0:5}" = "xterm" ]]; then
+    if [ -d ~/.terminfo ]; then
+        export TERM=xterm-24bits
+    elif [ -f /usr/local/share/bash-color/terminfo-24bit.src ]; then
+        tic -x -o ~/.terminfo /usr/local/share/bash-color/terminfo-24bit.src
+        export TERM=xterm-24bits
+    else
+        export TERM=xterm-256color
+    fi
 fi
 
 export USER=$(whoami)
@@ -144,6 +146,9 @@ if [[ "$INSIDE_EMACS" = 'vterm' ]] &&
 fi
 
 if [[ -n "$EAT_SHELL_INTEGRATION_DIR" ]]; then
-    TERM=xterm-color
     source "$EAT_SHELL_INTEGRATION_DIR/bash"
+    # TODO: fix shell only use the first element of PROMPT_COMMAND
+    PROMPT_COMMAND=("__eat_before_prompt_command
+                    __eat_prompt_command
+                    __eat_after_prompt_command")
 fi
