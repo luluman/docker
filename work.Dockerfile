@@ -383,7 +383,7 @@ RUN apt-get update && ldconfig && \
     libncurses5-dev \
     libncurses5 \
     # riscv-isa-sim
-    device-tree-compiler libboost-regex-dev \
+    device-tree-compiler libboost-regex-dev libboost-system-dev \
     # tools
     ninja-build \
     curl wget \
