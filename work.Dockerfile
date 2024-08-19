@@ -391,6 +391,10 @@ RUN apt-get update && ldconfig && \
     ccache \
     git-lfs \
     patchelf \
+    # linux
+    libelf-dev \
+    fakeroot \
+    bc \
     && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
