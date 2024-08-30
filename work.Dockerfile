@@ -34,9 +34,7 @@ RUN apt-get update && \
     libncurses5-dev \
     libxml2-dev \
     libxt-dev \
-    libjansson4 \
     gcc-multilib \
-    libjansson-dev \
     librsvg2-dev \
     libsqlite3-dev \
     libgccjit-13-dev \
@@ -64,21 +62,20 @@ RUN apt-get update \
 # install tree-sitter
 # https://www.reddit.com/r/emacs/comments/z25iyx/comment/ixll68j/?utm_source=share&utm_medium=web2x&context=3
 ENV CC="gcc-13" CFLAGS="-O3 -Wall -Wextra"
-RUN git clone --depth 1 --branch v0.22.6 https://github.com/tree-sitter/tree-sitter.git /opt/tree-sitter && \
+RUN git clone --depth 1 --branch v0.23.0 https://github.com/tree-sitter/tree-sitter.git /opt/tree-sitter && \
     cd /opt/tree-sitter && \
     make -j4 && \
     make install
 
 RUN ldconfig
 ENV CFLAGS="-O2"
-RUN git clone --depth 1 --branch emacs-29 https://github.com/emacs-mirror/emacs /opt/emacs && \
+RUN git clone --depth 1 --branch emacs-30 https://github.com/emacs-mirror/emacs /opt/emacs && \
     cd /opt/emacs && \
     ./autogen.sh && \
     ./configure --build="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
     --with-modules \
     --with-native-compilation \
     --with-tree-sitter \
-    --with-json \
     --with-sqlite3 \
     --with-gif=ifavailable \
     --with-jpeg=ifavailable \
@@ -118,7 +115,7 @@ RUN apt-get update && \
 # ============================================================
 # https://github.com/nodejs/docker-node
 
-ENV NODE_VERSION 20.14.0
+ENV NODE_VERSION 20.17.0
 
 RUN apt-get update && \
     apt-get install xz-utils && \
@@ -318,7 +315,6 @@ RUN apt-get update && \
     libncurses5 \
     libxml2 \
     libxt6 \
-    libjansson4 \
     libx11-xcb1 \
     binutils \
     libc6-dev \
