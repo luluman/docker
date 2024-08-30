@@ -391,6 +391,11 @@ RUN apt-get update && ldconfig && \
     libelf-dev \
     fakeroot \
     bc \
+    # https://youtu.be/QlzoegSuIzg?si=tDkVGrNi54yjhhcP
+    cpio \
+    # boot loader
+    syslinux \
+    dosfstools \
     && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
