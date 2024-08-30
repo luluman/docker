@@ -166,7 +166,7 @@ RUN git clone --depth 1 --branch $BEAR_VERSION https://github.com/rizsotto/Bear.
 # https://github.com/Starefossen/docker-aspell
 
 ENV ASPELL_SERVER https://ftp.gnu.org/gnu/aspell
-ENV ASPELL_VERSION 0.60.8
+ENV ASPELL_VERSION 0.60.8.1
 ENV ASPELL_EN 2020.12.07-0
 
 RUN apt-get install -y bzip2 && \
