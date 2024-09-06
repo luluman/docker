@@ -284,6 +284,15 @@ RUN apt-get update && \
 RUN curl -L https://downloads.clash.wiki/ClashPremium/clash-linux-amd64-v3-2023.08.17.gz | gunzip -c - > /usr/local/bin/clash \
     && chmod +x /usr/local/bin/clash
 
+# ==========================================================
+# install llvm tools
+ENV LLVM_VERSION=18.1.8
+RUN cd /opt/ && \
+    wget https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/clang+llvm-${LLVM_VERSION}-x86_64-linux-gnu-ubuntu-18.04.tar.xz && \
+    tar xf clang+llvm*x86_64-linux-gnu-ubuntu-18.04.tar.xz && \
+    cd clang+llvm*x86_64-linux-gnu-ubuntu-18.04/bin && \
+    cp llvm-cxxfilt llvm-symbolizer tblgen-lsp-server /usr/local/bin/ && \
+    cd /opt
 
 # ********************************************************************************
 #
