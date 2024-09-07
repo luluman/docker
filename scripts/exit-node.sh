@@ -9,7 +9,7 @@ until tailscale up \
     --authkey="${TAILSCALE_AUTH_KEY}" \
     --hostname="${TAILSCALE_HOSTNAME}" \
     --advertise-exit-node \
-    --advertise-routes=10.0.0.0/8,172.16.0.0/12; do
+    --advertise-routes=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16; do
     sleep 0.1
 done
 tailscale status
