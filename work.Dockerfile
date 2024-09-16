@@ -291,7 +291,8 @@ RUN cd /opt/ && \
     wget https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/clang+llvm-${LLVM_VERSION}-x86_64-linux-gnu-ubuntu-18.04.tar.xz && \
     tar xf clang+llvm*x86_64-linux-gnu-ubuntu-18.04.tar.xz && \
     cd clang+llvm*x86_64-linux-gnu-ubuntu-18.04/bin && \
-    cp llvm-cxxfilt llvm-symbolizer tblgen-lsp-server /usr/local/bin/ && \
+    cp llvm-cxxfilt llvm-symbolizer /usr/local/bin/ && \
+    cp *lsp-server /usr/local/bin/ && \
     cd /opt
 
 # ********************************************************************************
