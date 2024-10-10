@@ -106,9 +106,9 @@ RUN apt-get update && \
 # https://www.linuxfromscratch.org/blfs/view/svn/general/gdb.html
 RUN apt-get update && \
     apt-get install -y python3-dev libmpfr-dev libgmp-dev libreadline-dev && \
-    wget https://ftp.gnu.org/gnu/gdb/gdb-14.2.tar.gz && \
-    tar -xf gdb-14.2.tar.gz && \
-    cd gdb-14.2 && \
+    wget https://ftp.gnu.org/gnu/gdb/gdb-15.2.tar.gz && \
+    tar -xf gdb-15.2.tar.gz && \
+    cd gdb-15.2 && \
     ./configure --with-python=yes --prefix=/usr/local --with-system-readline && \
     make -j30 && make install
 
