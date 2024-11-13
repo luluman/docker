@@ -194,8 +194,8 @@ RUN wget "${ASPELL_SERVER}/aspell-${ASPELL_VERSION}.tar.gz" \
 ENV ENCHANT_VERSION 2.6.9
 
 RUN apt-get update && apt-get install -y libglib2.0-dev groff && \
-    wget "https://github.com/AbiWord/enchant/releases/download/v${ENCHANT_VERSION}/enchant-${ENCHANT_VERSION}.tar.gz" \
-    && tar -xf "enchant-${ENCHANT_VERSION}.tar.gz" \
+    wget "https://github.com/AbiWord/enchant/archive/refs/tags/v${ENCHANT_VERSION}.tar.gz" \
+    && tar -xf "v${ENCHANT_VERSION}.tar.gz" \
     # build
     && cd "enchant-${ENCHANT_VERSION}" \
     && test -f configure \
