@@ -9,7 +9,7 @@ function work-linux-server() {
     local tmp=$(realpath ~/.docker/tmp)
     local opt=$(realpath ~/.docker/opt)
 
-    local dirs=("/develop01" "/data01")
+    local dirs=("/develop01" "/data01" "/bjnfsdata01")
     local share=""
 
     for dir in "${dirs[@]}"; do
@@ -25,11 +25,13 @@ function work-linux-server() {
         return 1
     fi
 
+    local container_name=${USER}-work-server
+
     docker run -t \
         --privileged \
         --log-driver=none \
         --hostname=$(hostname) \
-        --name ${USER}-work-server \
+        --name ${container_name} \
         --detach-keys "ctrl-^,ctrl-@" \
         --volume="${home}:${HOME}":delegated \
         --volume="${workspace}:/workspace":cached \
@@ -43,6 +45,15 @@ function work-linux-server() {
         --env-file ${home}/.ssh/vpn.cfg \
         --detach \
         mattlu/work-dev:latest
+
+    # copy driver
+    local latest_drv=$(find /usr/local -type d -name 'houmo_drv*' -not -empty | sort -r | head -n 1)
+    if [[ "${latest_drv}" != *houmo_drv* ]]; then
+        echo -e "\e[31mcannot find driver in /usr/local\e[0m"
+    else
+        echo -e "\e[31musing latest driver ${latest_drv}\e[0m"
+        docker cp ${latest_drv} ${container_name}:/usr/local/houmo-sdk
+    fi
 }
 
 function work-linux-server-exec() {

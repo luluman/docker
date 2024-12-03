@@ -135,12 +135,6 @@ export GIT_SSL_NO_VERIFY=1
 export PATH="$HOME/.local/bin:$PATH"
 ulimit -n 65535
 
-
-if [[ -d "$HOME/.modular" ]]; then
-    export MODULAR_HOME="$HOME/.modular"
-    export PATH="$HOME/.modular/pkg/packages.modular.com_mojo/bin:$PATH"
-fi
-
 if [[ "$INSIDE_EMACS" = 'vterm' ]] &&
     [[ -n ${EMACS_VTERM_PATH} ]] &&
     [[ -f ${EMACS_VTERM_PATH}/etc/emacs-vterm-bash.sh ]]; then
@@ -153,4 +147,13 @@ if [[ -n "$EAT_SHELL_INTEGRATION_DIR" ]]; then
     PROMPT_COMMAND=("__eat_before_prompt_command
                     __eat_prompt_command
                     __eat_after_prompt_command")
+fi
+
+if [[ -d "$HOME/.modular" ]]; then
+    export MODULAR_HOME="$HOME/.modular"
+    export PATH="$HOME/.modular/pkg/packages.modular.com_mojo/bin:$PATH"
+fi
+
+if [[ -d "/usr/local/houmo-sdk/tools" ]]; then
+    export PATH="/usr/local/houmo-sdk/tools:$HOME/.modular/pkg/packages.modular.com_mojo/bin:$PATH"
 fi
