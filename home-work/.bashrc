@@ -155,5 +155,5 @@ if [[ -d "$HOME/.modular" ]]; then
 fi
 
 if [[ -d "/usr/local/houmo-sdk/tools" ]]; then
-    export PATH="/usr/local/houmo-sdk/tools:$HOME/.modular/pkg/packages.modular.com_mojo/bin:$PATH"
+    export PATH="/usr/local/houmo-sdk/tools:$PATH"
 fi
