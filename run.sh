@@ -43,6 +43,7 @@ function work-linux-server() {
         --volume="/etc/shadow:/etc/shadow:ro" \
         --volume=/var/run/docker.sock:/var/run/docker.sock \
         --env-file ${home}/.ssh/vpn.cfg \
+        --restart=always \
         --detach \
         mattlu/work-dev:latest
 
