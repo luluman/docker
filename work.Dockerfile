@@ -413,9 +413,6 @@ RUN apt-get update && ldconfig && \
 RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     apt-add-repository "deb http://apt.llvm.org/${UBUNTU_NAME}/ llvm-toolchain-${UBUNTU_NAME}-16 main" && \
     apt-get install -y  clang-16 lld-16 libomp-dev && \
-    # config gcc and python
-    update-alternatives --install /usr/bin/python python /usr/bin/python3 10 && \
-    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 10 --slave /usr/bin/g++ g++ /usr/bin/g++-13 && \
     # clang config
     update-alternatives --install /usr/bin/clang clang /usr/bin/clang-16 100 && \
     update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-16 100 && \
@@ -430,6 +427,10 @@ RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     update-alternatives --install /usr/bin/lldb-dap lldb-dap /usr/bin/lldb-dap-19 100 && \
     update-alternatives --install /usr/bin/lldb-server lldb-server /usr/bin/lldb-server-19 100 && \
     update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-19 100 && \
+    # config gcc and python
+    update-alternatives --install /usr/bin/python  python  /usr/bin/python3.9 10 && \
+    update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 10 && \
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 10 --slave /usr/bin/g++ g++ /usr/bin/g++-13 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
