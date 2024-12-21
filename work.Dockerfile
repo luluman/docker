@@ -62,15 +62,16 @@ RUN apt-get update \
 # install tree-sitter
 # https://www.reddit.com/r/emacs/comments/z25iyx/comment/ixll68j/?utm_source=share&utm_medium=web2x&context=3
 ENV CC="gcc-13" CFLAGS="-O3 -Wall -Wextra"
-RUN git clone --depth 1 --branch v0.23.0 https://github.com/tree-sitter/tree-sitter.git /opt/tree-sitter && \
+RUN git clone --depth 1 --branch v0.24.5 https://github.com/tree-sitter/tree-sitter.git /opt/tree-sitter && \
     cd /opt/tree-sitter && \
     make -j4 && \
     make install
 
 RUN ldconfig
 ENV CFLAGS="-O2"
-RUN git clone --depth 1 --branch scratch/tty-child-frames https://github.com/emacs-mirror/emacs /opt/emacs && \
+RUN git clone https://github.com/emacs-mirror/emacs /opt/emacs && \
     cd /opt/emacs && \
+    git checkout 1c960bda91237c92f9f602bcb8538ad500c0bc49 && \
     ./autogen.sh && \
     ./configure --build="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
     --with-modules \
@@ -95,8 +96,6 @@ RUN apt-get update && \
     apt-get install -y g++ && \
     git clone https://github.com/casouri/tree-sitter-module /opt/tree-sitter-module && \
     cd /opt/tree-sitter-module && \
-    # bugfix: https://github.com/tree-sitter/tree-sitter-cpp/issues/271
-    sed -i '/case "${lang}" in/a\    "cpp")\n        branch="v0.22.0"\n        ;;' build.sh && \
     ./batch.sh && \
     mv ./dist/* /usr/local/lib/ && \
     cd /opt/
@@ -105,11 +104,11 @@ RUN apt-get update && \
 # Install GDB
 # https://www.linuxfromscratch.org/blfs/view/svn/general/gdb.html
 RUN apt-get update && \
-    apt-get install -y python3-dev libmpfr-dev libgmp-dev libreadline-dev && \
+    apt-get install -y python3.9-dev libmpfr-dev libgmp-dev libreadline-dev && \
     wget https://ftp.gnu.org/gnu/gdb/gdb-15.2.tar.gz && \
     tar -xf gdb-15.2.tar.gz && \
     cd gdb-15.2 && \
-    ./configure --with-python=yes --prefix=/usr/local --with-system-readline && \
+    ./configure --with-python=/usr/bin/python3.9 --prefix=/usr/local --with-system-readline && \
     make -j30 && make install
 
 # ============================================================
@@ -380,8 +379,8 @@ RUN apt-get update && ldconfig && \
     # smb
     smbclient \
     # python3
-    python3-dev \
-    python3-venv \
+    python3.9-dev \
+    python3.9-venv \
     python3-pip \
     virtualenv \
     tzdata \
@@ -421,16 +420,16 @@ RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     update-alternatives --install /usr/bin/clang clang /usr/bin/clang-16 100 && \
     update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-16 100 && \
     update-alternatives --install /usr/bin/lld lld /usr/bin/lld-16 100 && \
-    # install clang-format-18
-    apt-add-repository "deb http://apt.llvm.org/${UBUNTU_NAME}/ llvm-toolchain-${UBUNTU_NAME}-18 main" && \
-    apt-get install -y  clang-format-18 clang-tidy-18 lldb-18 clangd-18 && \
-    update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-18 100 && \
-    update-alternatives --install /usr/bin/clang-format-diff clang-format-diff /usr/bin/clang-format-diff-18 100 && \
-    update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-18 100 && \
-    update-alternatives --install /usr/bin/lldb lldb /usr/bin/lldb-18 100 && \
-    update-alternatives --install /usr/bin/lldb-dap lldb-dap /usr/bin/lldb-dap-18 100 && \
-    update-alternatives --install /usr/bin/lldb-server lldb-server /usr/bin/lldb-server-18 100 && \
-    update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-18 100 && \
+    # install clang-format-19
+    apt-add-repository "deb http://apt.llvm.org/${UBUNTU_NAME}/ llvm-toolchain-${UBUNTU_NAME}-19 main" && \
+    apt-get install -y  clang-format-19 clang-tidy-19 lldb-19 clangd-19 && \
+    update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-19 100 && \
+    update-alternatives --install /usr/bin/clang-format-diff clang-format-diff /usr/bin/clang-format-diff-19 100 && \
+    update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-19 100 && \
+    update-alternatives --install /usr/bin/lldb lldb /usr/bin/lldb-19 100 && \
+    update-alternatives --install /usr/bin/lldb-dap lldb-dap /usr/bin/lldb-dap-19 100 && \
+    update-alternatives --install /usr/bin/lldb-server lldb-server /usr/bin/lldb-server-19 100 && \
+    update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-19 100 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
