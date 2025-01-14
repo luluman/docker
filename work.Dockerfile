@@ -71,7 +71,7 @@ RUN ldconfig
 ENV CFLAGS="-O2"
 RUN git clone https://github.com/emacs-mirror/emacs /opt/emacs && \
     cd /opt/emacs && \
-    git checkout 1c960bda91237c92f9f602bcb8538ad500c0bc49 && \
+    git checkout e633bbfec0fe0fa436026d759132faa47b6b0dc4 && \
     ./autogen.sh && \
     ./configure --build="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
     --with-modules \
@@ -272,8 +272,9 @@ RUN apt-get update && \
     automake \
     pkg-config protobuf-compiler libprotobuf-dev libutempter-dev zlib1g-dev libncurses5-dev \
     libssl-dev bash-completion tmux less && \
-    git clone --branch=mosh-1.4.0 https://github.com/mobile-shell/mosh && \
-    cd mosh && \
+    # https://github.com/mobile-shell/mosh/issues/1134
+    git clone --branch=mosh-1.4.0+blink-17.3.0 https://github.com/blinksh/mosh-server && \
+    cd mosh-server && \
     ./autogen.sh && \
     ./configure && \
     make && make install
