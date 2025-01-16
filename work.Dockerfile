@@ -397,6 +397,7 @@ RUN apt-get update && ldconfig && \
     ccache \
     git-lfs \
     patchelf \
+    shellcheck \
     # linux
     libelf-dev \
     fakeroot \
