@@ -96,6 +96,7 @@ RUN apt-get update && \
     apt-get install -y g++ && \
     git clone https://github.com/casouri/tree-sitter-module /opt/tree-sitter-module && \
     cd /opt/tree-sitter-module && \
+    sed -i "/languages=(/a \ \ \ \ 'jsdoc'" batch.sh && \
     ./batch.sh && \
     mv ./dist/* /usr/local/lib/ && \
     cd /opt/
