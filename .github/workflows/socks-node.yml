@@ -1,0 +1,29 @@
+name: socks-node
+
+on:
+  push:
+    paths:
+      - 'socks-node.Dockerfile'
+      - 'scripts/socks-node.sh'
+
+  workflow_dispatch:
+#  pull_request:
+#    branches: [ master ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+     - uses: actions/checkout@v1
+     - name: Login to DockerHub Registry
+       run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+     - name: Build the latest Docker image
+       run: |
+         docker build . --file socks-node.Dockerfile --tag socks-node
+         docker image tag socks-node mattlu/socks-node:latest
+
+     - name: Push the latest Docker image
+       run: docker push --all-tags mattlu/socks-node
