@@ -4,9 +4,9 @@ echo "Starting Tailscale daemon"
 # -state=mem: will logout and remove ephemeral node from network immediately after ending.
 # https://tailscale.com/kb/1112/userspace-networking
 tailscaled --tun=userspace-networking \
-           --socks5-server=100.64.0.0/10@:1055 \
-           --outbound-http-proxy-listen=100.64.0.0/10@:1055 \
-           -no-logs-no-support &
+    --socks5-server=0.0.0.0:1055 \
+    --outbound-http-proxy-listen=0.0.0.0:1055 \
+    -no-logs-no-support &
 PID=$!
 # https://github.com/tailscale/tailscale/issues/5412
 until tailscale up \
