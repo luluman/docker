@@ -71,7 +71,7 @@ RUN ldconfig
 ENV CFLAGS="-O2"
 RUN git clone https://github.com/emacs-mirror/emacs /opt/emacs && \
     cd /opt/emacs && \
-    git checkout e633bbfec0fe0fa436026d759132faa47b6b0dc4 && \
+    git checkout b65971b2c06d34c268b2b0280056e478dbc31586 && \
     ./autogen.sh && \
     ./configure --build="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
     --with-modules \
@@ -104,18 +104,20 @@ RUN apt-get update && \
 # ============================================================
 # Install GDB
 # https://www.linuxfromscratch.org/blfs/view/svn/general/gdb.html
+ENV GDB_VERSION 16.2
+
 RUN apt-get update && \
     apt-get install -y python3.9-dev libmpfr-dev libgmp-dev libreadline-dev && \
-    wget https://ftp.gnu.org/gnu/gdb/gdb-15.2.tar.gz && \
-    tar -xf gdb-15.2.tar.gz && \
-    cd gdb-15.2 && \
+    wget https://ftp.gnu.org/gnu/gdb/gdb-${GDB_VERSION}.tar.gz && \
+    tar -xf gdb-${GDB_VERSION}.tar.gz && \
+    cd gdb-${GDB_VERSION} && \
     ./configure --with-python=/usr/bin/python3.9 --prefix=/usr/local --with-system-readline && \
     make -j30 && make install
 
 # ============================================================
 # https://github.com/nodejs/docker-node
 
-ENV NODE_VERSION 20.17.0
+ENV NODE_VERSION 22.14.0
 
 RUN apt-get update && \
     apt-get install xz-utils && \
@@ -208,7 +210,7 @@ RUN apt-get update && apt-get install -y libglib2.0-dev groff && \
 # https://hub.docker.com/r/peccu/rg/dockerfile
 # build ripgrep
 
-ENV RG_VERSION=14.1.0
+ENV RG_VERSION=14.1.1
 RUN     set -x \
     &&  wget https://github.com/BurntSushi/ripgrep/releases/download/${RG_VERSION}/ripgrep-${RG_VERSION}-x86_64-unknown-linux-musl.tar.gz \
     --no-check-certificate \
