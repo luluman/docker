@@ -71,7 +71,7 @@ RUN ldconfig
 ENV CFLAGS="-O2"
 RUN git clone https://github.com/emacs-mirror/emacs /opt/emacs && \
     cd /opt/emacs && \
-    git checkout b65971b2c06d34c268b2b0280056e478dbc31586 && \
+    git checkout e633bbfec0fe0fa436026d759132faa47b6b0dc4 && \
     ./autogen.sh && \
     ./configure --build="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
     --with-modules \
@@ -422,16 +422,16 @@ RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     update-alternatives --install /usr/bin/clang clang /usr/bin/clang-16 100 && \
     update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-16 100 && \
     update-alternatives --install /usr/bin/lld lld /usr/bin/lld-16 100 && \
-    # install clang-format-19
-    apt-add-repository "deb http://apt.llvm.org/${UBUNTU_NAME}/ llvm-toolchain-${UBUNTU_NAME}-19 main" && \
-    apt-get install -y  clang-format-19 clang-tidy-19 lldb-19 clangd-19 && \
-    update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-19 100 && \
-    update-alternatives --install /usr/bin/clang-format-diff clang-format-diff /usr/bin/clang-format-diff-19 100 && \
-    update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-19 100 && \
-    update-alternatives --install /usr/bin/lldb lldb /usr/bin/lldb-19 100 && \
-    update-alternatives --install /usr/bin/lldb-dap lldb-dap /usr/bin/lldb-dap-19 100 && \
-    update-alternatives --install /usr/bin/lldb-server lldb-server /usr/bin/lldb-server-19 100 && \
-    update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-19 100 && \
+    # install clang-format-20
+    apt-add-repository "deb http://apt.llvm.org/${UBUNTU_NAME}/ llvm-toolchain-${UBUNTU_NAME}-20 main" && \
+    apt-get install -y  clang-format-20 clang-tidy-20 lldb-20 clangd-20 && \
+    update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-20 100 && \
+    update-alternatives --install /usr/bin/clang-format-diff clang-format-diff /usr/bin/clang-format-diff-20 100 && \
+    update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-20 100 && \
+    update-alternatives --install /usr/bin/lldb lldb /usr/bin/lldb-20 100 && \
+    update-alternatives --install /usr/bin/lldb-dap lldb-dap /usr/bin/lldb-dap-20 100 && \
+    update-alternatives --install /usr/bin/lldb-server lldb-server /usr/bin/lldb-server-20 100 && \
+    update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-20 100 && \
     # config gcc and python
     update-alternatives --install /usr/bin/python  python  /usr/bin/python3.9 10 && \
     update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 10 && \
