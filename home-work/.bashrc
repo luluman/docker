@@ -149,9 +149,8 @@ if [[ -n "$EAT_SHELL_INTEGRATION_DIR" ]]; then
                     __eat_after_prompt_command")
 fi
 
-if [[ -d "$HOME/.modular" ]]; then
-    export MODULAR_HOME="$HOME/.modular"
-    export PATH="$HOME/.modular/pkg/packages.modular.com_mojo/bin:$PATH"
+if [[ -d "$HOME/.modular/bin" ]]; then
+    export PATH="$PATH:$HOME/.modular/bin"
 fi
 
 if [[ -d "/usr/local/houmo-sdk/tools" ]]; then
