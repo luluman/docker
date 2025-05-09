@@ -107,11 +107,11 @@ RUN apt-get update && \
 ENV GDB_VERSION 16.2
 
 RUN apt-get update && \
-    apt-get install -y python3.9-dev libmpfr-dev libgmp-dev libreadline-dev && \
+    apt-get install -y python3-dev libmpfr-dev libgmp-dev libreadline-dev && \
     wget https://ftp.gnu.org/gnu/gdb/gdb-${GDB_VERSION}.tar.gz && \
     tar -xf gdb-${GDB_VERSION}.tar.gz && \
     cd gdb-${GDB_VERSION} && \
-    ./configure --with-python=/usr/bin/python3.9 --prefix=/usr/local --with-system-readline && \
+    ./configure --with-python=/usr/bin/python3 --prefix=/usr/local --with-system-readline && \
     make -j30 && make install
 
 # ============================================================
@@ -383,8 +383,8 @@ RUN apt-get update && ldconfig && \
     # smb
     smbclient \
     # python3
-    python3.9-dev \
-    python3.9-venv \
+    python3-dev \
+    python3-venv \
     python3-pip \
     virtualenv \
     tzdata \
@@ -432,9 +432,7 @@ RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     update-alternatives --install /usr/bin/lldb-dap lldb-dap /usr/bin/lldb-dap-20 100 && \
     update-alternatives --install /usr/bin/lldb-server lldb-server /usr/bin/lldb-server-20 100 && \
     update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-20 100 && \
-    # config gcc and python
-    update-alternatives --install /usr/bin/python  python  /usr/bin/python3.9 10 && \
-    update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 10 && \
+    # config gcc
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 10 --slave /usr/bin/g++ g++ /usr/bin/g++-13 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
