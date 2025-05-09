@@ -1,5 +1,5 @@
-ARG UBUNTU_VERSION=20.04
-ARG UBUNTU_NAME=focal
+ARG UBUNTU_VERSION=22.04
+ARG UBUNTU_NAME=jammy
 ARG DEBIAN_FRONTEND="noninteractive"
 
 # ********************************************************************************
@@ -482,14 +482,6 @@ RUN TZ=Asia/Shanghai \
     # packages for vpn
     pip3 install --no-cache-dir requests pyyaml
 
-
-# Modular magic on Ubuntu 20.04 bugfix
-# https://github.com/modular/max/issues/3684#issuecomment-2480409734
-RUN echo "deb http://th.archive.ubuntu.com/ubuntu jammy main" >> /etc/apt/sources.list && \
-    apt-get update && \
-    apt-get install -y libc6 zlib1g-dev libtinfo-dev && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
 
 # ================================================================================
 COPY --from=builder0 /usr/local /usr/local
