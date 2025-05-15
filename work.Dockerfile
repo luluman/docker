@@ -496,7 +496,7 @@ RUN ldconfig && \
     update-locale LC_ALL="en_US.UTF-8"
 
 # start SSH server
-COPY scripts/start.sh /usr/bin/start.sh
+COPY scripts/start-self.sh /usr/bin/start.sh
 
 CMD "start.sh"
 
