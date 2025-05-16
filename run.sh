@@ -9,21 +9,14 @@ function work-linux-server() {
     local tmp=$(realpath ~/.docker/tmp)
     local opt=$(realpath ~/.docker/opt)
 
-    local dirs=("/develop01" "/data01" "/bjnfsdata01")
-    local share=""
+    local share_data=$(realpath /share_data)
+    local software_data=$(realpath /software_data)
 
-    for dir in "${dirs[@]}"; do
-        if [ -d "$dir" ]; then
-            share="$dir"
-            echo "Directory $dir exists. Binding to container and starting Docker."
-            break
-        fi
-    done
+    getent passwd &> ~/.docker/etc/passwd
+    getent group &> ~/.docker/etc/group
 
-    if [ -z "$share" ]; then
-        echo "No shared directory found. Exiting."
-        return 1
-    fi
+    local group_file=$(realpath ~/.docker/etc/group)
+    local passwd_file=$(realpath ~/.docker/etc/passwd)
 
     local container_name=${USER}-work-server
 
@@ -37,10 +30,10 @@ function work-linux-server() {
         --volume="${workspace}:/workspace":cached \
         --volume="${tmp}:/tmp":cached \
         --volume="${opt}:/opt":cached \
-        --volume="${share}:${share}:ro" \
-        --volume="/etc/group:/etc/group:ro" \
-        --volume="/etc/passwd:/etc/passwd:ro" \
-        --volume="/etc/shadow:/etc/shadow:ro" \
+        --volume="${share_data}":/share_data:ro \
+        --volume="${software_data}":/software_data:ro \
+        --volume="{group_file}:/etc/group:ro" \
+        --volume="{passwd_file}:/etc/passwd:ro" \
         --volume=/var/run/docker.sock:/var/run/docker.sock \
         --env-file ${home}/.ssh/vpn.cfg \
         --restart=always \

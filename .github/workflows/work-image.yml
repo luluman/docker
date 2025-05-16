@@ -5,6 +5,7 @@ on:
     paths:
       - 'work.Dockerfile'
       - 'scripts/start.sh'
+      - 'scripts/start-self.sh'
 
   workflow_dispatch:
 #  pull_request:

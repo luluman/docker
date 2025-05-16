@@ -462,6 +462,9 @@ RUN curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/${UBUNTU_NAME}.gpg | apt
     # mosh-server config locales
     apt-get install -y  tailscale openssh-server locales && \
     apt-get clean && \
+    # fix compatible issue with Linux-kernel
+    # https://github.com/tailscale/tailscale/issues/14410#issuecomment-2551427726
+    echo 'TS_DEBUG_FIREWALL_MODE=nftables' >> /etc/default/tailscaled \
     rm -rf /var/lib/apt/lists/* && \
     # setup SSH server
     sed -i /etc/ssh/sshd_config \

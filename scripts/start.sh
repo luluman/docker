@@ -17,6 +17,8 @@ PID=$!
 until tailscale up --authkey="${TAILSCALE_AUTH_KEY}" --hostname="$(hostname)"; do
     sleep 0.1
 done
+
 tailscale status
+
 wait ${PID}
 wait ${PID}
