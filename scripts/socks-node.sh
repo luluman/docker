@@ -9,10 +9,13 @@ tailscaled --tun=userspace-networking \
     -no-logs-no-support &
 PID=$!
 # https://github.com/tailscale/tailscale/issues/5412
-until tailscale up \
-    --authkey="${TAILSCALE_AUTH_KEY}" \
-    --hostname="${TAILSCALE_HOSTNAME}"; do
-    sleep 0.1
+LOGIN_SERVER_ARG=""
+if [ -n "${TAILSCALE_SERVER}" ]; then
+  LOGIN_SERVER_ARG="--login-server=${TAILSCALE_SERVER}"
+fi
+
+until tailscale up "${LOGIN_SERVER_ARG}" --authkey="${TAILSCALE_AUTH_KEY}" --hostname="${TAILSCALE_HOSTNAME}"; do
+  sleep 0.1
 done
 tailscale status
 wait ${PID}
