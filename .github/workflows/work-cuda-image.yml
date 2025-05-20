@@ -5,7 +5,6 @@ on:
     paths:
       - 'work-cuda.Dockerfile'
       - 'scripts/start.sh'
-      - 'scripts/start-self.sh'
 
   workflow_dispatch:
 #  pull_request:
@@ -27,7 +26,7 @@ jobs:
         run: |
           docker build . --file work-cuda.Dockerfile --tag work-cuda-dev
           docker image tag work-cuda-dev mattlu/work-cuda-dev:latest
-          docker image tag work-cuda-dev mattlu/work-cuda-dev:cudnn12.6-ubuntu22.04
-          docker image tag work-cuda-dev mattlu/work-cuda-dev:cudnn12.6-ubuntu22.04-${{ steps.commit.outputs.short }}
+          docker image tag work-cuda-dev mattlu/work-cuda-dev:cuda12.6-ubuntu22.04
+          docker image tag work-cuda-dev mattlu/work-cuda-dev:cuda12.6-ubuntu22.04-${{ steps.commit.outputs.short }}
       - name: Push the latest Docker image
         run: docker push --all-tags mattlu/work-cuda-dev

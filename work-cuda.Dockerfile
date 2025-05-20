@@ -7,7 +7,7 @@ ARG DEBIAN_FRONTEND="noninteractive"
 # satge 0
 # ********************************************************************************
 
-FROM nvidia/cuda:12.6.3-cudnn-devel-ubuntu${UBUNTU_VERSION} AS builder0
+FROM nvidia/cuda:12.6.3-devel-ubuntu${UBUNTU_VERSION} AS builder0
 ARG UBUNTU_NAME
 ARG DEBIAN_FRONTEND
 
@@ -303,7 +303,7 @@ RUN cd /opt/ && \
 # stage 1
 # ********************************************************************************
 
-FROM nvidia/cuda:12.6.3-cudnn-devel-ubuntu${UBUNTU_VERSION} AS builder1
+FROM nvidia/cuda:12.6.3-devel-ubuntu${UBUNTU_VERSION} AS builder1
 ARG UBUNTU_NAME
 ARG DEBIAN_FRONTEND
 
