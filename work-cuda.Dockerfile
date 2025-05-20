@@ -85,7 +85,8 @@ RUN git clone https://github.com/emacs-mirror/emacs /opt/emacs && \
     --without-x --without-x-toolkit-scroll-bars \
     --prefix=/usr/local && \
     make NATIVE_FULL_AOT=1 -j30 && \
-    make install-strip
+    make install-strip && \
+    rm -r /opt/emacs
 
 # ============================================================
 # tree-sitter-language
@@ -292,11 +293,11 @@ RUN curl -L https://downloads.clash.wiki/ClashPremium/clash-linux-amd64-v3-2023.
 ENV LLVM_VERSION=18.1.8
 RUN cd /opt/ && \
     wget https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/clang+llvm-${LLVM_VERSION}-x86_64-linux-gnu-ubuntu-18.04.tar.xz && \
-    tar xf clang+llvm*x86_64-linux-gnu-ubuntu-18.04.tar.xz && \
-    cd clang+llvm*x86_64-linux-gnu-ubuntu-18.04/bin && \
-    cp llvm-cxxfilt llvm-symbolizer /usr/local/bin/ && \
-    cp *lsp-server /usr/local/bin/ && \
-    cd /opt
+    tar -xJf clang+llvm*x86_64-linux-gnu-ubuntu-18.04.tar.xz \
+    --wildcards --strip-components=2 \
+    "*/bin/llvm-cxxfilt" "*/bin/llvm-symbolizer" "*/bin/*lsp-server" && \
+    cp llvm-cxxfilt llvm-symbolizer  *lsp-server /usr/local/bin/ && \
+    rm -r /opt/*
 
 # ********************************************************************************
 #
