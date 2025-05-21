@@ -7,7 +7,7 @@ ssh-keygen -A
 exec /usr/sbin/sshd -D -e &
 
 echo "Start clash"
-exec clash -f /opt/clash_config.yaml -d /opt/ &
+exec clash -f /clash_config/clash_config.yaml -d /clash_config/ &
 
 trap 'kill -TERM $PID' TERM INT
 echo "Starting Tailscale daemon"
