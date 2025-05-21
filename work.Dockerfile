@@ -472,6 +472,7 @@ RUN curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/${UBUNTU_NAME}.gpg | apt
     -e 's/#RSAAuthentication.*/RSAAuthentication yes/'  \
     -e 's/#PasswordAuthentication.*/PasswordAuthentication no/' \
     -e 's/#SyslogFacility.*/SyslogFacility AUTH/' \
+    -e 's/^#\?UsePAM.*/UsePAM no/' \
     -e 's/#LogLevel.*/LogLevel INFO/' && \
     mkdir /var/run/sshd
 

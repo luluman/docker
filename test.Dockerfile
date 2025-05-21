@@ -35,6 +35,7 @@ RUN apt-get update \
     -e 's/#RSAAuthentication.*/RSAAuthentication yes/'  \
     -e 's/#PasswordAuthentication.*/PasswordAuthentication no/' \
     -e 's/#SyslogFacility.*/SyslogFacility AUTH/' \
+    -e 's/^#\?UsePAM.*/UsePAM no/' \
     -e 's/#LogLevel.*/LogLevel INFO/' && \
     mkdir /var/run/sshd
 
