@@ -61,7 +61,7 @@ function work-linux-cuda-server() {
     declare -a shared_dirs=(
         "/share_data"
         "/software_data"
-        "/zjsoftware_data"
+        "/zjshare_data"
     )
     for dir in "${shared_dirs[@]}"; do
         if [ -d "$dir" ]; then
