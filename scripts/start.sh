@@ -6,6 +6,9 @@ ssh-keygen -A
 # do not detach (-D), log to stderr (-e), passthrough other arguments
 exec /usr/sbin/sshd -D -e &
 
+# Grant all users to add records to /etc/hosts
+chmod 666 /etc/hosts
+
 echo "Start clash"
 exec clash -f /clash_config/clash_config.yaml -d /clash_config/ &
 
