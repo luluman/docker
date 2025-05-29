@@ -475,7 +475,9 @@ RUN curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/${UBUNTU_NAME}.gpg | apt
     -e 's/#SyslogFacility.*/SyslogFacility AUTH/' \
     -e 's/^#\?UsePAM.*/UsePAM no/' \
     -e 's/#LogLevel.*/LogLevel INFO/' && \
-    mkdir /var/run/sshd
+    # Grant all users to add record to /etc/hosts
+    chmod 666 /etc/hosts && \
+    mkdir -p /var/run/sshd
 
 # timeZone and some pip packages
 RUN TZ=Asia/Shanghai \
