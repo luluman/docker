@@ -74,6 +74,22 @@ function work-linux-cuda-server() {
     getent group > "$base/etc/group"
     volumes+=(--volume="$base/etc/passwd:/etc/passwd:ro" --volume="$base/etc/group:/etc/group:ro")
 
+    local memory_gb=0
+    local tmpfs_args=""
+
+    memory_gb=$(free -g | awk '/^Mem:/ {print $2}')
+    # Configure tmpfs based on memory size
+    if [ "${memory_gb}" -gt 1800 ]; then
+        tmpfs_args="--tmpfs /tmpfs:rw,exec,size=200g,mode=1777"
+        echo "System memory: ${memory_gb}GB - Using 200G tmpfs"
+    elif [ "${memory_gb}" -gt 900 ]; then
+        tmpfs_args="--tmpfs /tmpfs:rw,exec,size=100g,mode=1777"
+        echo "System memory: ${memory_gb}GB - Using 100G tmpfs"
+    else
+        echo "System memory: ${memory_gb}GB - No tmpfs configured"
+    fi
+
+
     docker run -t \
         --privileged \
         --gpus all \
@@ -82,6 +98,7 @@ function work-linux-cuda-server() {
         --name "${USER}-work-cuda-server" \
         --detach-keys "ctrl-^,ctrl-@" \
         "${volumes[@]}" \
+        ${tmpfs_args} \
         --env-file "$base/home-work/.ssh/vpn.cfg" \
         --restart=always --detach \
         mattlu/work-cuda-dev:cuda12.6-ubuntu22.04
