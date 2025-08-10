@@ -153,6 +153,8 @@ if [[ -d "$HOME/.modular/bin" ]]; then
     export PATH="$PATH:$HOME/.modular/bin"
 fi
 
-if [[ -d "/usr/local/houmo-sdk/tools" ]]; then
-    export PATH="/usr/local/houmo-sdk/tools:$PATH"
+if [[ -d "/usr/local/cuda" ]]; then
+    export CUDA_HOME=/usr/local/cuda
+    export PATH="$CUDA_HOME/bin:$PATH"
+    export LD_LIBRARY_PATH="$CUDA_HOME/lib64:$LD_LIBRARY_PATH"
 fi

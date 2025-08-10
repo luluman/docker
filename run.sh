@@ -51,7 +51,7 @@ function work-linux-cuda-server() {
     local base="$HOME/.docker"
     declare -a volumes=(
         --volume="$(realpath "$HOME/workspace"):/workspace:cached"
-        --volume="$(realpath "$base/home-work"):$HOME:delegated"
+        --volume="$(realpath "$base/home-work"):/home/$(whoami):delegated"
         --volume="$(realpath "$base/tmp"):/tmp:cached"
         --volume="$(realpath "$base/clash_config"):/clash_config:cached"
         --volume="/var/run/docker.sock:/var/run/docker.sock"
@@ -61,16 +61,18 @@ function work-linux-cuda-server() {
     declare -a shared_dirs=(
         "/share_data"
         "/software_data"
+        "/data"
         "/zjshare_data"
     )
     for dir in "${shared_dirs[@]}"; do
         if [ -d "$dir" ]; then
-            volumes+=(--volume="$(realpath "$dir"):$dir:ro")
+            volumes+=(--volume="$(realpath "$dir"):$dir")
         fi
     done
 
     mkdir -p "$base/etc"
-    getent passwd > "$base/etc/passwd"
+    # Use awk to find the current user's line and replace the home directory (field 6).
+    getent passwd | awk -F: -v u="$(whoami)" 'BEGIN{OFS=FS} $1==u{$6="/home/"u}1' > "$base/etc/passwd"
     getent group > "$base/etc/group"
     volumes+=(--volume="$base/etc/passwd:/etc/passwd:ro" --volume="$base/etc/group:/etc/group:ro")
 
