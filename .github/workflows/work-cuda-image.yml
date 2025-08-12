@@ -24,7 +24,7 @@ jobs:
         run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
       - name: Build the latest Docker image
         run: |
-          docker build . --file work-cuda.Dockerfile --tag work-cuda-dev
+          DOCKER_BUILDKIT=0 docker build . --file work-cuda.Dockerfile --tag work-cuda-dev
           docker image tag work-cuda-dev mattlu/work-cuda-dev:latest
           docker image tag work-cuda-dev mattlu/work-cuda-dev:cuda12.6-ubuntu22.04
           docker image tag work-cuda-dev mattlu/work-cuda-dev:cuda12.6-ubuntu22.04-${{ steps.commit.outputs.short }}
