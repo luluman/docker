@@ -157,7 +157,7 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmak
 # Build Aspell
 # https://github.com/Starefossen/docker-aspell
 
-ENV ASPELL_SERVER https://ftp.gnu.org/gnu/aspell
+ENV ASPELL_SERVER http://mirror.keystealth.org/gnu/aspell
 ENV ASPELL_VERSION 0.60.8.1
 ENV ASPELL_EN 2020.12.07-0
 
@@ -407,13 +407,14 @@ RUN apt-get update && ldconfig && \
 
 # Clang
 RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
-    apt-add-repository "deb http://apt.llvm.org/${UBUNTU_NAME}/ llvm-toolchain-${UBUNTU_NAME}-21 main" && \
-    apt-get install -y  clang-21 lld-21 libomp-dev && \
+    apt-add-repository "deb http://apt.llvm.org/${UBUNTU_NAME}/ llvm-toolchain-${UBUNTU_NAME}-18 main" && \
+    apt-get install -y  clang-18 lld-18 libomp-dev && \
     # clang config
-    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-21 100 && \
-    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-21 100 && \
-    update-alternatives --install /usr/bin/lld lld /usr/bin/lld-21 100 && \
+    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100 && \
+    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100 && \
+    update-alternatives --install /usr/bin/lld lld /usr/bin/lld-18 100 && \
     # install clang-format-21
+    apt-add-repository "deb http://apt.llvm.org/${UBUNTU_NAME}/ llvm-toolchain-${UBUNTU_NAME}-21 main" && \
     apt-get install -y  clang-format-21 clang-tidy-21 lldb-21 clangd-21 && \
     update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-21 100 && \
     update-alternatives --install /usr/bin/clang-format-diff clang-format-diff /usr/bin/clang-format-diff-21 100 && \
