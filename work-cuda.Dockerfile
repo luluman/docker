@@ -105,7 +105,7 @@ RUN apt-get update && \
 # ============================================================
 # Install GDB
 # https://www.linuxfromscratch.org/blfs/view/svn/general/gdb.html
-ENV GDB_VERSION 16.2
+ENV GDB_VERSION 16.3
 
 RUN apt-get update && \
     apt-get install -y python3-dev libmpfr-dev libgmp-dev libreadline-dev && \
@@ -118,7 +118,7 @@ RUN apt-get update && \
 # ============================================================
 # https://github.com/nodejs/docker-node
 
-ENV NODE_VERSION 22.14.0
+ENV NODE_VERSION 22.18.0
 
 RUN apt-get update && \
     apt-get install xz-utils && \
@@ -144,7 +144,7 @@ RUN apt-get update && \
 # ============================================================
 # https://hub.docker.com/r/rikorose/gcc-cmake/dockerfile
 
-ENV CMAKE_VERSION 3.25.3
+ENV CMAKE_VERSION 4.1.0
 
 RUN wget https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmake-$CMAKE_VERSION-linux-x86_64.sh \
     --no-check-certificate \
@@ -290,13 +290,13 @@ RUN curl -L https://downloads.clash.wiki/ClashPremium/clash-linux-amd64-v3-2023.
 
 # ==========================================================
 # install llvm tools
-ENV LLVM_VERSION=18.1.8
+ENV LLVM_VERSION=20.1.8
 RUN cd /opt/ && \
-    wget https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/clang+llvm-${LLVM_VERSION}-x86_64-linux-gnu-ubuntu-18.04.tar.xz && \
-    tar -xJf clang+llvm*x86_64-linux-gnu-ubuntu-18.04.tar.xz \
-    --wildcards --strip-components=2 \
-    "*/bin/llvm-cxxfilt" "*/bin/llvm-symbolizer" "*/bin/*lsp-server" && \
-    cp llvm-cxxfilt llvm-symbolizer  *lsp-server /usr/local/bin/ && \
+    wget https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/LLVM-${LLVM_VERSION}-Linux-X64.tar.xz && \
+    tar xf LLVM-${LLVM_VERSION}-Linux-X64.tar.xz && \
+    cd LLVM-${LLVM_VERSION}-Linux-X64/bin && \
+    cp llvm-cxxfilt llvm-symbolizer /usr/local/bin/ && \
+    cp *lsp-server /usr/local/bin/ && \
     rm -r /opt/*
 
 # ********************************************************************************
@@ -417,22 +417,21 @@ RUN apt-get update && ldconfig && \
 
 # Clang
 RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
-    apt-add-repository "deb http://apt.llvm.org/${UBUNTU_NAME}/ llvm-toolchain-${UBUNTU_NAME}-16 main" && \
-    apt-get install -y  clang-16 lld-16 libomp-dev && \
+    apt-add-repository "deb http://apt.llvm.org/${UBUNTU_NAME}/ llvm-toolchain-${UBUNTU_NAME}-21 main" && \
+    apt-get install -y  clang-21 lld-21 libomp-dev && \
     # clang config
-    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-16 100 && \
-    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-16 100 && \
-    update-alternatives --install /usr/bin/lld lld /usr/bin/lld-16 100 && \
-    # install clang-format-20
-    apt-add-repository "deb http://apt.llvm.org/${UBUNTU_NAME}/ llvm-toolchain-${UBUNTU_NAME}-20 main" && \
-    apt-get install -y  clang-format-20 clang-tidy-20 lldb-20 clangd-20 && \
-    update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-20 100 && \
-    update-alternatives --install /usr/bin/clang-format-diff clang-format-diff /usr/bin/clang-format-diff-20 100 && \
-    update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-20 100 && \
-    update-alternatives --install /usr/bin/lldb lldb /usr/bin/lldb-20 100 && \
-    update-alternatives --install /usr/bin/lldb-dap lldb-dap /usr/bin/lldb-dap-20 100 && \
-    update-alternatives --install /usr/bin/lldb-server lldb-server /usr/bin/lldb-server-20 100 && \
-    update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-20 100 && \
+    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-21 100 && \
+    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-21 100 && \
+    update-alternatives --install /usr/bin/lld lld /usr/bin/lld-21 100 && \
+    # install clang-format-21
+    apt-get install -y  clang-format-21 clang-tidy-21 lldb-21 clangd-21 && \
+    update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-21 100 && \
+    update-alternatives --install /usr/bin/clang-format-diff clang-format-diff /usr/bin/clang-format-diff-21 100 && \
+    update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-21 100 && \
+    update-alternatives --install /usr/bin/lldb lldb /usr/bin/lldb-21 100 && \
+    update-alternatives --install /usr/bin/lldb-dap lldb-dap /usr/bin/lldb-dap-21 100 && \
+    update-alternatives --install /usr/bin/lldb-server lldb-server /usr/bin/lldb-server-21 100 && \
+    update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-21 100 && \
     # config gcc
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 10 --slave /usr/bin/g++ g++ /usr/bin/g++-13 && \
     apt-get clean && \
