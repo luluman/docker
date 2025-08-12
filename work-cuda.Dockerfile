@@ -154,17 +154,6 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmak
     && rm /tmp/cmake-install.sh
 
 # ============================================================
-# Build EAR (BEAR)
-
-ENV BEAR_VERSION 2.4.4
-
-RUN git clone --depth 1 --branch $BEAR_VERSION https://github.com/rizsotto/Bear.git /opt/bear && \
-    cd /opt/bear && \
-    cmake . -DCMAKE_INSTALL_PREFIX=/usr/local && \
-    make all -j4 && \
-    make install
-
-# ============================================================
 # Build Aspell
 # https://github.com/Starefossen/docker-aspell
 
@@ -369,6 +358,7 @@ RUN apt-get update && ldconfig && \
     parallel \
     rsync \
     graphviz \
+    bear \
     # for BM
     bison \
     flex \
