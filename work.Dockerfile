@@ -108,7 +108,7 @@ ENV GDB_VERSION 16.3
 
 RUN apt-get update && \
     apt-get install -y python3-dev libmpfr-dev libgmp-dev libreadline-dev && \
-    wget https://ftp.gnu.org/gnu/gdb/gdb-${GDB_VERSION}.tar.gz && \
+    wget https://sourceware.org/pub/gdb/releases/gdb-${GDB_VERSION}.tar.gz && \
     tar -xf gdb-${GDB_VERSION}.tar.gz && \
     cd gdb-${GDB_VERSION} && \
     ./configure --with-python=/usr/bin/python3 --prefix=/usr/local --with-system-readline && \
