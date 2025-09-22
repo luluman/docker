@@ -62,7 +62,7 @@ RUN apt-get update \
 # install tree-sitter
 # https://www.reddit.com/r/emacs/comments/z25iyx/comment/ixll68j/?utm_source=share&utm_medium=web2x&context=3
 ENV CC="gcc-13" CFLAGS="-O3 -Wall -Wextra"
-RUN git clone --depth 1 --branch v0.24.5 https://github.com/tree-sitter/tree-sitter.git /opt/tree-sitter && \
+RUN git clone --depth 1 --branch v0.25.9 https://github.com/tree-sitter/tree-sitter.git /opt/tree-sitter && \
     cd /opt/tree-sitter && \
     make -j4 && \
     make install
@@ -71,7 +71,7 @@ RUN ldconfig
 ENV CFLAGS="-O2"
 RUN git clone https://github.com/emacs-mirror/emacs /opt/emacs && \
     cd /opt/emacs && \
-    git checkout e633bbfec0fe0fa436026d759132faa47b6b0dc4 && \
+    git checkout aeadaf77488a85838547ed8253a2f0b017cf4774 && \
     ./autogen.sh && \
     ./configure --build="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
     --with-modules \
