@@ -95,7 +95,7 @@ RUN git clone https://github.com/emacs-mirror/emacs /opt/emacs && \
 # https://emacs-china.org/t/treesit-master/22862/69
 RUN apt-get update && \
     apt-get install -y g++ && \
-    git clone https://github.com/casouri/tree-sitter-module /opt/tree-sitter-module && \
+    git clone --branch v2.5 https://github.com/casouri/tree-sitter-module /opt/tree-sitter-module && \
     cd /opt/tree-sitter-module && \
     sed -i "/languages=(/a \ \ \ \ 'jsdoc'" batch.sh && \
     ./batch.sh && \
@@ -118,7 +118,7 @@ RUN apt-get update && \
 # ============================================================
 # https://github.com/nodejs/docker-node
 
-ENV NODE_VERSION 22.18.0
+ENV NODE_VERSION 22.19.0
 
 RUN apt-get update && \
     apt-get install xz-utils && \
@@ -138,8 +138,10 @@ RUN apt-get update && \
     && npm i --location=global dockerfile-language-server-nodejs \
     && npm i --location=global vscode-langservers-extracted  \
     && npm i --location=global yaml-language-server \
-    && npm i --location=global markdownlint-cli
-
+    && npm i --location=global markdownlint-cli \
+    && npm i --location=global @google/gemini-cli \
+    && npm i --location=global @anthropic-ai/claude-code \
+    && npm i --location=global @openai/codex
 
 # ============================================================
 # https://hub.docker.com/r/rikorose/gcc-cmake/dockerfile

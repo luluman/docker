@@ -100,7 +100,6 @@ function work-linux-cuda-server() {
         --name "${USER}-work-cuda-server" \
         --detach-keys "ctrl-^,ctrl-@" \
         "${volumes[@]}" \
-        ${tmpfs_args} \
         --env-file "$base/home-work/.ssh/vpn.cfg" \
         --restart=always --detach \
         mattlu/work-cuda-dev:cuda12.6-ubuntu22.04
