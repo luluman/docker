@@ -295,7 +295,7 @@ RUN cd /opt/ && \
 # stage 1
 # ********************************************************************************
 
-FROM nvidia/cuda:12.6.3-devel-ubuntu${UBUNTU_VERSION} AS builder1
+FROM nvidia/cuda:13.0.0-devel-ubuntu${UBUNTU_VERSION} AS builder1
 ARG UBUNTU_NAME
 ARG DEBIAN_FRONTEND
 

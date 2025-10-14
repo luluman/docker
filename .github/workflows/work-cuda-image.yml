@@ -26,7 +26,7 @@ jobs:
         run: |
           DOCKER_BUILDKIT=0 docker build . --file work-cuda.Dockerfile --tag work-cuda-dev
           docker image tag work-cuda-dev mattlu/work-cuda-dev:latest
-          docker image tag work-cuda-dev mattlu/work-cuda-dev:cuda12.6-ubuntu22.04
-          docker image tag work-cuda-dev mattlu/work-cuda-dev:cuda12.6-ubuntu22.04-${{ steps.commit.outputs.short }}
+          docker image tag work-cuda-dev mattlu/work-cuda-dev:cuda13.0-ubuntu22.04
+          docker image tag work-cuda-dev mattlu/work-cuda-dev:cuda13.0-ubuntu22.04-${{ steps.commit.outputs.short }}
       - name: Push the latest Docker image
         run: docker push --all-tags mattlu/work-cuda-dev
