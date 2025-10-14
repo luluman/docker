@@ -159,7 +159,7 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmak
 # Build Aspell
 # https://github.com/Starefossen/docker-aspell
 
-ENV ASPELL_SERVER https://ftp.gnu.org/gnu/aspell
+ENV ASPELL_SERVER http://mirror.keystealth.org/gnu/aspell
 ENV ASPELL_VERSION 0.60.8.1
 ENV ASPELL_EN 2020.12.07-0
 
