@@ -243,18 +243,6 @@ RUN wget https://github.com/mvdan/sh/releases/download/v${SHFMT_VERSION}/shfmt_v
     chmod +x ./shfmt && \
     cp ./shfmt /usr/local/bin/
 
-# ===========================================================
-# install fuz (fuzzy match scoring/matching functions for Emacs)
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
-    apt-get update && apt-get install -y clang llvm && \
-    git clone https://github.com/rustify-emacs/fuz.el fuz
-
-ENV PATH="/root/.cargo/bin:${PATH}"
-RUN cd fuz && \
-    sed -i 's/fuzzy-matcher = "0\.2\.1"/fuzzy-matcher = "0.3.7"/' Cargo.toml && \
-    cargo build --release && \
-    cp target/release/libfuz_core.so /usr/local/lib/
-
 # ==========================================================
 # install rust-analyzer
 RUN curl -L https://github.com/rust-analyzer/rust-analyzer/releases/latest/download/rust-analyzer-x86_64-unknown-linux-gnu.gz | gunzip -c - > /usr/local/bin/rust-analyzer \
@@ -276,8 +264,8 @@ RUN apt-get update && \
 
 # ==========================================================
 # install clash
-RUN curl -L https://downloads.clash.wiki/ClashPremium/clash-linux-amd64-v3-2023.08.17.gz | gunzip -c - > /usr/local/bin/clash \
-    && chmod +x /usr/local/bin/clash
+COPY clash_config/clash /usr/local/bin/
+RUN  chmod +x /usr/local/bin/clash
 
 # ==========================================================
 # install llvm tools
