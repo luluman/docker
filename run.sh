@@ -25,8 +25,8 @@ function work-linux-server() {
     done
 
     mkdir -p "$base/etc"
-    getent passwd > "$base/etc/passwd"
-    getent group > "$base/etc/group"
+    getent passwd >"$base/etc/passwd"
+    getent group >"$base/etc/group"
     volumes+=(--volume="$base/etc/passwd:/etc/passwd:ro" --volume="$base/etc/group:/etc/group:ro")
 
     docker run -t \
@@ -63,6 +63,9 @@ function work-linux-cuda-server() {
         "/software_data"
         "/data"
         "/zjshare_data"
+        "/softhome"
+        "/share"
+        "/data_gpu"
     )
     for dir in "${shared_dirs[@]}"; do
         if [ -d "$dir" ]; then
@@ -72,25 +75,9 @@ function work-linux-cuda-server() {
 
     mkdir -p "$base/etc"
     # Use awk to find the current user's line and replace the home directory (field 6).
-    getent passwd | awk -F: -v u="$(whoami)" 'BEGIN{OFS=FS} $1==u{$6="/home/"u}1' > "$base/etc/passwd"
-    getent group > "$base/etc/group"
+    getent passwd | awk -F: -v u="$(whoami)" 'BEGIN{OFS=FS} $1==u{$6="/home/"u}1' >"$base/etc/passwd"
+    getent group >"$base/etc/group"
     volumes+=(--volume="$base/etc/passwd:/etc/passwd:ro" --volume="$base/etc/group:/etc/group:ro")
-
-    local memory_gb=0
-    local tmpfs_args=""
-
-    memory_gb=$(free -g | awk '/^Mem:/ {print $2}')
-    # Configure tmpfs based on memory size
-    if [ "${memory_gb}" -gt 1800 ]; then
-        tmpfs_args="--tmpfs /tmpfs:rw,exec,size=200g,mode=1777"
-        echo "System memory: ${memory_gb}GB - Using 200G tmpfs"
-    elif [ "${memory_gb}" -gt 900 ]; then
-        tmpfs_args="--tmpfs /tmpfs:rw,exec,size=100g,mode=1777"
-        echo "System memory: ${memory_gb}GB - Using 100G tmpfs"
-    else
-        echo "System memory: ${memory_gb}GB - No tmpfs configured"
-    fi
-
 
     docker run -t \
         --privileged \
@@ -109,7 +96,7 @@ function work-linux-cuda-server() {
 function work-linux-server-exec() {
     docker exec -ti --user ${UID} \
         --detach-keys "ctrl-^,ctrl-@" \
-        ${USER}-work-server /bin/bash
+        "${USER}"-work-server /bin/bash
 
 }
 
