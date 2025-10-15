@@ -75,8 +75,7 @@ function work-linux-cuda-server() {
 
     mkdir -p "$base/etc"
     # Use awk to find the current user's line and replace the home directory (field 6).
-    getent passwd | awk -F: '$3 < 1000 {print}' >"$base/etc/passwd" # system accounts
-    getent passwd "$(whoami)" | awk -F: 'BEGIN{OFS=FS}{$6="/home/"$1}1' >>"$base/etc/passwd"
+    getent passwd "$(whoami)" | awk -F: 'BEGIN{OFS=FS}{$6="/home/"$1}1' >"$base/etc/passwd"
     getent group >"$base/etc/group"
     volumes+=(--volume="$base/etc/passwd:/etc/passwd:ro" --volume="$base/etc/group:/etc/group:ro")
 
