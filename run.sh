@@ -78,6 +78,8 @@ function work-linux-cuda-server() {
     getent passwd | awk -F: '$3 < 1000 {print}' >"$base/etc/passwd" # system accounts
     getent passwd "$(whoami)" | awk -F: 'BEGIN{OFS=FS}{$6="/home/"$1}1' >>"$base/etc/passwd"
     getent group >"$base/etc/group"
+    getent group "$(id -g -n)" >>"$base/etc/group"
+
     volumes+=(--volume="$base/etc/passwd:/etc/passwd:ro" --volume="$base/etc/group:/etc/group:ro")
 
     docker run -t \
