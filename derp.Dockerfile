@@ -1,7 +1,7 @@
 # ENV DERP_DOMAIN your-hostname.com
 
 FROM golang:alpine AS builder
-ARG TAILSCALE_VERSION=v1.80.2
+ARG TAILSCALE_VERSION=v1.88.4
 
 RUN go install tailscale.com/cmd/derper@${TAILSCALE_VERSION}
 RUN go install tailscale.com/cmd/tailscaled@${TAILSCALE_VERSION}
