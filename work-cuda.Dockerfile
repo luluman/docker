@@ -1,4 +1,5 @@
 ARG UBUNTU_VERSION=22.04
+ARG CUDA_VERSION=13.0.0
 ARG UBUNTU_NAME=jammy
 ARG DEBIAN_FRONTEND="noninteractive"
 
@@ -7,7 +8,7 @@ ARG DEBIAN_FRONTEND="noninteractive"
 # satge 0
 # ********************************************************************************
 
-FROM ubuntu:${UBUNTU_VERSION} AS builder0
+FROM ubuntu:${UBUNTU_VERSION} AS builder
 ARG UBUNTU_NAME
 ARG DEBIAN_FRONTEND
 
@@ -283,7 +284,8 @@ RUN cd /opt/ && \
 # stage 1
 # ********************************************************************************
 
-FROM nvidia/cuda:13.0.0-devel-ubuntu${UBUNTU_VERSION} AS builder1
+FROM nvidia/cuda:${CUDA_VERSION}-devel-ubuntu${UBUNTU_VERSION} AS runtime
+ARG CUDA_VERSION
 ARG UBUNTU_NAME
 ARG DEBIAN_FRONTEND
 
@@ -476,7 +478,7 @@ RUN TZ=Asia/Shanghai \
 
 
 # ================================================================================
-COPY --from=builder0 /usr/local /usr/local
+COPY --from=builder /usr/local /usr/local
 
 RUN \
     # fix emacs bug
