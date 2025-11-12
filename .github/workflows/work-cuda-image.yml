@@ -3,55 +3,69 @@ name: work-cuda-dev
 on:
     push:
         paths:
+            - "work-base.Dockerfile"
             - "work-cuda.Dockerfile"
             - "scripts/start.sh"
-
     workflow_dispatch:
-#  pull_request:
-#    branches: [ master ]
+
+env:
+    REGISTRY_IMAGE: mattlu/work-cuda-dev
+    BUILDER_IMAGE: mattlu/work-builder:latest
 
 jobs:
-    build:
+    changes:
         runs-on: ubuntu-latest
-
+        outputs:
+            base: ${{ steps.filter.outputs.base }}
         steps:
-            - name: Checkout
-              uses: actions/checkout@v4
+            - uses: actions/checkout@v4
+            - id: filter
+              uses: dorny/paths-filter@v3
+              with:
+                  filters: |
+                      base:
+                        - 'work-base.Dockerfile'
 
-            - name: Set up Docker Buildx
-              uses: docker/setup-buildx-action@v3
-
-            - name: Log in to Docker Hub
-              uses: docker/login-action@v3
+    build-builder:
+        needs: changes
+        runs-on: ubuntu-latest
+        if: needs.changes.outputs.base == 'true' || github.event_name == 'workflow_dispatch'
+        steps:
+            - uses: actions/checkout@v4
+            - uses: docker/setup-buildx-action@v3
+            - uses: docker/login-action@v3
               with:
                   username: ${{ secrets.DOCKERHUB_USERNAME }}
                   password: ${{ secrets.DOCKERHUB_PASSWORD }}
+            - name: Build and push builder
+              run: docker buildx build --push -t ${{ env.BUILDER_IMAGE }} -f work-base.Dockerfile .
 
-            - name: Build and push CUDA 13.0 image
+    build-cuda:
+        runs-on: ubuntu-latest
+        needs: build-builder
+        if: always() && (needs.build-builder.result == 'success' || needs.build-builder.result == 'skipped')
+        strategy:
+            matrix:
+                cuda:
+                    [
+                        { version: "13.0.0", tag: "cuda13.0" },
+                        { version: "12.6.3", tag: "cuda12.6" },
+                    ]
+        steps:
+            - uses: actions/checkout@v4
+            - name: Get short commit SHA
+              id: commit
+              run: echo "short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+            - uses: docker/setup-buildx-action@v3
+            - uses: docker/login-action@v3
+              with:
+                  username: ${{ secrets.DOCKERHUB_USERNAME }}
+                  password: ${{ secrets.DOCKERHUB_PASSWORD }}
+            - name: Build and push CUDA ${{ matrix.cuda.version }}
               run: |
-                  docker buildx build \
-                    --push \
+                  docker buildx build --push \
                     --target runtime \
-                    --build-arg CUDA_VERSION=13.0.0 \
-                    -t mattlu/work-cuda-dev:cuda13.0-ubuntu22.04 \
-                    -t mattlu/work-cuda-dev:cuda13.0-ubuntu22.04-${{ steps.commit.outputs.short }} \
-                    -t mattlu/work-cuda-dev:latest \
+                    --build-arg CUDA_VERSION=${{ matrix.cuda.version }} \
+                    -t ${{ env.REGISTRY_IMAGE }}:${{ matrix.cuda.tag }}-ubuntu22.04 \
+                    -t ${{ env.REGISTRY_IMAGE }}:${{ matrix.cuda.tag }}-ubuntu22.04-${{ steps.commit.outputs.short }} \
                     -f work-cuda.Dockerfile .
-              shell: bash
-
-            - name: Clean up builder cache (save space)
-              run: docker builder prune -f
-
-            - name: Build and push CUDA 12.6 image
-              run: |
-                  docker buildx build \
-                    --push \
-                    --target runtime \
-                    --build-arg CUDA_VERSION=12.6.3 \
-                    -t mattlu/work-cuda-dev:cuda12.6-ubuntu22.04 \
-                    -t mattlu/work-cuda-dev:cuda12.6-ubuntu22.04-${{ steps.commit.outputs.short }} \
-                    -f work-cuda.Dockerfile .
-              shell: bash
-
-            - name: Final cleanup
-              run: docker system prune -af
