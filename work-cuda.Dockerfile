@@ -71,7 +71,7 @@ RUN ldconfig
 ENV CFLAGS="-O2"
 RUN git clone https://github.com/emacs-mirror/emacs /opt/emacs && \
     cd /opt/emacs && \
-    git checkout aeadaf77488a85838547ed8253a2f0b017cf4774 && \
+    git checkout 45a82437a3ea651db9efa3215588cd828e06c79c && \
     ./autogen.sh && \
     ./configure --build="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
     --with-modules \
@@ -202,7 +202,7 @@ RUN apt-get update && apt-get install -y libglib2.0-dev groff && \
 # https://hub.docker.com/r/peccu/rg/dockerfile
 # build ripgrep
 
-ENV RG_VERSION=14.1.1
+ENV RG_VERSION=15.1.0
 RUN     set -x \
     &&  wget https://github.com/BurntSushi/ripgrep/releases/download/${RG_VERSION}/ripgrep-${RG_VERSION}-x86_64-unknown-linux-musl.tar.gz \
     --no-check-certificate \
@@ -431,6 +431,15 @@ RUN apt-get update && apt-get install -y  \
     apt-get update && apt-get install -y  \
     docker-ce-cli \
     && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install WezTerm terminal emulator for multiplexing
+RUN curl -fsSL https://apt.fury.io/wez/gpg.key | gpg --yes --dearmor -o /usr/share/keyrings/wezterm-fury.gpg && \
+    echo 'deb [signed-by=/usr/share/keyrings/wezterm-fury.gpg] https://apt.fury.io/wez/ * *' | tee /etc/apt/sources.list.d/wezterm.list && \
+    chmod 644 /usr/share/keyrings/wezterm-fury.gpg && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends wezterm && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
