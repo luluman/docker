@@ -8,3 +8,5 @@
 /tmp/*
 /opt/*
 /clash_config/*
+/etc/group
+/etc/passwd

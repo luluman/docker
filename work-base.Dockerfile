@@ -2,6 +2,9 @@ ARG UBUNTU_VERSION=22.04
 ARG UBUNTU_NAME=jammy
 ARG DEBIAN_FRONTEND="noninteractive"
 
+# ==========================================================
+# stage 0
+
 FROM ubuntu:${UBUNTU_VERSION} AS builder
 ARG UBUNTU_NAME
 ARG DEBIAN_FRONTEND
@@ -113,7 +116,7 @@ RUN apt-get update && \
 # ============================================================
 # https://github.com/nodejs/docker-node
 
-ENV NODE_VERSION 22.19.0
+ENV NODE_VERSION 24.11.1
 
 RUN apt-get update && \
     apt-get install xz-utils && \
@@ -264,7 +267,7 @@ RUN  chmod +x /usr/local/bin/clash
 
 # ==========================================================
 # install llvm tools
-ENV LLVM_VERSION=20.1.8
+ENV LLVM_VERSION=21.1.5
 RUN cd /opt/ && \
     wget https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/LLVM-${LLVM_VERSION}-Linux-X64.tar.xz && \
     tar xf LLVM-${LLVM_VERSION}-Linux-X64.tar.xz && \
@@ -274,9 +277,12 @@ RUN cd /opt/ && \
     rm -r /opt/*
 
 # ==========================================================
+# stage 1
 
 FROM ubuntu:${UBUNTU_VERSION} AS release
 ARG UBUNTU_NAME
 ARG DEBIAN_FRONTEND
+
+RUN rm -rf /usr/local/man
 
 COPY --from=builder /usr/local /usr/local
