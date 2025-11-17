@@ -8,15 +8,21 @@ tailscaled --tun=userspace-networking \
     --outbound-http-proxy-listen=0.0.0.0:1055 \
     -no-logs-no-support &
 PID=$!
-# https://github.com/tailscale/tailscale/issues/5412
-LOGIN_SERVER_ARG=""
-if [ -n "${TAILSCALE_SERVER}" ]; then
-  LOGIN_SERVER_ARG="--login-server=${TAILSCALE_SERVER}"
-fi
 
-until tailscale up "${LOGIN_SERVER_ARG}" --authkey="${TAILSCALE_AUTH_KEY}" --hostname="${TAILSCALE_HOSTNAME}"; do
-  sleep 0.1
+# Build argument list
+set -- # clear "$@"
+if [ -n "${TAILSCALE_SERVER}" ]; then
+    set -- "$@" "--login-server=${TAILSCALE_SERVER}"
+fi
+set -- "$@" \
+    "--authkey=${TAILSCALE_AUTH_KEY}" \
+    "--hostname=${TAILSCALE_HOSTNAME}"
+
+# "$@" expands only to real args; no empty placeholder
+until tailscale up "$@"; do
+    sleep 0.1
 done
+
 tailscale status
 wait ${PID}
 wait ${PID}
