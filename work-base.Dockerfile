@@ -267,8 +267,8 @@ RUN  chmod +x /usr/local/bin/clash
 
 # ==========================================================
 # install llvm tools
-ENV LLVM_VERSION=21.1.5
-RUN cd /opt/ && \
+ENV LLVM_VERSION=21.1.7
+RUN cd /opt/ && rm -rf /opt/* /tmp/* && \
     wget https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/LLVM-${LLVM_VERSION}-Linux-X64.tar.xz && \
     tar xf LLVM-${LLVM_VERSION}-Linux-X64.tar.xz && \
     cd LLVM-${LLVM_VERSION}-Linux-X64/bin && \
