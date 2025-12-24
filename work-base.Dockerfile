@@ -69,7 +69,7 @@ RUN ldconfig
 ENV CFLAGS="-O2"
 RUN git clone https://github.com/emacs-mirror/emacs /opt/emacs && \
     cd /opt/emacs && \
-    git checkout 45a82437a3ea651db9efa3215588cd828e06c79c && \
+    git checkout c6bdfaf358e25d7e30162d378dab9bb75e1220c2 && \
     ./autogen.sh && \
     ./configure --build="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
     --with-modules \
@@ -116,7 +116,7 @@ RUN apt-get update && \
 # ============================================================
 # https://github.com/nodejs/docker-node
 
-ENV NODE_VERSION 24.11.1
+ENV NODE_VERSION 24.12.0
 
 RUN apt-get update && \
     apt-get install xz-utils && \
@@ -136,10 +136,7 @@ RUN apt-get update && \
     && npm i --location=global dockerfile-language-server-nodejs \
     && npm i --location=global vscode-langservers-extracted  \
     && npm i --location=global yaml-language-server \
-    && npm i --location=global markdownlint-cli \
-    && npm i --location=global @google/gemini-cli \
-    && npm i --location=global @anthropic-ai/claude-code \
-    && npm i --location=global @openai/codex
+    && npm i --location=global markdownlint-cli
 
 # ============================================================
 # https://hub.docker.com/r/rikorose/gcc-cmake/dockerfile
