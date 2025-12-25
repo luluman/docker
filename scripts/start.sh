@@ -23,7 +23,7 @@ if [ -n "${TAILSCALE_SERVER}" ]; then
     LOGIN_SERVER_ARG+=("--login-server=${TAILSCALE_SERVER}")
 fi
 
-until tailscale up "${LOGIN_SERVER_ARG[@]}" --authkey="${TAILSCALE_AUTH_KEY}" --hostname="$(hostname)"; do
+until tailscale up "${LOGIN_SERVER_ARG[@]}" --authkey="${TAILSCALE_AUTH_KEY}" --hostname="$(hostname)" --accept-routes; do
     sleep 0.1
 done
 
