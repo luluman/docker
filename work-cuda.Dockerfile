@@ -79,6 +79,8 @@ RUN apt-get update && ldconfig && \
     # ping network
     iputils-ping \
     netcat \
+    # test storage performance
+    fio \
     # SQL
     sqlite3 postgresql-client \
     # smb
