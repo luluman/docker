@@ -123,16 +123,16 @@ RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100 && \
     update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100 && \
     update-alternatives --install /usr/bin/lld lld /usr/bin/lld-18 100 && \
-    # install clang-format-21
-    apt-add-repository "deb http://apt.llvm.org/${UBUNTU_NAME}/ llvm-toolchain-${UBUNTU_NAME}-21 main" && \
-    apt-get install -y  clang-format-21 clang-tidy-21 lldb-21 clangd-21 && \
-    update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-21 100 && \
-    update-alternatives --install /usr/bin/clang-format-diff clang-format-diff /usr/bin/clang-format-diff-21 100 && \
-    update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-21 100 && \
-    update-alternatives --install /usr/bin/lldb lldb /usr/bin/lldb-21 100 && \
-    update-alternatives --install /usr/bin/lldb-dap lldb-dap /usr/bin/lldb-dap-21 100 && \
-    update-alternatives --install /usr/bin/lldb-server lldb-server /usr/bin/lldb-server-21 100 && \
-    update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-21 100 && \
+    # install clang-format-22
+    apt-add-repository "deb http://apt.llvm.org/${UBUNTU_NAME}/ llvm-toolchain-${UBUNTU_NAME}-22 main" && \
+    apt-get install -y  clang-format-22 clang-tidy-22 lldb-22 clangd-22 && \
+    update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-22 100 && \
+    update-alternatives --install /usr/bin/clang-format-diff clang-format-diff /usr/bin/clang-format-diff-22 100 && \
+    update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-22 100 && \
+    update-alternatives --install /usr/bin/lldb lldb /usr/bin/lldb-22 100 && \
+    update-alternatives --install /usr/bin/lldb-dap lldb-dap /usr/bin/lldb-dap-22 100 && \
+    update-alternatives --install /usr/bin/lldb-server lldb-server /usr/bin/lldb-server-22 100 && \
+    update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-22 100 && \
     # config gcc
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 10 --slave /usr/bin/g++ g++ /usr/bin/g++-12 && \
     apt-get clean && \
