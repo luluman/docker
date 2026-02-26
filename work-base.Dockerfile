@@ -60,7 +60,7 @@ RUN apt-get update \
 # install tree-sitter
 # https://www.reddit.com/r/emacs/comments/z25iyx/comment/ixll68j/?utm_source=share&utm_medium=web2x&context=3
 ENV CC="gcc-13" CFLAGS="-O3 -Wall -Wextra"
-RUN git clone --depth 1 --branch v0.25.9 https://github.com/tree-sitter/tree-sitter.git /opt/tree-sitter && \
+RUN git clone --depth 1 --branch v0.26.6 https://github.com/tree-sitter/tree-sitter.git /opt/tree-sitter && \
     cd /opt/tree-sitter && \
     make -j4 && \
     make install
@@ -263,8 +263,19 @@ COPY clash_config/clash /usr/local/bin/
 RUN  chmod +x /usr/local/bin/clash
 
 # ==========================================================
+# install uv
+
+RUN curl -L https://github.com/astral-sh/uv/releases/latest/download/uv-x86_64-unknown-linux-musl.tar.gz \
+    | tar -xz -C /usr/local/bin --strip-components=1
+
+# ==========================================================
+# install pixi
+RUN curl -L https://github.com/prefix-dev/pixi/releases/latest/download/pixi-x86_64-unknown-linux-musl.tar.gz \
+    | tar -xz -C /usr/local/bin
+
+# ==========================================================
 # install llvm tools
-ENV LLVM_VERSION=21.1.7
+ENV LLVM_VERSION=22.1.0
 RUN cd /opt/ && rm -rf /opt/* /tmp/* && \
     wget https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/LLVM-${LLVM_VERSION}-Linux-X64.tar.xz && \
     tar xf LLVM-${LLVM_VERSION}-Linux-X64.tar.xz && \

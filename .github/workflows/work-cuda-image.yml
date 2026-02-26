@@ -56,7 +56,7 @@ jobs:
             matrix:
                 cuda:
                     [
-                        { version: "13.0.0", tag: "cuda13.0" },
+                        { version: "13.1.0", tag: "cuda13.1" },
                         { version: "12.6.3", tag: "cuda12.6" },
                     ]
         steps:
