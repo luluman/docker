@@ -14,8 +14,7 @@ COPY 99-apt-get-settings /etc/apt/apt.conf.d/
 # dependency of Emacs
 RUN apt-get update && \
     apt-get install -y software-properties-common gpg-agent && \
-    apt-add-repository ppa:ubuntu-toolchain-r/test && \
-    apt-get update && rm -rf /usr/local/man && \
+    rm -rf /usr/local/man && \
     apt-get install -y  \
     libmpc3 \
     libmpfr6 \
@@ -32,9 +31,8 @@ RUN apt-get update && \
     binutils \
     libc6-dev \
     librsvg2-2 \
-    libgccjit-13-dev \
-    # libgccjit-11 needs gcc-12 ?
-    gcc-13 g++-13 \
+    libgccjit-12-dev \
+    gcc-12 g++-12 \
     libsqlite3-dev \
     # for vterm
     libtool \
@@ -136,7 +134,7 @@ RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     update-alternatives --install /usr/bin/lldb-server lldb-server /usr/bin/lldb-server-21 100 && \
     update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-21 100 && \
     # config gcc
-    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 10 --slave /usr/bin/g++ g++ /usr/bin/g++-13 && \
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 10 --slave /usr/bin/g++ g++ /usr/bin/g++-12 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
