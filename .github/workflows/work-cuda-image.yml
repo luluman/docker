@@ -81,6 +81,6 @@ jobs:
                   docker buildx build --push \
                     --target runtime \
                     --build-arg CUDA_VERSION=${{ matrix.cuda.version }} \
-                    -t ${{ env.REGISTRY_IMAGE }}:${{ matrix.cuda.tag }}-ubuntu22.04 \
-                    -t ${{ env.REGISTRY_IMAGE }}:${{ matrix.cuda.tag }}-ubuntu22.04-${{ steps.commit.outputs.short }} \
+                    -t ${{ env.REGISTRY_IMAGE }}:${{ matrix.cuda.tag }}-ubuntu24.04 \
+                    -t ${{ env.REGISTRY_IMAGE }}:${{ matrix.cuda.tag }}-ubuntu24.04-${{ steps.commit.outputs.short }} \
                     -f work-cuda.Dockerfile .

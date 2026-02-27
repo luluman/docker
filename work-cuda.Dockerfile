@@ -1,6 +1,6 @@
-ARG UBUNTU_VERSION=22.04
+ARG UBUNTU_VERSION=24.04
 ARG CUDA_VERSION=13.1.0
-ARG UBUNTU_NAME=jammy
+ARG UBUNTU_NAME=noble
 ARG DEBIAN_FRONTEND="noninteractive"
 
 FROM nvidia/cuda:${CUDA_VERSION}-devel-ubuntu${UBUNTU_VERSION} AS runtime
@@ -31,8 +31,8 @@ RUN apt-get update && \
     binutils \
     libc6-dev \
     librsvg2-2 \
-    libgccjit-12-dev \
-    gcc-12 g++-12 \
+    libgccjit-13-dev \
+    gcc-13 g++-13 \
     libsqlite3-dev \
     # for vterm
     libtool \
@@ -134,7 +134,7 @@ RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     update-alternatives --install /usr/bin/lldb-server lldb-server /usr/bin/lldb-server-22 100 && \
     update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-22 100 && \
     # config gcc
-    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 10 --slave /usr/bin/g++ g++ /usr/bin/g++-12 && \
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 10 --slave /usr/bin/g++ g++ /usr/bin/g++-13 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
