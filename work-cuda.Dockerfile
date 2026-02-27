@@ -57,6 +57,8 @@ RUN apt-get update && ldconfig && \
     valgrind \
     openssh-client \
     sudo \
+    # clang find 14
+    libstdc++-14-dev \
     # gdb \
     libmpfr-dev libgmp-dev libreadline-dev \
     # tectonic
