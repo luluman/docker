@@ -23,8 +23,8 @@ RUN apt-get update && \
     libjpeg-turbo8 \
     libtiff6 \
     libxpm4 \
-    libgnutlsxx28 \
-    libncurses5 \
+    libgnutlsxx30 \
+    libncurses6 \
     libxml2 \
     libxt6 \
     libx11-xcb1 \
@@ -90,8 +90,8 @@ RUN apt-get update && ldconfig && \
     virtualenv \
     tzdata \
     # tablegen
-    libncurses5-dev \
-    libncurses5 \
+    libncurses6-dev \
+    libncurses6 \
     # riscv-isa-sim
     device-tree-compiler libboost-regex-dev libboost-system-dev \
     # tools
