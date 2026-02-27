@@ -54,7 +54,6 @@ RUN apt-get update && ldconfig && \
     build-essential \
     apt-transport-https \
     ca-certificates \
-    libstdc++-dev \
     valgrind \
     openssh-client \
     sudo \
