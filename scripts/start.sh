@@ -27,7 +27,7 @@ until tailscale up "${LOGIN_SERVER_ARG[@]}" \
     --authkey="${TAILSCALE_AUTH_KEY}" \
     --hostname="$(hostname)" \
     --accept-routes \
-    --ssh; do
+      ; do
     sleep 0.1
 done
 
