@@ -23,7 +23,8 @@ RUN apt-get update && \
     libjpeg-turbo8 \
     libtiff6 \
     libxpm4 \
-    libgnutlsxx30 \
+    # can not find libgnutlsxx28
+    libgnutls28-dev \
     libncurses6 \
     libxml2 \
     libxt6 \
@@ -53,6 +54,7 @@ RUN apt-get update && ldconfig && \
     build-essential \
     apt-transport-https \
     ca-certificates \
+    libstdc++-13-dev \
     valgrind \
     openssh-client \
     sudo \
@@ -76,7 +78,7 @@ RUN apt-get update && ldconfig && \
     libutempter-dev \
     # ping network
     iputils-ping \
-    netcat \
+    netcat-traditional \
     # test storage performance
     fio \
     # SQL
@@ -90,7 +92,7 @@ RUN apt-get update && ldconfig && \
     virtualenv \
     tzdata \
     # tablegen
-    libncurses6-dev \
+    libncurses-dev \
     libncurses6 \
     # riscv-isa-sim
     device-tree-compiler libboost-regex-dev libboost-system-dev \
