@@ -23,7 +23,7 @@ RUN apt-get update && \
     libgmp-dev \
     coreutils \
     make \
-    libtinfo5 \
+    libtinfo6 \
     texinfo \
     libxpm-dev \
     libgnutls28-dev \

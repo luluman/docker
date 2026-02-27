@@ -21,7 +21,7 @@ RUN apt-get update && \
     libgmp10 \
     coreutils \
     libjpeg-turbo8 \
-    libtiff5 \
+    libtiff6 \
     libxpm4 \
     libgnutlsxx28 \
     libncurses5 \
