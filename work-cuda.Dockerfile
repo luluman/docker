@@ -33,7 +33,7 @@ RUN apt-get update && \
     libc6-dev \
     librsvg2-2 \
     libgccjit-13-dev \
-    gcc-13 g++-13 \
+    gcc g++ \
     libsqlite3-dev \
     # for vterm
     libtool \
@@ -54,7 +54,7 @@ RUN apt-get update && ldconfig && \
     build-essential \
     apt-transport-https \
     ca-certificates \
-    libstdc++-13-dev \
+    libstdc++-dev \
     valgrind \
     openssh-client \
     sudo \
@@ -136,7 +136,7 @@ RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     update-alternatives --install /usr/bin/lldb-server lldb-server /usr/bin/lldb-server-22 100 && \
     update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-22 100 && \
     # config gcc
-    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 10 --slave /usr/bin/g++ g++ /usr/bin/g++-13 && \
+    # update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 10 --slave /usr/bin/g++ g++ /usr/bin/g++-13 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 

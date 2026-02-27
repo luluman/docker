@@ -34,7 +34,7 @@ RUN apt-get update && \
     librsvg2-dev \
     libsqlite3-dev \
     libgccjit-13-dev \
-    gcc-13 g++-13 \
+    gcc g++ \
     && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -56,7 +56,7 @@ RUN apt-get update \
 
 # install tree-sitter
 # https://www.reddit.com/r/emacs/comments/z25iyx/comment/ixll68j/?utm_source=share&utm_medium=web2x&context=3
-ENV CC="gcc-13" CFLAGS="-O3 -Wall -Wextra"
+ENV CC="gcc" CFLAGS="-O3 -Wall -Wextra"
 RUN git clone --depth 1 --branch v0.26.6 https://github.com/tree-sitter/tree-sitter.git /opt/tree-sitter && \
     cd /opt/tree-sitter && \
     make -j4 && \
