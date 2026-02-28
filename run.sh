@@ -82,17 +82,20 @@ function work-linux-cuda-server() {
 
     volumes+=(--volume="$base/etc/passwd:/etc/passwd:ro" --volume="$base/etc/group:/etc/group:ro")
 
+    declare suffix
+    suffix="$(date +%m%d-%H%M)"
+
     docker run -t \
         --privileged \
         --gpus all \
         --log-driver=none \
         --hostname="$(hostname)" \
-        --name "${USER}-work-cuda-server" \
+        --name "${USER}-work-cuda-server_${suffix}" \
         --detach-keys "ctrl-^,ctrl-@" \
         "${volumes[@]}" \
         --env-file "$base/home-work/.ssh/vpn.cfg" \
         --restart=always --detach \
-        mattlu/work-cuda-dev:cuda13.0-ubuntu22.04
+        mattlu/work-cuda-dev:cuda13.1-ubuntu24.04
 
 }
 
