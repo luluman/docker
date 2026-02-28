@@ -121,7 +121,7 @@ RUN apt-get update && ldconfig && \
 # Clang
 RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     apt-add-repository "deb http://apt.llvm.org/${UBUNTU_NAME}/ llvm-toolchain-${UBUNTU_NAME}-18 main" && \
-    apt-get install -y  clang-18 lld-18 libomp-dev && \
+    apt-get install -y  clang-18 lld-18 libomp-dev libc++-18-dev libc++abi-18-dev && \
     # clang config
     update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100 && \
     update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100 && \
