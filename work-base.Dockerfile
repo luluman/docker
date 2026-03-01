@@ -1,5 +1,5 @@
-ARG UBUNTU_VERSION=24.04
-ARG UBUNTU_NAME=noble
+ARG UBUNTU_VERSION=22.04
+ARG UBUNTU_NAME=jammy
 ARG DEBIAN_FRONTEND="noninteractive"
 
 # ==========================================================
@@ -11,6 +11,8 @@ ARG DEBIAN_FRONTEND
 
 RUN apt-get update && \
     apt-get install -y software-properties-common gpg-agent && \
+    apt-add-repository ppa:ubuntu-toolchain-r/test && \
+    apt-get update && \
     apt-get install -y \
     git \
     autoconf \
@@ -23,7 +25,7 @@ RUN apt-get update && \
     libgmp-dev \
     coreutils \
     make \
-    libtinfo6 \
+    libtinfo5 \
     texinfo \
     libxpm-dev \
     libgnutls28-dev \
@@ -34,7 +36,8 @@ RUN apt-get update && \
     librsvg2-dev \
     libsqlite3-dev \
     libgccjit-13-dev \
-    gcc g++ \
+    # libgccjit-11 needs gcc-12 ?
+    gcc-13 g++-13 \
     && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -56,7 +59,7 @@ RUN apt-get update \
 
 # install tree-sitter
 # https://www.reddit.com/r/emacs/comments/z25iyx/comment/ixll68j/?utm_source=share&utm_medium=web2x&context=3
-ENV CC="gcc" CFLAGS="-O3 -Wall -Wextra"
+ENV CC="gcc-13" CFLAGS="-O3 -Wall -Wextra"
 RUN git clone --depth 1 --branch v0.26.6 https://github.com/tree-sitter/tree-sitter.git /opt/tree-sitter && \
     cd /opt/tree-sitter && \
     make -j4 && \

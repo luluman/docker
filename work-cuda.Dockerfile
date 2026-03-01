@@ -1,6 +1,6 @@
-ARG UBUNTU_VERSION=24.04
+ARG UBUNTU_VERSION=22.04
 ARG CUDA_VERSION=13.1.0
-ARG UBUNTU_NAME=noble
+ARG UBUNTU_NAME=jammy
 ARG DEBIAN_FRONTEND="noninteractive"
 
 FROM nvidia/cuda:${CUDA_VERSION}-devel-ubuntu${UBUNTU_VERSION} AS runtime
@@ -14,18 +14,18 @@ COPY 99-apt-get-settings /etc/apt/apt.conf.d/
 # dependency of Emacs
 RUN apt-get update && \
     apt-get install -y software-properties-common gpg-agent && \
-    rm -rf /usr/local/man && \
+    apt-add-repository ppa:ubuntu-toolchain-r/test && \
+    apt-get update && rm -rf /usr/local/man && \
     apt-get install -y  \
     libmpc3 \
     libmpfr6 \
     libgmp10 \
     coreutils \
     libjpeg-turbo8 \
-    libtiff6 \
+    libtiff5 \
     libxpm4 \
-    # can not find libgnutlsxx28
-    libgnutls28-dev \
-    libncurses6 \
+    libgnutlsxx28 \
+    libncurses5 \
     libxml2 \
     libxt6 \
     libx11-xcb1 \
@@ -33,7 +33,8 @@ RUN apt-get update && \
     libc6-dev \
     librsvg2-2 \
     libgccjit-13-dev \
-    gcc g++ \
+    # libgccjit-11 needs gcc-12 ?
+    gcc-13 g++-13 \
     libsqlite3-dev \
     # for vterm
     libtool \
@@ -57,8 +58,6 @@ RUN apt-get update && ldconfig && \
     valgrind \
     openssh-client \
     sudo \
-    # clang find 14
-    libstdc++-14-dev \
     # gdb \
     libmpfr-dev libgmp-dev libreadline-dev \
     # tectonic
@@ -79,7 +78,7 @@ RUN apt-get update && ldconfig && \
     libutempter-dev \
     # ping network
     iputils-ping \
-    netcat-traditional \
+    netcat \
     # test storage performance
     fio \
     # SQL
@@ -93,8 +92,8 @@ RUN apt-get update && ldconfig && \
     virtualenv \
     tzdata \
     # tablegen
-    libncurses-dev \
-    libncurses6 \
+    libncurses5-dev \
+    libncurses5 \
     # riscv-isa-sim
     device-tree-compiler libboost-regex-dev libboost-system-dev \
     # tools
@@ -121,7 +120,7 @@ RUN apt-get update && ldconfig && \
 # Clang
 RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     apt-add-repository "deb http://apt.llvm.org/${UBUNTU_NAME}/ llvm-toolchain-${UBUNTU_NAME}-18 main" && \
-    apt-get install -y  clang-18 lld-18 libomp-dev libc++-18-dev libc++abi-18-dev && \
+    apt-get install -y  clang-18 lld-18 libomp-dev && \
     # clang config
     update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100 && \
     update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100 && \
@@ -137,7 +136,7 @@ RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     update-alternatives --install /usr/bin/lldb-server lldb-server /usr/bin/lldb-server-22 100 && \
     update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-22 100 && \
     # config gcc
-    # update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 10 --slave /usr/bin/g++ g++ /usr/bin/g++-13 && \
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 10 --slave /usr/bin/g++ g++ /usr/bin/g++-13 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
