@@ -60,16 +60,16 @@ RUN apt-get update \
 # install tree-sitter
 # https://www.reddit.com/r/emacs/comments/z25iyx/comment/ixll68j/?utm_source=share&utm_medium=web2x&context=3
 ENV CC="gcc-13" CFLAGS="-O3 -Wall -Wextra"
-RUN git clone --depth 1 --branch v0.26.6 https://github.com/tree-sitter/tree-sitter.git /opt/tree-sitter && \
+RUN git clone --depth 1 --branch v0.26.8 https://github.com/tree-sitter/tree-sitter.git /opt/tree-sitter && \
     cd /opt/tree-sitter && \
     make -j4 && \
     make install
 
 RUN ldconfig
 ENV CFLAGS="-O2"
-RUN git clone https://github.com/emacs-mirror/emacs /opt/emacs && \
+RUN git clone --depth 1 --branch emacs-31 https://github.com/emacs-mirror/emacs /opt/emacs && \
     cd /opt/emacs && \
-    git checkout c6bdfaf358e25d7e30162d378dab9bb75e1220c2 && \
+    # git checkout c6bdfaf358e25d7e30162d378dab9bb75e1220c2 && \
     ./autogen.sh && \
     ./configure --build="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
     --with-modules \
@@ -103,7 +103,7 @@ RUN apt-get update && \
 # ============================================================
 # Install GDB
 # https://www.linuxfromscratch.org/blfs/view/svn/general/gdb.html
-ENV GDB_VERSION 16.3
+ENV GDB_VERSION 17.1
 
 RUN apt-get update && \
     apt-get install -y python3-dev libmpfr-dev libgmp-dev libreadline-dev && \
@@ -116,7 +116,7 @@ RUN apt-get update && \
 # ============================================================
 # https://github.com/nodejs/docker-node
 
-ENV NODE_VERSION 24.12.0
+ENV NODE_VERSION 24.15.0
 
 RUN apt-get update && \
     apt-get install xz-utils && \
@@ -207,7 +207,7 @@ RUN     set -x \
 # ============================================================
 # get jq
 
-ENV JQ_VERSION=1.7.1
+ENV JQ_VERSION=1.8.1
 RUN     set -x \
     &&  wget https://github.com/jqlang/jq/releases/download/jq-${JQ_VERSION}/jq-linux-amd64 \
     --no-check-certificate -O jq \
@@ -217,7 +217,7 @@ RUN     set -x \
 # ============================================================
 # build fd-find
 
-ENV FD_VERSION=9.0.0
+ENV FD_VERSION=10.4.2
 RUN     set -x \
     &&  wget https://github.com/sharkdp/fd/releases/download/v${FD_VERSION}/fd-v${FD_VERSION}-x86_64-unknown-linux-gnu.tar.gz \
     --no-check-certificate \
@@ -232,7 +232,7 @@ COPY scripts/terminfo-24bit.src /usr/local/share/bash-color/
 
 # ============================================================
 # download latest shfmt
-ENV SHFMT_VERSION=3.7.0
+ENV SHFMT_VERSION=3.13.1
 RUN wget https://github.com/mvdan/sh/releases/download/v${SHFMT_VERSION}/shfmt_v${SHFMT_VERSION}_linux_amd64 && \
     mv shfmt*linux_amd64 shfmt && \
     chmod +x ./shfmt && \
@@ -275,7 +275,7 @@ RUN curl -L https://github.com/prefix-dev/pixi/releases/latest/download/pixi-x86
 
 # ==========================================================
 # install llvm tools
-ENV LLVM_VERSION=22.1.0
+ENV LLVM_VERSION=22.1.5
 RUN cd /opt/ && rm -rf /opt/* /tmp/* && \
     wget https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/LLVM-${LLVM_VERSION}-Linux-X64.tar.xz && \
     tar xf LLVM-${LLVM_VERSION}-Linux-X64.tar.xz && \

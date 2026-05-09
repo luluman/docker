@@ -158,3 +158,6 @@ if [[ -d "/usr/local/cuda" ]]; then
     export PATH="$CUDA_HOME/bin:$PATH"
     export LD_LIBRARY_PATH="$CUDA_HOME/lib64:$LD_LIBRARY_PATH"
 fi
+
+[ -f "$HOME/.ghcup/env" ] && . "$HOME/.ghcup/env" # ghcup-env
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env" # rust-env

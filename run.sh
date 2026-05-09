@@ -7,7 +7,7 @@ function work-linux-server() {
     local base="$HOME/.docker"
     declare -a volumes=(
         --volume="$(realpath "$HOME/workspace"):/workspace:cached"
-        --volume="$(realpath "$base/home-work"):$HOME:delegated"
+        --volume="$(realpath "$base/home"):$HOME:delegated"
         --volume="$(realpath "$base/tmp"):/tmp:cached"
         --volume="$(realpath "$base/clash_config"):/clash_config:cached"
         --volume="/var/run/docker.sock:/var/run/docker.sock"
@@ -36,7 +36,7 @@ function work-linux-server() {
         --name "${USER}-work-server" \
         --detach-keys "ctrl-^,ctrl-@" \
         "${volumes[@]}" \
-        --env-file "$base/home-work/.ssh/vpn.cfg" \
+        --env-file "$base/home/.ssh/vpn.cfg" \
         --restart=always --detach \
         mattlu/work-dev:latest
 
@@ -51,7 +51,7 @@ function work-linux-cuda-server() {
     local base="$HOME/.docker"
     declare -a volumes=(
         --volume="$(realpath "$HOME/workspace"):/workspace:cached"
-        --volume="$(realpath "$base/home-work"):/home/$(whoami):delegated"
+        --volume="$(realpath "$base/home"):/home/$(whoami):delegated"
         --volume="$(realpath "$base/tmp"):/tmp:cached"
         --volume="$(realpath "$base/clash_config"):/clash_config:cached"
         --volume="/var/run/docker.sock:/var/run/docker.sock"
@@ -93,9 +93,9 @@ function work-linux-cuda-server() {
         --name "${USER}-work-cuda-server_${suffix}" \
         --detach-keys "ctrl-^,ctrl-@" \
         "${volumes[@]}" \
-        --env-file "$base/home-work/.ssh/vpn.cfg" \
+        --env-file "$base/home/.ssh/vpn.cfg" \
         --restart=always --detach \
-        mattlu/work-cuda-dev:cuda13.1-ubuntu24.04
+        mattlu/work-cuda-dev:cuda13.1-ubuntu22.04
 
 }
 
