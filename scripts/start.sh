@@ -9,9 +9,6 @@ exec /usr/sbin/sshd -D -e &
 # Grant all users to add records to /etc/hosts
 chmod 666 /etc/hosts
 
-echo "Start clash"
-exec clash -f /clash_config/clash_config.yaml -d /clash_config/ &
-
 trap 'kill -TERM $PID' TERM INT
 echo "Starting Tailscale daemon"
 # -state=mem: will logout and remove ephemeral node from network immediately after ending.

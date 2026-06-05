@@ -9,7 +9,6 @@ function work-linux-server() {
         --volume="$(realpath "$HOME/workspace"):/workspace:cached"
         --volume="$(realpath "$base/home"):$HOME:delegated"
         --volume="$(realpath "$base/tmp"):/tmp:cached"
-        --volume="$(realpath "$base/clash_config"):/clash_config:cached"
         --volume="/var/run/docker.sock:/var/run/docker.sock"
     )
 
@@ -53,7 +52,6 @@ function work-linux-cuda-server() {
         --volume="$(realpath "$HOME/workspace"):/workspace:cached"
         --volume="$(realpath "$base/home"):/home/$(whoami):delegated"
         --volume="$(realpath "$base/tmp"):/tmp:cached"
-        --volume="$(realpath "$base/clash_config"):/clash_config:cached"
         --volume="/var/run/docker.sock:/var/run/docker.sock"
     )
 

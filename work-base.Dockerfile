@@ -258,11 +258,6 @@ RUN apt-get update && \
     make && make install
 
 # ==========================================================
-# install clash
-COPY clash_config/clash /usr/local/bin/
-RUN  chmod +x /usr/local/bin/clash
-
-# ==========================================================
 # install uv
 
 RUN curl -L https://github.com/astral-sh/uv/releases/latest/download/uv-x86_64-unknown-linux-musl.tar.gz \

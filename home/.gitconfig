@@ -1,0 +1,11 @@
+[core]
+editor = emacs -q
+
+[http]
+# proxy = socks5://vps-us:1055/
+
+[https]
+# proxy = socks5://vps-us:1055/
+[safe]
+	directory = /workspace/sglang
+	directory = /workspace/sglang
