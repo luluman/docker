@@ -56,14 +56,22 @@ if [ -n "$force_color_prompt" ]; then
     fi
 fi
 
-# Renders a ✔/✘ glyph reflecting the previous command's exit status.
+# Renders a ✔/⧗/✘ glyph reflecting the previous command's exit status.
 __exit_status_glyph() {
     local code=$? glyph color reset=""
-    if [ "$code" -eq 0 ]; then
-        glyph='✔' color=$'\001\033[01;32m\002'
-    else
-        glyph='✘' color=$'\001\033[01;31m\002'
-    fi
+
+    case "$code" in
+    0)
+        glyph='✔' color=$'\001\033[01;32m\002' # green
+        ;;
+    147 | 148)
+        glyph='⧗' color=$'\001\033[01;33m\002' # yellow
+        ;;
+    *)
+        glyph='✘' color=$'\001\033[01;31m\002' # red
+        ;;
+    esac
+
     [ "$1" = color ] && reset=$'\001\033[00m\002' || color=""
     printf '%s%s%s' "$color" "$glyph" "$reset"
 }
