@@ -57,6 +57,8 @@ RUN apt-get update && ldconfig && \
     ca-certificates \
     valgrind \
     openssh-client \
+    # truecolor term
+    ncurses-term \
     sudo \
     # gdb \
     libmpfr-dev libgmp-dev libreadline-dev \
