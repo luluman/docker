@@ -14,6 +14,7 @@ COPY 99-apt-get-settings /etc/apt/apt.conf.d/
 # dependency of Emacs
 RUN apt-get update && \
     apt-get install -y software-properties-common gpg-agent && \
+    apt-get install -y gcc-12 libgccjit-12-dev && \
     apt-add-repository ppa:ubuntu-toolchain-r/test && \
     apt-get update && rm -rf /usr/local/man && \
     apt-get install -y  \
@@ -32,9 +33,6 @@ RUN apt-get update && \
     binutils \
     libc6-dev \
     librsvg2-2 \
-    libgccjit-13-dev \
-    # libgccjit-11 needs gcc-12 ?
-    gcc-13 g++-13 \
     libsqlite3-dev \
     # for vterm
     libtool \
@@ -53,6 +51,7 @@ RUN apt-get update && \
 RUN apt-get update && ldconfig && \
     apt-get install -y   \
     build-essential \
+    gcc-13 g++-13 \
     apt-transport-https \
     ca-certificates \
     valgrind \

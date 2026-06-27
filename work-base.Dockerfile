@@ -11,6 +11,7 @@ ARG DEBIAN_FRONTEND
 
 RUN apt-get update && \
     apt-get install -y software-properties-common gpg-agent && \
+    apt-get install -y gcc-12 libgccjit-12-dev && \
     apt-add-repository ppa:ubuntu-toolchain-r/test && \
     apt-get update && \
     apt-get install -y \
@@ -35,8 +36,6 @@ RUN apt-get update && \
     gcc-multilib \
     librsvg2-dev \
     libsqlite3-dev \
-    libgccjit-13-dev \
-    # libgccjit-11 needs gcc-12 ?
     gcc-13 g++-13 \
     && \
     apt-get clean && \
@@ -59,14 +58,14 @@ RUN apt-get update \
 
 # install tree-sitter
 # https://www.reddit.com/r/emacs/comments/z25iyx/comment/ixll68j/?utm_source=share&utm_medium=web2x&context=3
-ENV CC="gcc-13" CFLAGS="-O3 -Wall -Wextra"
-RUN git clone --depth 1 --branch v0.26.8 https://github.com/tree-sitter/tree-sitter.git /opt/tree-sitter && \
+ARG CC="gcc-12" CFLAGS="-O3 -Wall -Wextra"
+RUN git clone --depth 1 --branch v0.26.9 https://github.com/tree-sitter/tree-sitter.git /opt/tree-sitter && \
     cd /opt/tree-sitter && \
     make -j4 && \
     make install
 
 RUN ldconfig
-ENV CFLAGS="-O2"
+ARG CFLAGS="-O2"
 RUN git clone --depth 1 --branch emacs-31 https://github.com/emacs-mirror/emacs /opt/emacs && \
     cd /opt/emacs && \
     # git checkout c6bdfaf358e25d7e30162d378dab9bb75e1220c2 && \
@@ -103,7 +102,7 @@ RUN apt-get update && \
 # ============================================================
 # Install GDB
 # https://www.linuxfromscratch.org/blfs/view/svn/general/gdb.html
-ENV GDB_VERSION 17.1
+ENV GDB_VERSION 17.2
 
 RUN apt-get update && \
     apt-get install -y python3-dev libmpfr-dev libgmp-dev libreadline-dev && \
@@ -116,7 +115,7 @@ RUN apt-get update && \
 # ============================================================
 # https://github.com/nodejs/docker-node
 
-ENV NODE_VERSION 24.15.0
+ENV NODE_VERSION 24.18.0
 
 RUN apt-get update && \
     apt-get install xz-utils && \
@@ -270,7 +269,7 @@ RUN curl -L https://github.com/prefix-dev/pixi/releases/latest/download/pixi-x86
 
 # ==========================================================
 # install llvm tools
-ENV LLVM_VERSION=22.1.5
+ENV LLVM_VERSION=22.1.8
 RUN cd /opt/ && rm -rf /opt/* /tmp/* && \
     wget https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/LLVM-${LLVM_VERSION}-Linux-X64.tar.xz && \
     tar xf LLVM-${LLVM_VERSION}-Linux-X64.tar.xz && \
