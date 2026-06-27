@@ -12,11 +12,8 @@ ARG DEBIAN_FRONTEND
 COPY 99-apt-get-settings /etc/apt/apt.conf.d/
 
 # dependency of Emacs
-RUN apt-get update && \
+RUN apt-get update && rm -rf /usr/local/man &&  \
     apt-get install -y software-properties-common gpg-agent && \
-    apt-get install -y gcc-12 libgccjit-12-dev && \
-    apt-add-repository ppa:ubuntu-toolchain-r/test && \
-    apt-get update && rm -rf /usr/local/man && \
     apt-get install -y  \
     libmpc3 \
     libmpfr6 \
@@ -34,6 +31,7 @@ RUN apt-get update && \
     libc6-dev \
     librsvg2-2 \
     libsqlite3-dev \
+    gcc-11 libgccjit-11-dev \
     # for vterm
     libtool \
     libtool-bin \
@@ -49,6 +47,7 @@ RUN apt-get update && \
 # ================================================================================
 # some others
 RUN apt-get update && ldconfig && \
+    apt-add-repository ppa:ubuntu-toolchain-r/test && \
     apt-get install -y   \
     build-essential \
     gcc-13 g++-13 \
