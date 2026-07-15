@@ -128,9 +128,9 @@ RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100 && \
     update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100 && \
     update-alternatives --install /usr/bin/lld lld /usr/bin/lld-18 100 && \
-    # install clang-format-22
+    # install clang-22
     apt-add-repository "deb http://apt.llvm.org/${UBUNTU_NAME}/ llvm-toolchain-${UBUNTU_NAME}-22 main" && \
-    apt-get install -y  clang-format-22 clang-tidy-22 lldb-22 clangd-22 && \
+    apt-get install -y clang-22 lld-22 clang-format-22 clang-tidy-22 lldb-22 clangd-22 && \
     update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-22 100 && \
     update-alternatives --install /usr/bin/clang-format-diff clang-format-diff /usr/bin/clang-format-diff-22 100 && \
     update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-22 100 && \
