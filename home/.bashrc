@@ -139,6 +139,9 @@ if [[ ! -d ~/.terminfo ]] && [[ -f /usr/local/share/bash-color/terminfo-24bit.sr
     tic -x -o ~/.terminfo /usr/local/share/bash-color/terminfo-24bit.src
 fi
 
+# setup eat shell integration
+[ -n "$EAT_SHELL_INTEGRATION_DIR" ] && . "$EAT_SHELL_INTEGRATION_DIR/bash"
+
 export USER=$(whoami)
 export LANG="en_US.UTF-8"
 export LANGUAGE="en_US:en"
