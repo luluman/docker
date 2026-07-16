@@ -57,7 +57,7 @@ RUN apt-get update && ldconfig && \
     openssh-client \
     # truecolor term
     ncurses-term \
-    sudo \
+    sudo vim \
     # gdb \
     libmpfr-dev libgmp-dev libreadline-dev \
     # tectonic
