@@ -92,9 +92,8 @@ RUN git clone --depth 1 --branch emacs-31 https://github.com/emacs-mirror/emacs 
 # https://emacs-china.org/t/treesit-master/22862/69
 RUN apt-get update && \
     apt-get install -y g++ && \
-    git clone --branch v2.5 https://github.com/casouri/tree-sitter-module /opt/tree-sitter-module && \
+    git clone https://github.com/casouri/tree-sitter-module /opt/tree-sitter-module && \
     cd /opt/tree-sitter-module && \
-    sed -i "/languages=(/a \ \ \ \ 'jsdoc'" batch.sh && \
     ./batch.sh && \
     mv ./dist/* /usr/local/lib/ && \
     cd /opt/
