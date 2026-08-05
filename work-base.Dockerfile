@@ -59,7 +59,7 @@ RUN apt-get update \
 # install tree-sitter
 # https://www.reddit.com/r/emacs/comments/z25iyx/comment/ixll68j/?utm_source=share&utm_medium=web2x&context=3
 ARG CC="gcc-11" CFLAGS="-O3 -Wall -Wextra"
-RUN git clone --depth 1 --branch v0.26.9 https://github.com/tree-sitter/tree-sitter.git /opt/tree-sitter && \
+RUN git clone --depth 1 --branch v0.26.11 https://github.com/tree-sitter/tree-sitter.git /opt/tree-sitter && \
     cd /opt/tree-sitter && \
     make -j4 && \
     make install
@@ -115,7 +115,7 @@ RUN apt-get update && \
 # ============================================================
 # https://github.com/nodejs/docker-node
 
-ENV NODE_VERSION 24.18.0
+ENV NODE_VERSION 24.19.0
 
 RUN apt-get update && \
     apt-get install xz-utils && \
@@ -196,7 +196,7 @@ RUN apt-get update && apt-get install -y libglib2.0-dev groff && \
 # https://hub.docker.com/r/peccu/rg/dockerfile
 # build ripgrep
 
-ENV RG_VERSION=15.1.0
+ENV RG_VERSION=15.2.0
 RUN     set -x \
     &&  wget https://github.com/BurntSushi/ripgrep/releases/download/${RG_VERSION}/ripgrep-${RG_VERSION}-x86_64-unknown-linux-musl.tar.gz \
     --no-check-certificate \
