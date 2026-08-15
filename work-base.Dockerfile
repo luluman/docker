@@ -279,6 +279,12 @@ RUN cd /opt/ && rm -rf /opt/* /tmp/* && \
     rm -r /opt/*
 
 # ==========================================================
+# install gitlab CLI
+ENV GLIB_VERSION=1.113.0
+RUN curl -L https://gitlab.com/gitlab-org/cli/-/releases/v${GLIB_VERSION}/downloads/glab_${GLIB_VERSION}_linux_amd64.tar.gz \
+    | tar -xz -C /usr/local/bin --strip-components=1
+
+# ==========================================================
 # stage 1
 
 FROM ubuntu:${UBUNTU_VERSION} AS release
