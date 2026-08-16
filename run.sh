@@ -60,7 +60,6 @@ function work-linux-cuda-server() {
         "/share_data"
         "/software_data"
         "/data"
-        "/zjshare_data"
         "/softhome"
         "/share"
         "/data_gpu"
