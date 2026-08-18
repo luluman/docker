@@ -285,6 +285,17 @@ RUN curl -L https://gitlab.com/gitlab-org/cli/-/releases/v${GLIB_VERSION}/downlo
     | tar -xz -C /usr/local/bin --strip-components=1
 
 # ==========================================================
+# https://bazel.build/install/ide#autocomplete-for-source-code
+# Install bazel-compile-commands: generates compile_commands.json from Bazel
+# projects for use with clangd and other LSP-based tooling.
+ENV BAZEL_COMPILE_COMMANDS_VERSION=0.21.0
+RUN curl -fsSL "https://github.com/kiron1/bazel-compile-commands/releases/download/v${BAZEL_COMPILE_COMMANDS_VERSION}/bazel-compile-commands_${BAZEL_COMPILE_COMMANDS_VERSION}-jammy_amd64.deb" \
+    -o /tmp/bazel-compile-commands.deb && \
+    dpkg-deb -x /tmp/bazel-compile-commands.deb /tmp/bazel-compile-commands && \
+    install -m 0755 /tmp/bazel-compile-commands/usr/bin/* /usr/local/bin/ && \
+    rm -rf /tmp/bazel-compile-commands.deb /tmp/bazel-compile-commands
+
+# ==========================================================
 # stage 1
 
 FROM ubuntu:${UBUNTU_VERSION} AS release
