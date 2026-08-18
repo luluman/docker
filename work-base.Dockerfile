@@ -59,7 +59,7 @@ RUN apt-get update \
 # install tree-sitter
 # https://www.reddit.com/r/emacs/comments/z25iyx/comment/ixll68j/?utm_source=share&utm_medium=web2x&context=3
 ARG CC="gcc-11" CFLAGS="-O3 -Wall -Wextra"
-RUN git clone --depth 1 --branch v0.26.11 https://github.com/tree-sitter/tree-sitter.git /opt/tree-sitter && \
+RUN git clone --depth 1 --branch v0.26.12 https://github.com/tree-sitter/tree-sitter.git /opt/tree-sitter && \
     cd /opt/tree-sitter && \
     make -j4 && \
     make install
