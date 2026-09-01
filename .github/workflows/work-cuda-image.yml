@@ -57,7 +57,7 @@ jobs:
                 cuda:
                     [
                         { version: "13.1.0", tag: "cuda13.1" },
-                        { version: "12.6.3", tag: "cuda12.6" },
+                        { version: "13.2.0", tag: "cuda13.2" },
                     ]
         steps:
             - run: df -h
