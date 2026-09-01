@@ -62,7 +62,7 @@ function work-linux-cuda-server() {
         "/data"
         "/softhome"
         "/share"
-        "/data_gpu"
+        #  "/data_gpu"
     )
     for dir in "${shared_dirs[@]}"; do
         if [ -d "$dir" ]; then
