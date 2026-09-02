@@ -92,7 +92,7 @@ function work-linux-cuda-server() {
         "${volumes[@]}" \
         --env-file "$base/home/.ssh/vpn.cfg" \
         --restart=always --detach \
-        mattlu/work-cuda-dev:cuda13.1-ubuntu22.04
+        mattlu/work-cuda-dev:cuda13.2-ubuntu22.04
 
 }
 
