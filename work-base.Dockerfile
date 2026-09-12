@@ -129,11 +129,8 @@ RUN apt-get update && \
     && npm --version \
     # install some LSP servers
     # && npm config set registry https://registry.npm.taobao.org \
-    && npm i --location=global typescript typescript-language-server \
     && npm i --location=global bash-language-server \
-    && npm i --location=global pyright \
     && npm i --location=global dockerfile-language-server-nodejs \
-    && npm i --location=global vscode-langservers-extracted  \
     && npm i --location=global yaml-language-server \
     && npm i --location=global markdownlint-cli
 
