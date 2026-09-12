@@ -268,6 +268,11 @@ RUN curl -L https://github.com/prefix-dev/pixi/releases/latest/download/pixi-x86
     | tar -xz -C /usr/local/bin
 
 # ==========================================================
+# install neocmakelsp
+RUN curl -L https://github.com/neocmakelsp/neocmakelsp/releases/latest/download/neocmakelsp-x86_64-unknown-linux-musl.tar.gz \
+    | tar -xz -C /usr/local/bin
+
+# ==========================================================
 # install llvm tools
 ENV LLVM_VERSION=22.1.8
 RUN cd /opt/ && rm -rf /opt/* /tmp/* && \
