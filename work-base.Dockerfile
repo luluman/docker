@@ -59,7 +59,7 @@ RUN apt-get update \
 # install tree-sitter
 # https://www.reddit.com/r/emacs/comments/z25iyx/comment/ixll68j/?utm_source=share&utm_medium=web2x&context=3
 ARG CC="gcc-11" CFLAGS="-O3 -Wall -Wextra"
-RUN git clone --depth 1 --branch v0.26.12 https://github.com/tree-sitter/tree-sitter.git /opt/tree-sitter && \
+RUN git clone --depth 1 --branch v0.27.1 https://github.com/tree-sitter/tree-sitter.git /opt/tree-sitter && \
     cd /opt/tree-sitter && \
     make -j4 && \
     make install
@@ -102,7 +102,7 @@ RUN apt-get update && \
 # ============================================================
 # Install GDB
 # https://www.linuxfromscratch.org/blfs/view/svn/general/gdb.html
-ENV GDB_VERSION 17.2
+ENV GDB_VERSION 18.1
 
 RUN apt-get update && \
     apt-get install -y python3-dev libmpfr-dev libgmp-dev libreadline-dev && \
@@ -115,7 +115,7 @@ RUN apt-get update && \
 # ============================================================
 # https://github.com/nodejs/docker-node
 
-ENV NODE_VERSION 24.19.0
+ENV NODE_VERSION 24.22.1
 
 RUN apt-get update && \
     apt-get install xz-utils && \
@@ -150,9 +150,9 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmak
 # Build Aspell
 # https://github.com/Starefossen/docker-aspell
 
-ENV ASPELL_SERVER http://mirror.keystealth.org/gnu/aspell
-ENV ASPELL_VERSION 0.60.8.1
-ENV ASPELL_EN 2020.12.07-0
+ENV ASPELL_SERVER https://ftp.gnu.org/gnu/aspell
+ENV ASPELL_VERSION 0.60.8.2
+ENV ASPELL_EN 2026.02.25-0
 
 RUN apt-get install -y bzip2 && \
     ldconfig
@@ -265,13 +265,34 @@ RUN curl -L https://github.com/prefix-dev/pixi/releases/latest/download/pixi-x86
     | tar -xz -C /usr/local/bin
 
 # ==========================================================
-# install neocmakelsp
+# install Cmake lsp
 RUN curl -L https://github.com/neocmakelsp/neocmakelsp/releases/latest/download/neocmakelsp-x86_64-unknown-linux-musl.tar.gz \
     | tar -xz -C /usr/local/bin
 
 # ==========================================================
+# install typst
+RUN wget "https://github.com/typst/typst/releases/latest/download/typst-x86_64-unknown-linux-musl.tar.xz" \
+    -O /opt/typst-x86_64-unknown-linux-musl.tar.xz \
+    && tar -xf /opt/typst-x86_64-unknown-linux-musl.tar.xz -C /opt/ \
+    && mv /opt/typst-x86_64-unknown-linux-musl/typst /usr/local/bin
+
+# ==========================================================
+# install tinymist
+RUN wget "https://github.com/Myriad-Dreamin/tinymist/releases/latest/download/tinymist-x86_64-unknown-linux-musl.tar.gz" \
+    -O /opt/tinymist-x86_64-unknown-linux-musl.tar.gz \
+    && tar -xf /opt/tinymist-x86_64-unknown-linux-musl.tar.gz -C /opt/ \
+    && mv /opt/tinymist-x86_64-unknown-linux-musl/tinymist /usr/local/bin
+
+# ==========================================================
+# install Chinese font
+RUN wget "http://mirrors.ctan.org/fonts/fandol.zip" -O /usr/local/share/fonts/fandol.zip \
+    && unzip /usr/local/share/fonts/fandol.zip -d /usr/local/share/fonts \
+    && rm /usr/local/share/fonts/fandol.zip
+
+
+# ==========================================================
 # install llvm tools
-ENV LLVM_VERSION=22.1.8
+ENV LLVM_VERSION=23.1.4
 RUN cd /opt/ && rm -rf /opt/* /tmp/* && \
     wget https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VERSION}/LLVM-${LLVM_VERSION}-Linux-X64.tar.xz && \
     tar xf LLVM-${LLVM_VERSION}-Linux-X64.tar.xz && \
@@ -281,15 +302,10 @@ RUN cd /opt/ && rm -rf /opt/* /tmp/* && \
     rm -r /opt/*
 
 # ==========================================================
-# install gitlab CLI
-ENV GLIB_VERSION=1.113.0
-RUN curl -L https://gitlab.com/gitlab-org/cli/-/releases/v${GLIB_VERSION}/downloads/glab_${GLIB_VERSION}_linux_amd64.tar.gz \
-    | tar -xz -C /usr/local/bin --strip-components=1
-
-# ==========================================================
 # https://bazel.build/install/ide#autocomplete-for-source-code
 # Install bazel-compile-commands: generates compile_commands.json from Bazel
 # projects for use with clangd and other LSP-based tooling.
+# Pin to 0.21.0; version 0.22 does not build on Ubuntu 22.04 (Jammy).
 ENV BAZEL_COMPILE_COMMANDS_VERSION=0.21.0
 RUN curl -fsSL "https://github.com/kiron1/bazel-compile-commands/releases/download/v${BAZEL_COMPILE_COMMANDS_VERSION}/bazel-compile-commands_${BAZEL_COMPILE_COMMANDS_VERSION}-jammy_amd64.deb" \
     -o /tmp/bazel-compile-commands.deb && \

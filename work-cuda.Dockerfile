@@ -57,7 +57,7 @@ RUN apt-get update && ldconfig && \
     openssh-client \
     # truecolor term
     ncurses-term \
-    sudo vim \
+    vim \
     # gdb \
     libmpfr-dev libgmp-dev libreadline-dev \
     # tectonic
@@ -119,25 +119,22 @@ RUN apt-get update && ldconfig && \
 
 # Clang
 RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
-    apt-add-repository "deb http://apt.llvm.org/${UBUNTU_NAME}/ llvm-toolchain-${UBUNTU_NAME}-18 main" && \
-    apt-get install -y  \
-    clang-18 lld-18 libomp-18-dev \
-    libclang-rt-18-dev libclang-common-18-dev libclang-18-dev \
-    libc++-18-dev libc++abi-18-dev && \
-    # clang config
-    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100 && \
-    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100 && \
-    update-alternatives --install /usr/bin/lld lld /usr/bin/lld-18 100 && \
-    # install clang-22
-    apt-add-repository "deb http://apt.llvm.org/${UBUNTU_NAME}/ llvm-toolchain-${UBUNTU_NAME}-22 main" && \
-    apt-get install -y clang-22 lld-22 clang-format-22 clang-tidy-22 lldb-22 clangd-22 && \
-    update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-22 100 && \
-    update-alternatives --install /usr/bin/clang-format-diff clang-format-diff /usr/bin/clang-format-diff-22 100 && \
-    update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-22 100 && \
-    update-alternatives --install /usr/bin/lldb lldb /usr/bin/lldb-22 100 && \
-    update-alternatives --install /usr/bin/lldb-dap lldb-dap /usr/bin/lldb-dap-22 100 && \
-    update-alternatives --install /usr/bin/lldb-server lldb-server /usr/bin/lldb-server-22 100 && \
-    update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-22 100 && \
+    # install clang-23
+    apt-add-repository "deb http://apt.llvm.org/${UBUNTU_NAME}/ llvm-toolchain-${UBUNTU_NAME}-23 main" && \
+    apt-get install -y clang-23 lld-23 clang-format-23 clang-tidy-23 lldb-23 clangd-23 \
+    libomp-23-dev libclang-rt-23-dev libclang-common-23-dev libclang-23-dev \
+    libc++-23-dev libc++abi-23-dev && \
+    #
+    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-23 100 && \
+    update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-23 100 && \
+    update-alternatives --install /usr/bin/lld lld /usr/bin/lld-23 100 && \
+    update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-23 100 && \
+    update-alternatives --install /usr/bin/clang-format-diff clang-format-diff /usr/bin/clang-format-diff-23 100 && \
+    update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-23 100 && \
+    update-alternatives --install /usr/bin/lldb lldb /usr/bin/lldb-23 100 && \
+    update-alternatives --install /usr/bin/lldb-dap lldb-dap /usr/bin/lldb-dap-23 100 && \
+    update-alternatives --install /usr/bin/lldb-server lldb-server /usr/bin/lldb-server-23 100 && \
+    update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-23 100 && \
     # config gcc
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 10 --slave /usr/bin/g++ g++ /usr/bin/g++-13 && \
     apt-get clean && \
@@ -159,14 +156,6 @@ RUN apt-get update && apt-get install -y  \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Install WezTerm terminal emulator for multiplexing
-RUN curl -fsSL https://apt.fury.io/wez/gpg.key | gpg --yes --dearmor -o /usr/share/keyrings/wezterm-fury.gpg && \
-    echo 'deb [signed-by=/usr/share/keyrings/wezterm-fury.gpg] https://apt.fury.io/wez/ * *' | tee /etc/apt/sources.list.d/wezterm.list && \
-    chmod 644 /usr/share/keyrings/wezterm-fury.gpg && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends wezterm && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
 
 # ================================================================================
 #  tailscale
