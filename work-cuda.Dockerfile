@@ -94,6 +94,8 @@ RUN apt-get update && ldconfig && \
     # tablegen
     libncurses5-dev \
     libncurses5 \
+    # llvm
+    libzstd-dev \
     # riscv-isa-sim
     device-tree-compiler libboost-regex-dev libboost-system-dev \
     # tools
