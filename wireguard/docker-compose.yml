@@ -1,0 +1,31 @@
+services:
+    wireguard-exit:
+        image: mattlu/wg-gotatun-exit:latest
+        platform: linux/amd64
+        pull_policy: always
+        container_name: wireguard-exit
+        restart: unless-stopped
+        cap_add:
+            - NET_ADMIN
+        environment:
+            - WG_PORT=${WG_PORT:-51820}
+            - SERVER_ENDPOINT=${SERVER_ENDPOINT:-}
+        sysctls:
+            - net.ipv4.ip_forward=1
+            - net.ipv4.conf.all.src_valid_mark=1
+            - net.ipv6.conf.all.disable_ipv6=0
+            - net.ipv6.conf.all.forwarding=1
+        ports:
+            - "${WG_PORT:-51820}:${WG_PORT:-51820}/udp"
+        networks:
+            - wg-ephemeral-net
+
+networks:
+    wg-ephemeral-net:
+        name: wg-ephemeral-net
+        driver: bridge
+        enable_ipv6: true
+        ipam:
+            config:
+                - subnet: 172.29.0.0/16
+                - subnet: fd00:cafe:beef::/48

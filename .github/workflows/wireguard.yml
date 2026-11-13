@@ -1,29 +1,32 @@
 name: wireguard
 
 on:
-  push:
-    paths:
-      - 'wireguard.Dockerfile'
-      - 'scripts/wireguard.sh'
+    push:
+        paths:
+            - "wireguard/wireguard.Dockerfile"
+            - "wireguard/entrypoint.sh"
+            - "wireguard/docker-compose.yml"
 
-  workflow_dispatch:
-#  pull_request:
-#    branches: [ master ]
+env:
+    IMAGE_NAME: mattlu/wg-gotatun-exit
+    LOCAL_TAG: wg-gotatun-exit
 
 jobs:
+    build:
+        runs-on: ubuntu-latest
 
-  build:
+        steps:
+            - uses: actions/checkout@v4
 
-    runs-on: ubuntu-latest
+            - name: Log in to Docker Hub
+              run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-    steps:
-     - uses: actions/checkout@v4
-     - name: Login to DockerHub Registry
-       run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
-     - name: Build the latest Wireguard image
-       run: |
-         docker build . --file wireguard.Dockerfile --tag wireguard
-         docker image tag wireguard mattlu/wireguard:latest
+            - name: Build WireGuard image
+              working-directory: wireguard
+              run: |
+                  docker build . --file wireguard.Dockerfile --tag "$LOCAL_TAG"
+                  docker image tag "$LOCAL_TAG" "$IMAGE_NAME:latest"
 
-     - name: Push the latest Wireguard image
-       run: docker push --all-tags mattlu/wireguard
+            # Publish the :latest tag to Docker Hub
+            - name: Push WireGuard image
+              run: docker push --all-tags "$IMAGE_NAME"
