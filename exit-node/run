@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+#
+# Manages the lifecycle of the Tailscale exit/SOCKS5 node container.
+
+set -euo pipefail
+
+readonly CONTAINER_NAME="tailscale-exit-node"
+readonly UP_USAGE="./run up <auth_key> <hostname> [login_server]"
+
+print_usage() {
+    cat <<EOF
+Usage:
+  ${UP_USAGE}  - Start the exit/SOCKS5 node
+  ./run down                                     - Stop and remove container & network
+  ./run status                                   - Check Tailscale connection status
+EOF
+}
+
+die() {
+    printf 'Error: %s\n' "$1" >&2
+    exit 1
+}
+
+print_status() {
+    docker exec "$CONTAINER_NAME" tailscale status
+}
+
+start_node() {
+    # Positional arguments override the corresponding TS_* environment
+    # variables. The hostname lives in `node_hostname` rather than `HOSTNAME`,
+    # because bash already uses `HOSTNAME` for the local machine's name.
+    local auth_key="${1:-${TS_AUTHKEY:-}}"
+    local node_hostname="${2:-${TS_HOSTNAME:-}}"
+    local login_server="${3:-${TS_LOGIN_SERVER:-}}"
+
+    if [[ -z "$auth_key" || -z "$node_hostname" ]]; then
+        printf 'Usage: %s\n' "$UP_USAGE" >&2
+        die "Missing Tailscale auth key or hostname"
+    fi
+
+    echo "Starting Tailscale node '$node_hostname'..."
+    TS_AUTHKEY="$auth_key" \
+        TS_HOSTNAME="$node_hostname" \
+        TS_LOGIN_SERVER="$login_server" \
+        docker compose up -d --force-recreate
+
+    echo "Waiting for Tailscale to connect..."
+    sleep 2
+
+    # Reporting status is best-effort: the node may still be connecting after
+    # the grace period, and that alone should not make `up` fail.
+    print_status || true
+}
+
+stop_node() {
+    echo "Stopping container and removing its volumes and network..."
+    docker compose down --remove-orphans --volumes
+    echo "Cleanup complete."
+}
+
+main() {
+    local command="${1:-}"
+    (($# > 0)) && shift
+
+    case "$command" in
+    up) start_node "$@" ;;
+    down) stop_node ;;
+    status) print_status ;;
+    *)
+        print_usage >&2
+        exit 1
+        ;;
+    esac
+}
+
+main "$@"

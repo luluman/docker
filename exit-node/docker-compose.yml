@@ -1,0 +1,58 @@
+# Tailscale exit node.
+#
+# Runs tailscaled in userspace-networking mode, so it needs neither the
+# NET_ADMIN capability nor a /dev/net/tun device. Node state lives in memory
+# only: every restart registers a fresh node, so use a reusable (and ideally
+# ephemeral) auth key.
+#
+# Host environment:
+#   TS_AUTHKEY       (required) Auth key used to join the tailnet.
+#                               Renamed from TS_AUTH_KEY to match the name
+#                               the container (and the error message) uses.
+#   TS_HOSTNAME      (required) Name this node is given on the tailnet.
+#   TS_LOGIN_SERVER  (optional) Control server URL, e.g. a self-hosted
+#                               Headscale instance. Defaults to Tailscale's
+#                               control plane.
+
+services:
+    tailscale-exit-node:
+        image: tailscale/tailscale:stable
+        platform: linux/amd64
+        pull_policy: always
+        container_name: tailscale-exit-node
+        restart: unless-stopped
+        environment:
+            TS_AUTHKEY: "${TS_AUTHKEY:?TS_AUTHKEY is required}"
+            TS_HOSTNAME: "${TS_HOSTNAME:?TS_HOSTNAME is required}"
+
+            # Userspace networking: no TUN device or elevated privileges required.
+            TS_USERSPACE: "true"
+
+            # TS_STATE_DIR is deliberately unset, so tailscaled defaults to
+            # in-memory state (--state=mem:) and nothing persists across restarts.
+
+            # Advertise the RFC 1918 private ranges as subnet routes. This is
+            # separate from the exit-node role, which is advertised below.
+            TS_ROUTES: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+
+            # Offer this node as an exit node. --login-server is appended only when
+            # TS_LOGIN_SERVER is set and non-empty.
+            TS_EXTRA_ARGS: "--advertise-exit-node ${TS_LOGIN_SERVER:+--login-server=${TS_LOGIN_SERVER}}"
+
+            # Don't upload logs to Tailscale (this also opts out of support).
+            TS_TAILSCALED_EXTRA_ARGS: "--no-logs-no-support"
+
+            # Expose a proxy to other tailnet nodes. tailscaled multiplexes SOCKS5
+            # and HTTP proxy traffic on a single listener, so both share port 1055.
+            TS_SOCKS5_SERVER: "0.0.0.0:1055"
+            TS_OUTBOUND_HTTP_PROXY_LISTEN: "0.0.0.0:1055"
+        logging:
+            # Discard container output; combined with --no-logs-no-support above,
+            # no logs are kept locally or sent to Tailscale.
+            driver: none
+        networks:
+            - exit-node-net
+
+networks:
+    exit-node-net:
+        driver: bridge

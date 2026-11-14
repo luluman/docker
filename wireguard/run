@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export WG_PORT="${WG_PORT:-$(shuf -i 20000-60000 -n 1)}"
+
+case "${1:-}" in
+up)
+    docker compose up -d
+    docker logs wireguard-exit
+    ;;
+down)
+    docker compose down -v --remove-orphans
+    ;;
+*)
+    echo "Usage: $0 {up|down}" >&2
+    exit 1
+    ;;
+esac

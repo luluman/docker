@@ -1,0 +1,27 @@
+services:
+    derp:
+        image: mattlu/derp:latest
+        platform: linux/amd64
+        pull_policy: always
+        container_name: derp
+        restart: unless-stopped
+        network_mode: host
+        environment:
+            - TS_AUTHKEY=${TS_AUTHKEY:?TS_AUTHKEY is required}
+            # Node name shown in the Tailscale admin console.
+            - TS_HOSTNAME=${TS_HOSTNAME:-cn-derp}
+            # Custom TLS SNI domain to reject active IP scanners/probers.
+            - DERP_DOMAIN=${DERP_DOMAIN:-derp.local}
+            # Custom control plane URL; leave empty unless self-hosting Headscale.
+            - TS_LOGIN_SERVER=${TS_LOGIN_SERVER:-}
+            - TS_STATE=${TS_STATE:-mem:}
+            # Public IPv4 address; auto-detected by entrypoint.sh if left empty.
+            - DERP_HOST=${DERP_HOST:-}
+            - DERP_ADDR=${DERP_ADDR:-:443}
+            - DERP_HTTP_PORT=${DERP_HTTP_PORT:-80}
+            - DERP_STUN=${DERP_STUN:-true}
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "10m"
+                max-file: "3"

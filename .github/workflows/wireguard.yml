@@ -5,7 +5,6 @@ on:
         paths:
             - "wireguard/wireguard.Dockerfile"
             - "wireguard/entrypoint.sh"
-            - "wireguard/docker-compose.yml"
 
 env:
     IMAGE_NAME: mattlu/wg-gotatun-exit

@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+    cat >&2 <<EOF
+Usage:
+  ./run up <auth_key> [domain] [hostname]
+  ./run down
+  ./run status
+  ./run logs
+EOF
+    exit 1
+}
+
+case "${1:-}" in
+up)
+    export TS_AUTHKEY="${2:-${TS_AUTHKEY:-}}"
+    export DERP_DOMAIN="${3:-${DERP_DOMAIN:-derp.local}}"
+    export TS_HOSTNAME="${4:-${TS_HOSTNAME:-cn-derp}}"
+
+    [[ -n "$TS_AUTHKEY" ]] || usage
+
+    docker compose up -d
+    echo "Waiting for DERP server to start..."
+    for _ in {1..20}; do
+        if docker exec derp pgrep -x derper >/dev/null 2>&1; then
+            docker compose logs derp
+            exit 0
+        fi
+        sleep 1
+    done
+    echo "Still starting; check './run logs'."
+    ;;
+down) docker compose down --remove-orphans --volumes ;;
+status) docker exec derp tailscale status ;;
+logs) docker compose logs -f ;;
+*) usage ;;
+esac
