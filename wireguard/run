@@ -6,10 +6,21 @@ export WG_PORT="${WG_PORT:-$(shuf -i 20000-60000 -n 1)}"
 case "${1:-}" in
 up)
     docker compose up -d
-    docker compose logs wireguard-exit
+    echo "Waiting for gotatun to start..."
+    for _ in {1..20}; do
+        if docker exec wireguard-exit pgrep -x gotatun >/dev/null 2>&1; then
+            docker logs wireguard-exit
+            exit 0
+        fi
+        sleep 1
+    done
+    echo "Still starting; check './run logs'."
     ;;
 down)
     docker compose down -v --remove-orphans
+    ;;
+logs)
+    docker logs wireguard-exit -f
     ;;
 *)
     echo "Usage: $0 {up|down}" >&2
