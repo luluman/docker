@@ -6,7 +6,7 @@ export DEBIAN_FRONTEND=noninteractive
 
 setup_sshd() {
     cat <<'EOF' >/etc/ssh/sshd_config.d/99-hardening.conf
-PermitRootLogin yes
+PermitRootLogin prohibit-password
 PubkeyAuthentication yes
 PasswordAuthentication no
 KbdInteractiveAuthentication no
