@@ -52,5 +52,11 @@ EOF
         docker-compose-plugin
 }
 
+# Install 24-bit color terminfo entries for the current user.
+install_24bit_terminfo() {
+    tic -x -o "${HOME}/.terminfo" "./scripts/terminfo-24bit.src"
+}
+
+install_24bit_terminfo
 setup_sshd
 install_docker

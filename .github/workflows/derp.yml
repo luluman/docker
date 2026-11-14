@@ -3,7 +3,7 @@ name: derp
 on:
     push:
         paths:
-            - "derp/derp.Dockerfile"
+            - "derp/Dockerfile"
             - "derp/entrypoint.sh"
 
 jobs:
@@ -17,7 +17,7 @@ jobs:
             - name: Build the latest Docker image
               working-directory: derp
               run: |
-                  docker build . --file derp.Dockerfile --tag derp
+                  docker build . --file Dockerfile --tag derp
                   docker image tag derp mattlu/derp:latest
 
             - name: Push the latest Docker image

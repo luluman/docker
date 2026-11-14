@@ -3,7 +3,7 @@ name: wireguard
 on:
     push:
         paths:
-            - "wireguard/wireguard.Dockerfile"
+            - "wireguard/Dockerfile"
             - "wireguard/entrypoint.sh"
 
 env:
@@ -23,7 +23,7 @@ jobs:
             - name: Build WireGuard image
               working-directory: wireguard
               run: |
-                  docker build . --file wireguard.Dockerfile --tag "$LOCAL_TAG"
+                  docker build . --file Dockerfile --tag "$LOCAL_TAG"
                   docker image tag "$LOCAL_TAG" "$IMAGE_NAME:latest"
 
             # Publish the :latest tag to Docker Hub
