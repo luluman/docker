@@ -47,6 +47,7 @@ SERVER_EOF
 PrivateKey = ${CLIENT_PRIV}
 Address = 10.13.13.2/32, fd42:42:42::2/128
 DNS = 2606:4700:4700::1111, 2606:4700:4700::1001, 1.1.1.1, 1.0.0.1
+MTU = 1420
 
 [Peer]
 PublicKey = ${SERVER_PUB}
