@@ -7,7 +7,7 @@ services:
         restart: unless-stopped
         network_mode: host
         environment:
-            - TS_AUTHKEY=${TS_AUTHKEY:?TS_AUTHKEY is required}
+            - TS_AUTHKEY=${TS_AUTHKEY:-}
             # Node name shown in the Tailscale admin console.
             - TS_HOSTNAME=${TS_HOSTNAME:-cn-derp}
             # Custom TLS SNI domain to reject active IP scanners/probers.

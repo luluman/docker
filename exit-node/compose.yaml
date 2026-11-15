@@ -22,8 +22,8 @@ services:
         container_name: tailscale-exit-node
         restart: unless-stopped
         environment:
-            TS_AUTHKEY: "${TS_AUTHKEY:?TS_AUTHKEY is required}"
-            TS_HOSTNAME: "${TS_HOSTNAME:?TS_HOSTNAME is required}"
+            TS_AUTHKEY: "${TS_AUTHKEY:-}"
+            TS_HOSTNAME: "${TS_HOSTNAME:-}"
 
             # Userspace networking: no TUN device or elevated privileges required.
             TS_USERSPACE: "true"
