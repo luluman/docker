@@ -21,15 +21,9 @@ if [ ! -f "$WG_CONF" ]; then
     CLIENT_PUB=$(echo "$CLIENT_PRIV" | wg pubkey)
     PSK=$(wg genpsk)
 
-    # Auto-detect public IPv6 using AAAA-only endpoints (or use SERVER_ENDPOINT if provided)
-    PUBLIC_IP="${SERVER_ENDPOINT:-$(wget -qO- -T 5 http://api6.ipify.org || wget -qO- -T 5 http://v6.ident.me || echo "YOUR_SERVER_PUBLIC_IPV6")}"
-
-    # Automatically enclose raw IPv6 addresses in square brackets [IPv6] for WireGuard
-    case "$PUBLIC_IP" in
-    \[*\]) ENDPOINT_HOST="$PUBLIC_IP" ;;
-    *:*) ENDPOINT_HOST="[${PUBLIC_IP}]" ;;
-    *) ENDPOINT_HOST="$PUBLIC_IP" ;;
-    esac
+    # Auto-detect public IPv4 and IPv6
+    PUBLIC_IPV4=$(wget -qO- -T 5 http://api4.ipify.org || wget -qO- -T 5 http://v4.ident.me || echo "YOUR_SERVER_PUBLIC_IPV4")
+    PUBLIC_IPV6=$(wget -qO- -T 5 http://api6.ipify.org || wget -qO- -T 5 http://v6.ident.me || echo "YOUR_SERVER_PUBLIC_IPV6")
 
     cat <<SERVER_EOF >"$WG_CONF"
 [Interface]
@@ -46,13 +40,14 @@ SERVER_EOF
 [Interface]
 PrivateKey = ${CLIENT_PRIV}
 Address = 10.13.13.2/32, fd42:42:42::2/128
-DNS = 2606:4700:4700::1111, 2606:4700:4700::1001, 1.1.1.1, 1.0.0.1
+DNS = 1.1.1.1, 1.0.0.1, 2606:4700:4700::1111, 2606:4700:4700::1001
 MTU = 1420
 
 [Peer]
 PublicKey = ${SERVER_PUB}
 PresharedKey = ${PSK}
-Endpoint = ${ENDPOINT_HOST}:${WG_PORT}
+Endpoint = ${PUBLIC_IPV4}:${WG_PORT}
+# Endpoint = [${PUBLIC_IPV6}]:${WG_PORT}
 AllowedIPs = 0.0.0.0/0, ::/0
 PersistentKeepalive = 25
 CLIENT_EOF
@@ -85,7 +80,7 @@ trap cleanup TERM INT QUIT
 
 echo ""
 echo "=================================================================="
-echo "   WIREGUARD EXIT NODE READY (IPV6 ENDPOINT: ${ENDPOINT_HOST}:${WG_PORT})"
+echo "   WIREGUARD DUAL-STACK EXIT NODE READY"
 echo "   COPY AND PASTE THIS CONFIGURATION INTO YOUR WIREGUARD CLIENT   "
 echo "=================================================================="
 cat "$CLIENT_CONF"
